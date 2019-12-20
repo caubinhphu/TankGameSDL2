@@ -18,5 +18,22 @@
     <ClCompile Include="TankGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BasicObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TankMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="general.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TankMain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

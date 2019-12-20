@@ -150,7 +150,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BasicObject.cpp" />
     <ClCompile Include="TankGame.cpp" />
+    <ClCompile Include="TankMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BasicObject.h" />
+    <ClInclude Include="general.h" />
+    <ClInclude Include="TankMain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
