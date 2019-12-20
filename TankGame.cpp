@@ -1,4 +1,4 @@
-#include "general.h"
+﻿#include "general.h"
 #include "TankMain.h"
 
 TankMain tank(100, 100);
@@ -11,8 +11,8 @@ bool init() {
 	if (window == NULL) {
 		return false;
 	}
-	renderder = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	if (renderder == NULL) {
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	if (renderer == NULL) {
 		return false;
 	}
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
@@ -23,13 +23,21 @@ bool init() {
 }
 
 bool load() {
-	return tank.loadImg("./image/tank5.png", renderder);
+	bool res = true;
+	if (!tank.loadImg("./image/tank5.png", renderer)) {
+		res = false;
+	}
+	if (!tank.loadTamBan("./image/tamban.png", renderer)) {
+		res = false;
+	}
+
+	return res;
 }
 
 void close() {
 	tank.free();
-	SDL_DestroyRenderer(renderder);
-	renderder = NULL;
+	SDL_DestroyRenderer(renderer);
+	renderer = NULL;
 	SDL_DestroyWindow(window);
 	window = NULL;
 	SDL_Quit();
@@ -40,23 +48,25 @@ int main(int arc, char* arg[]) {
 	if (init()) {
 		bool out = false;
 		if (load()) {
-			SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight };
+			SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
+			SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
 			while (!out) {
-				while (SDL_PollEvent(&event) != 0) {
+				while (SDL_PollEvent(&event) != 0) { // bắt các sự kiện
 					if (event.type == SDL_QUIT) {
 						out = true;
 					}
 					tank.handleEvents(&event, camera);
 				}
 
-				SDL_RenderClear(renderder);
-				SDL_SetRenderDrawColor(renderder, 100, 50, 0, 0);
+				SDL_RenderClear(renderer); // clear màn hình render
+				SDL_SetRenderDrawColor(renderer, 100, 50, 0, 0);
 				
 				tank.move();
 				tank.setCamera(camera);
 
-				tank.render(renderder, camera);
-				SDL_RenderPresent(renderder);
+				tank.render(renderer, camera);
+				tank.renderTam(renderer);
+				SDL_RenderPresent(renderer);
 			}
 			
 		}

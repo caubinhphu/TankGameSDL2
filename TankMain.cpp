@@ -5,6 +5,7 @@ TankMain::TankMain(int _x, int _y) {
 	box.y = _y;
 	speed = 5;
 	spX = spY = 0;
+	rotation = 0;
 }
 
 TankMain::~TankMain() {
@@ -12,6 +13,12 @@ TankMain::~TankMain() {
 }
 
 void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
+	int mouseX = 0, mouseY = 0;
+	SDL_GetMouseState(&mouseX, &mouseY);
+
+	rotation = check::rotationA_B(mouseX, mouseY, box.x + box.w / 2 - _camera.x, box.y + box.h / 2 - _camera.y);
+	std::cout << rotation << std::endl;
+
 	if (_e->type == SDL_KEYDOWN && _e->key.repeat == 0) {
 		switch (_e->key.keysym.sym) {
 		case SDLK_a:
@@ -62,5 +69,15 @@ void TankMain::setCamera(SDL_Rect &_camera) {
 }
 
 void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
-	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, 0);
+	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
+}
+
+bool TankMain::loadTamBan(std::string _path, SDL_Renderer* _renderer) {
+	return tamBan.loadImg(_path, _renderer);
+}
+
+void TankMain::renderTam(SDL_Renderer* _renderer) {
+	int mouseX = 0, mouseY = 0;
+	SDL_GetMouseState(&mouseX, &mouseY);
+	tamBan.render(_renderer, mouseX - tamBan.getW() / 2, mouseY - tamBan.getH() / 2, NULL, 0);
 }
