@@ -22,7 +22,14 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 	int mouseX = 0, mouseY = 0;
 	SDL_GetMouseState(&mouseX, &mouseY);
 
-	rotation = check::rotationA_B(mouseX, mouseY, box.x + box.w / 2 - _camera.x, box.y + box.h / 2 - _camera.y);
+	if (mouseX == tankCircle.x && mouseY == tankCircle.y) {
+		mouseX = tankCircle.x;
+		mouseY = tankCircle.y - 5;
+		std::cout << 1 << std::endl;
+	}
+	else {
+		rotation = check::rotationA_B(mouseX, mouseY, box.x + box.w / 2 - _camera.x, box.y + box.h / 2 - _camera.y);
+	}
 	//std::cout << rotation << std::endl;
 
 	if (_e->type == SDL_KEYDOWN && _e->key.repeat == 0) {
@@ -110,7 +117,7 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 		Bullet* bullet = new Bullet();
 		bullet->loadImg("./image/danlua4.png", _renderer);
 		int x, y;
-		if (rotation >= 0 && rotation <= 90) {
+		if ((rotation >= 0 && rotation <= 90) || rotation < 0) {
 			bullet->setDir(Bullet::TOP_RIGHT);
 			bullet->setSpX(sin((rotation * 3.14) / 180) * Bullet::speed);
 			bullet->setSpY(cos((rotation * 3.14) / 180) * Bullet::speed);
@@ -146,18 +153,19 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 	}
 }
 
-void TankMain::handleBullet() {
-	for (int i = 0; i < bullets.size(); i++) {
-		//Bullet* tmpBullet = new Bullet();
-		
+void TankMain::handleBullet(MapGame map) {
+	for (int i = 0; i < bullets.size(); i++) {		
 		bullets[i]->move();
-		if (bullets[i]->getIsMove() == false) {
+		if (map.checkCollitionBullet(bullets[i]->getBox())) {
+			bullets[i]->setIsMove(false);
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
 			i--;
 		}
-		/*else {
-
+		/*if (bullets[i]->getIsMove() == false) {
+			delete bullets[i];
+			bullets.erase(bullets.begin() + i);
+			i--;
 		}*/
 	}
 }

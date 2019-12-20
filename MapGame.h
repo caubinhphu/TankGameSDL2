@@ -15,6 +15,7 @@ public:
 	bool loadMap(std::string _pathImg, std::string _pathMapText, SDL_Renderer* _renderer);
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
 	bool checkCollision(Circle tankMain);
+	bool checkCollitionBullet(SDL_Rect _bullet);
 };
 
 #endif // !MAPGAME_H_

@@ -53,3 +53,14 @@ bool MapGame::checkCollision(Circle tankMain) {
 	}
 	return false;
 }
+
+bool MapGame::checkCollitionBullet(SDL_Rect _bullet) {
+	for (int i = 0; i < tiles.size(); i++) {
+		if (tiles[i]->getType() == TILE_WALL) {
+			if (check::checkRect_Rect(tiles[i]->getBox(), _bullet)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}

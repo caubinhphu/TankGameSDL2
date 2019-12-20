@@ -25,7 +25,7 @@ public:
 
 	void handleEvents(SDL_Event* _e, SDL_Rect _camera);
 	void createBullet(SDL_Renderer* _renderer);
-	void handleBullet();
+	void handleBullet(MapGame map);
 	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void move(MapGame map);
 	void setCamera(SDL_Rect &_camera);
