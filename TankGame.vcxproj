@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BasicObject.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="general.cpp" />
     <ClCompile Include="MapGame.cpp" />
     <ClCompile Include="TankGame.cpp" />
@@ -159,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicObject.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="general.h" />
     <ClInclude Include="MapGame.h" />
     <ClInclude Include="TankMain.h" />

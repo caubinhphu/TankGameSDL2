@@ -67,7 +67,9 @@ int main(int arc, char* arg[]) {
 				map.render(renderer, camera);
 				tank.move(map);
 				tank.setCamera(camera);
-
+				tank.createBullet(renderer);
+				tank.handleBullet();
+				tank.renderBullet(renderer, camera);
 				tank.render(renderer, camera);
 				tank.renderTam(renderer);
 				SDL_RenderPresent(renderer);

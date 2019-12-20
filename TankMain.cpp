@@ -7,6 +7,7 @@ TankMain::TankMain(int _x, int _y) {
 	spX = spY = 0;
 	rotation = 0;
 	//setTankCircle();
+	isMouseDown = isMouseUp = false;
 }
 
 TankMain::~TankMain() {
@@ -48,6 +49,14 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 			spY += speed; break;
 		}
 	}
+	else if (_e->type == SDL_MOUSEBUTTONDOWN) {
+		isMouseDown = true;
+		isMouseUp = false;
+	}
+	else if (_e->type == SDL_MOUSEBUTTONUP) {
+		isMouseDown = false;
+		isMouseUp = true;
+	}
 }
 
 void TankMain::move(MapGame map) {
@@ -62,7 +71,6 @@ void TankMain::move(MapGame map) {
 		box.y -= spY;
 		setTankCircle();
 	}
-	
 }
 
 void TankMain::setCamera(SDL_Rect &_camera) {
@@ -95,4 +103,67 @@ void TankMain::renderTam(SDL_Renderer* _renderer) {
 	int mouseX = 0, mouseY = 0;
 	SDL_GetMouseState(&mouseX, &mouseY);
 	tamBan.render(_renderer, mouseX - tamBan.getW() / 2, mouseY - tamBan.getH() / 2, NULL, 0);
+}
+
+void TankMain::createBullet(SDL_Renderer* _renderer) {
+	if (isMouseDown && !isMouseUp) {
+		Bullet* bullet = new Bullet();
+		bullet->loadImg("./image/danlua4.png", _renderer);
+		int x, y;
+		if (rotation >= 0 && rotation <= 90) {
+			bullet->setDir(Bullet::TOP_RIGHT);
+			bullet->setSpX(sin((rotation * 3.14) / 180) * Bullet::speed);
+			bullet->setSpY(cos((rotation * 3.14) / 180) * Bullet::speed);
+			x = tankCircle.x + (sin((rotation * 3.14) / 180) * (box.h / 2)) - bullet->getW() / 2;
+			y = tankCircle.y - (cos((rotation * 3.14) / 180) * (box.h / 2)) - bullet->getH() / 2;
+		}
+		else if (rotation > 90 && rotation <= 180) {
+			bullet->setDir(Bullet::BOTTOM_RIGHT);
+			bullet->setSpX(sin(3.14 - (rotation * 3.14) / 180) * Bullet::speed);
+			bullet->setSpY(cos(3.14 - (rotation * 3.14) / 180) * Bullet::speed);
+			x = tankCircle.x + (sin(3.14 - (rotation * 3.14) / 180) * (box.h / 2)) - bullet->getW() / 2;
+			y = tankCircle.y + (cos(3.14 - (rotation * 3.14) / 180) * (box.h / 2)) - bullet->getH() / 2;
+		}
+		else if (rotation > 180 && rotation <= 270) {
+			bullet->setDir(Bullet::BOTTOM_LEFT);
+			bullet->setSpX(sin((rotation * 3.14) / 180 - 3.14) * Bullet::speed);
+			bullet->setSpY(cos((rotation * 3.14) / 180 - 3.14) * Bullet::speed);
+			x = tankCircle.x - (sin((rotation * 3.14) / 180 - 3.14) * (box.h / 2)) - bullet->getW() / 2;
+			y = tankCircle.y + (cos((rotation * 3.14) / 180 - 3.14) * (box.h / 2)) - bullet->getH() / 2;
+		}
+		else if (rotation > 270 && rotation < 360) {
+			bullet->setDir(Bullet::TOP_LEFT);
+			bullet->setSpX(sin(6.28 - (rotation * 3.14) / 180) * Bullet::speed);
+			bullet->setSpY(cos(6.28 - (rotation * 3.14) / 180) * Bullet::speed);
+			x = tankCircle.x - (sin(6.28 - (rotation * 3.14) / 180) * (box.h / 2)) - bullet->getW() / 2;
+			y = tankCircle.y - (cos(6.28 - (rotation * 3.14) / 180) * (box.h / 2)) - bullet->getH() / 2;
+		}
+		bullet->setXY(x, y);
+		bullet->setRotation(rotation);
+		bullet->setIsMove(true);
+
+		bullets.push_back(bullet);
+	}
+}
+
+void TankMain::handleBullet() {
+	for (int i = 0; i < bullets.size(); i++) {
+		//Bullet* tmpBullet = new Bullet();
+		
+		bullets[i]->move();
+		if (bullets[i]->getIsMove() == false) {
+			delete bullets[i];
+			bullets.erase(bullets.begin() + i);
+			i--;
+		}
+		/*else {
+
+		}*/
+	}
+}
+
+void TankMain::renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera) {
+	for (int i = 0; i < bullets.size(); i++) {
+		bullets[i]->render(_renderer, _camera);
+	}
 }
