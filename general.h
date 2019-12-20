@@ -4,7 +4,9 @@
 #define GENERAL_H_
 
 #include <iostream>
+#include <vector>
 #include <string>
+#include <fstream>
 #include <SDL.h>
 #include <SDL_image.h>
 
@@ -19,6 +21,7 @@ static SDL_Event event;
 
 namespace check {
 	double rotationA_B(int xA, int yA, int xB, int yB);
+	bool checkRect_Rect(SDL_Rect a, SDL_Rect b);
 }
 
 #endif // !GENERAL_H_

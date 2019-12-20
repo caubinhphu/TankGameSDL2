@@ -17,7 +17,7 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 	SDL_GetMouseState(&mouseX, &mouseY);
 
 	rotation = check::rotationA_B(mouseX, mouseY, box.x + box.w / 2 - _camera.x, box.y + box.h / 2 - _camera.y);
-	std::cout << rotation << std::endl;
+	//std::cout << rotation << std::endl;
 
 	if (_e->type == SDL_KEYDOWN && _e->key.repeat == 0) {
 		switch (_e->key.keysym.sym) {

@@ -152,13 +152,17 @@
   <ItemGroup>
     <ClCompile Include="BasicObject.cpp" />
     <ClCompile Include="general.cpp" />
+    <ClCompile Include="MapGame.cpp" />
     <ClCompile Include="TankGame.cpp" />
     <ClCompile Include="TankMain.cpp" />
+    <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicObject.h" />
     <ClInclude Include="general.h" />
+    <ClInclude Include="MapGame.h" />
     <ClInclude Include="TankMain.h" />
+    <ClInclude Include="Tile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
