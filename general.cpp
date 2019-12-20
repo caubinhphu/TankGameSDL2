@@ -25,3 +25,24 @@ bool check::checkRect_Rect(SDL_Rect a, SDL_Rect b) {
 	if (bottom_a <= top_b || bottom_b <= top_a || right_a <= left_b || right_b <= left_a) return false;
 	return true;
 }
+
+int check::bingPhuongKhoangCach(int x1, int y1, int x2, int y2) {
+	int dX = x2 - x1;
+	int dY = y2 - y1;
+	return dX * dX + dY * dY;
+}
+
+bool check::checkRect_Circle(SDL_Rect b, Circle a) {
+	int x, y;
+	if (a.x < b.x) x = b.x;
+	else if (a.x > b.x + b.w) x = b.x + b.w;
+	else x = a.x;
+
+	if (a.y < b.y) y = b.y;
+	else if (a.y > b.y + b.h) y = b.y + b.h;
+	else y = a.y;
+
+	int kc_mu2 = check::bingPhuongKhoangCach(a.x, a.y, x, y);
+	if (kc_mu2 < a.r * a.r) return true;
+	return false;
+}

@@ -24,6 +24,7 @@ public:
 	void clipImg(std::string _path, SDL_Renderer* _renderer);
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
 	
+	int getType() { return type; };
 	void setType(int _type) { type = _type; };
 };
 

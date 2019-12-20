@@ -6,10 +6,15 @@ TankMain::TankMain(int _x, int _y) {
 	speed = 5;
 	spX = spY = 0;
 	rotation = 0;
+	//setTankCircle();
 }
 
 TankMain::~TankMain() {
 	free();
+}
+
+void TankMain::setTankCircle() {
+	tankCircle = { box.x + box.w / 2, box.y + box.h / 2, box.w / 2 };
 }
 
 void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
@@ -45,9 +50,19 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 	}
 }
 
-void TankMain::move() {
+void TankMain::move(MapGame map) {
 	box.x += spX;
 	box.y += spY;
+	setTankCircle();
+	if (map.checkCollision(tankCircle)) {
+		box.x -= spX;
+		setTankCircle();
+	}
+	if (map.checkCollision(tankCircle)) {
+		box.y -= spY;
+		setTankCircle();
+	}
+	
 }
 
 void TankMain::setCamera(SDL_Rect &_camera) {

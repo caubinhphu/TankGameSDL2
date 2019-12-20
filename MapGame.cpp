@@ -42,3 +42,14 @@ void MapGame::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 			tiles[i]->render(_renderer, _camera);
 	}
 }
+
+bool MapGame::checkCollision(Circle tankMain) {
+	for (int i = 0; i < TOTAL_TILE; i++) {
+		if (tiles[i]->getType() == TILE_WALL) {
+			if (check::checkRect_Circle(tiles[i]->getBox(), tankMain)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}

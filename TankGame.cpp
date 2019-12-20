@@ -65,7 +65,7 @@ int main(int arc, char* arg[]) {
 				SDL_RenderClear(renderer); // clear màn hình render
 				SDL_SetRenderDrawColor(renderer, 100, 50, 0, 0);
 				map.render(renderer, camera);
-				tank.move();
+				tank.move(map);
 				tank.setCamera(camera);
 
 				tank.render(renderer, camera);
