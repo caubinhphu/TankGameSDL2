@@ -12,7 +12,7 @@ public:
 	BasicObj(); // hàm khởi tạo
 	~BasicObj(); // hàm hủy
 	void free(); // hàm giải phóng bộ nhớ
-	bool loadImg(std::string _path, SDL_Renderer* _renderer); // hàm load hình ảnh
+	virtual bool loadImg(std::string _path, SDL_Renderer* _renderer); // hàm load hình ảnh
 	virtual void render(SDL_Renderer* _renderer, int _x, int _y, SDL_Rect* _clip, double _a); // hàm render
 	int getX() { return box.x; }; // hàm lấy toạ độ x của đối tượng
 	int getY() { return box.y; }; // hàm lấy toạ độ y của đối tượng

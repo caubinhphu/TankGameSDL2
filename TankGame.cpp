@@ -68,7 +68,7 @@ int main(int arc, char* arg[]) {
 				tank.move(map);
 				tank.setCamera(camera);
 				tank.createBullet(renderer);
-				tank.handleBullet(map);
+				tank.handleBullet(map, renderer, camera);
 				tank.renderBullet(renderer, camera);
 				tank.render(renderer, camera);
 				tank.renderTam(renderer);

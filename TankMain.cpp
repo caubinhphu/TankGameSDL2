@@ -23,13 +23,13 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 	SDL_GetMouseState(&mouseX, &mouseY);
 
 	if (mouseX == tankCircle.x && mouseY == tankCircle.y) {
-		mouseX = tankCircle.x;
-		mouseY = tankCircle.y - 5;
-		std::cout << 1 << std::endl;
+		rotation = 0;
+		//std::cout << 1 << std::endl;
 	}
 	else {
 		rotation = check::rotationA_B(mouseX, mouseY, box.x + box.w / 2 - _camera.x, box.y + box.h / 2 - _camera.y);
 	}
+	if (rotation < 0) rotation = 0;
 	//std::cout << rotation << std::endl;
 
 	if (_e->type == SDL_KEYDOWN && _e->key.repeat == 0) {
@@ -115,9 +115,9 @@ void TankMain::renderTam(SDL_Renderer* _renderer) {
 void TankMain::createBullet(SDL_Renderer* _renderer) {
 	if (isMouseDown && !isMouseUp) {
 		Bullet* bullet = new Bullet();
-		bullet->loadImg("./image/danlua4.png", _renderer);
+		bullet->loadImg("./image/danlua4.png", "./image/effect_shoot.png", "./image/collision3.png", _renderer);
 		int x, y;
-		if ((rotation >= 0 && rotation <= 90) || rotation < 0) {
+		if ((rotation >= 0 && rotation <= 90)) {
 			bullet->setDir(Bullet::TOP_RIGHT);
 			bullet->setSpX(sin((rotation * 3.14) / 180) * Bullet::speed);
 			bullet->setSpY(cos((rotation * 3.14) / 180) * Bullet::speed);
@@ -153,11 +153,12 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 	}
 }
 
-void TankMain::handleBullet(MapGame map) {
+void TankMain::handleBullet(MapGame map, SDL_Renderer* _renderer, SDL_Rect _camera) {
 	for (int i = 0; i < bullets.size(); i++) {		
 		bullets[i]->move();
 		if (map.checkCollitionBullet(bullets[i]->getBox())) {
 			bullets[i]->setIsMove(false);
+			bullets[i]->renderCollisionEffect(_renderer, _camera);
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
 			i--;
@@ -172,6 +173,11 @@ void TankMain::handleBullet(MapGame map) {
 
 void TankMain::renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	for (int i = 0; i < bullets.size(); i++) {
+		
+		if (bullets[i]->getIsEffectShoot()) {
+			bullets[i]->setIsEffectShoot(false);
+			bullets[i]->renderShootEffect(_renderer, _camera, box);
+		}
 		bullets[i]->render(_renderer, _camera);
 	}
 }
