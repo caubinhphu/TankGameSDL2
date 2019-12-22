@@ -19,43 +19,19 @@ Bullet::~Bullet() {
 void Bullet::move() {
 	if (dir == TOP_LEFT) {
 		box.x -= spX;
-		if (box.x <= 50) {
-			isMove = false;
-		}
 		box.y -= spY;
-		if (box.y <= 50) {
-			isMove = false;
-		}
 	}
 	else if (dir == TOP_RIGHT) {
 		box.x += spX;
-		if (box.x >= backgroundWidth) {
-			isMove = false;
-		}
 		box.y -= spY;
-		if (box.y <= 0) {
-			isMove = false;
-		}
 	}
 	else if (dir == BOTTOM_LEFT) {
 		box.x -= spX;
-		if (box.x <= 0) {
-			isMove = false;
-		}
 		box.y += spY;
-		if (box.y >= backgroundHeight) {
-			isMove = false;
-		}
 	}
 	else if (dir == BOTTOM_RIGHT) {
 		box.x += spX;
-		if (box.x >= backgroundWidth) {
-			isMove = false;
-		}
 		box.y += spY;
-		if (box.y >= backgroundHeight) {
-			isMove = false;
-		}
 	}
 }
 
@@ -78,8 +54,8 @@ bool Bullet::loadImg(std::string _pathBullet, std::string _pathShootEffect, std:
 
 void Bullet::renderShootEffect(SDL_Renderer* _renderer, SDL_Rect _camera, SDL_Rect _boxTankMain) {
 	int _x = 0, _y = 0;
-	_x = _boxTankMain.x + _boxTankMain.w / 2 + (sin((rotation * 3.14) / 180) * (_boxTankMain.h / 2 + 6)) - shootEffect.getW() / 2;
-	_y = _boxTankMain.y + _boxTankMain.h / 2 - (cos((rotation * 3.14) / 180) * (_boxTankMain.h / 2 + 6)) - shootEffect.getH() / 2;
+	_x = _boxTankMain.x + _boxTankMain.w / 2 + (sin(rotation) * ((_boxTankMain.h / 2) + 6)) - shootEffect.getW() / 2;
+	_y = _boxTankMain.y + _boxTankMain.h / 2 - (cos(rotation) * ((_boxTankMain.h / 2) + 6)) - shootEffect.getH() / 2;
 	
 	shootEffect.render(_renderer, _x - _camera.x, _y - _camera.y, NULL, rotation);
 }

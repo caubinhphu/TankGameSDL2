@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef GENERAL_H_
 #define GENERAL_H_
@@ -14,6 +14,7 @@
 #define backgroundHeight 1600
 #define cameraWidth 650
 #define cameraHeight 450
+#define PI 3.14159265359 // số PI
 
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
@@ -25,9 +26,9 @@ struct Circle
 };
 
 namespace check {
-	double rotationA_B(int xA, int yA, int xB, int yB);
+	double rotationA_B(int xA, int yA, int xB, int yB); // return radian
 	bool checkRect_Rect(SDL_Rect a, SDL_Rect b);
-	int bingPhuongKhoangCach(int x1, int y1, int x2, int y2);
+	int binhPhuongKhoangCach(int x1, int y1, int x2, int y2);
 	bool checkRect_Circle(SDL_Rect b, Circle a);
 }
 

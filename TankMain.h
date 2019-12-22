@@ -9,7 +9,7 @@
 class TankMain : public BasicObj {
 private:
 	int speed; // tốc độ của xe
-	double rotation; // góc quay của xe
+	double rotation; // góc quay của xe (radian)
 	int spX, spY; // gia tốc
 	BasicObj tamBan; // tâm ngắm bắn
 	Circle tankCircle;

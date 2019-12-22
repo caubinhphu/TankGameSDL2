@@ -34,11 +34,12 @@ bool BasicObj::loadImg(std::string _path, SDL_Renderer* _renderer) {
 	return true;
 }
 
-void BasicObj::render(SDL_Renderer* _renderer, int _x, int _y, SDL_Rect* _clip = NULL, double _a = 0) {
+void BasicObj::render(SDL_Renderer* _renderer, int _x, int _y, SDL_Rect* _clip = NULL, double _aRadian = 0) {
 	SDL_Rect rect = { _x, _y, box.w, box.h };
 	if (_clip != NULL) {
 		rect.w = _clip->w;
 		rect.h = _clip->h;
 	}
-	SDL_RenderCopyEx(_renderer, texture, _clip, &rect, _a, NULL, SDL_FLIP_NONE);
+
+	SDL_RenderCopyEx(_renderer, texture, _clip, &rect, (_aRadian * 180) / PI, NULL, SDL_FLIP_NONE);
 }

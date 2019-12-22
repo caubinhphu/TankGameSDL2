@@ -17,7 +17,7 @@ public:
 		fireRate = 600,
 		rocketRate = 1000,
 	};
-	static const int speed = 20;
+	static const int speed = 5; // 20
 private:
 	int spX, spY;
 	double rotation;

@@ -32,7 +32,7 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 		rotation = check::rotationA_B(mouseX, mouseY, box.x + box.w / 2 - _camera.x, box.y + box.h / 2 - _camera.y);
 	}
 	if (rotation < 0) rotation = 0;
-	//std::cout << rotation << std::endl;
+	std::cout << rotation << std::endl;
 
 	if (_e->type == SDL_KEYDOWN && _e->key.repeat == 0) {
 		switch (_e->key.keysym.sym) {
@@ -137,9 +137,10 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 
 		// kiểm tra thời điểm bắn đạn trước so với thời điểm bắn đạn sau có lớn hơn tốc độ bắn hay không
 		if (SDL_GetTicks() - saveTimeShoot > firtingRate) {
-			std::string _imgBullet;
+			std::string _imgBullet; // hình viên đạn
 			if (bulletType == Bullet::nomalBullet) {
 				_imgBullet = "./image/ammo.png";
+				
 			}
 			else if (bulletType == Bullet::fireBullet) {
 				_imgBullet = "./image/danlua4.png";
@@ -147,36 +148,38 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 			else if (bulletType == Bullet::rocketBullet) {
 				_imgBullet = "./image/bullet_rocket.png";
 			}
-			Bullet* bullet = new Bullet();
+
+			Bullet* bullet = new Bullet(); // khai báo viên đạn mới
+			bullet->setType(bulletType);
 			bullet->loadImg(_imgBullet, "./image/effect_shoot.png", "./image/collision3.png", _renderer);
-			int x, y;
-			if ((rotation >= 0 && rotation <= 90)) {
+			int x, y; // vị trí ban đầu
+			if ((rotation >= 0 && rotation <= PI / 2)) {
 				bullet->setDir(Bullet::TOP_RIGHT);
-				bullet->setSpX(sin((rotation * 3.14) / 180) * Bullet::speed);
-				bullet->setSpY(cos((rotation * 3.14) / 180) * Bullet::speed);
-				x = tankCircle.x + (sin((rotation * 3.14) / 180) * (box.h / 2)) - bullet->getW() / 2;
-				y = tankCircle.y - (cos((rotation * 3.14) / 180) * (box.h / 2)) - bullet->getH() / 2;
+				bullet->setSpX(sin(rotation) * Bullet::speed); // độ lệch x
+				bullet->setSpY(cos(rotation) * Bullet::speed); // độ lệch y
+				x = tankCircle.x + (sin(rotation) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y - (cos(rotation) * (box.h / 2)) - bullet->getH() / 2;
 			}
-			else if (rotation > 90 && rotation <= 180) {
+			else if (rotation > PI / 2 && rotation <= PI) {
 				bullet->setDir(Bullet::BOTTOM_RIGHT);
-				bullet->setSpX(sin(3.14 - (rotation * 3.14) / 180) * Bullet::speed);
-				bullet->setSpY(cos(3.14 - (rotation * 3.14) / 180) * Bullet::speed);
-				x = tankCircle.x + (sin(3.14 - (rotation * 3.14) / 180) * (box.h / 2)) - bullet->getW() / 2;
-				y = tankCircle.y + (cos(3.14 - (rotation * 3.14) / 180) * (box.h / 2)) - bullet->getH() / 2;
+				bullet->setSpX(sin(PI - rotation) * Bullet::speed);
+				bullet->setSpY(cos(PI - rotation) * Bullet::speed);
+				x = tankCircle.x + (sin(PI - rotation) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y + (cos(PI - rotation) * (box.h / 2)) - bullet->getH() / 2;
 			}
-			else if (rotation > 180 && rotation <= 270) {
+			else if (rotation > PI && rotation <= 1.5 * PI) {
 				bullet->setDir(Bullet::BOTTOM_LEFT);
-				bullet->setSpX(sin((rotation * 3.14) / 180 - 3.14) * Bullet::speed);
-				bullet->setSpY(cos((rotation * 3.14) / 180 - 3.14) * Bullet::speed);
-				x = tankCircle.x - (sin((rotation * 3.14) / 180 - 3.14) * (box.h / 2)) - bullet->getW() / 2;
-				y = tankCircle.y + (cos((rotation * 3.14) / 180 - 3.14) * (box.h / 2)) - bullet->getH() / 2;
+				bullet->setSpX(sin(rotation - PI) * Bullet::speed);
+				bullet->setSpY(cos(rotation - PI) * Bullet::speed);
+				x = tankCircle.x - (sin(rotation - PI) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y + (cos(rotation - PI) * (box.h / 2)) - bullet->getH() / 2;
 			}
-			else if (rotation > 270 && rotation < 360) {
+			else if (rotation > 1.5 * PI && rotation < 2 * PI) {
 				bullet->setDir(Bullet::TOP_LEFT);
-				bullet->setSpX(sin(6.28 - (rotation * 3.14) / 180) * Bullet::speed);
-				bullet->setSpY(cos(6.28 - (rotation * 3.14) / 180) * Bullet::speed);
-				x = tankCircle.x - (sin(6.28 - (rotation * 3.14) / 180) * (box.h / 2)) - bullet->getW() / 2;
-				y = tankCircle.y - (cos(6.28 - (rotation * 3.14) / 180) * (box.h / 2)) - bullet->getH() / 2;
+				bullet->setSpX(sin(2 * PI - rotation) * Bullet::speed);
+				bullet->setSpY(cos(2 * PI - rotation) * Bullet::speed);
+				x = tankCircle.x - (sin(2 * PI - rotation) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y - (cos(2 * PI - rotation) * (box.h / 2)) - bullet->getH() / 2;
 			}
 			bullet->setXY(x, y);
 			bullet->setRotation(rotation);
@@ -198,11 +201,6 @@ void TankMain::handleBullet(MapGame map, SDL_Renderer* _renderer, SDL_Rect _came
 			bullets.erase(bullets.begin() + i);
 			i--;
 		}
-		/*if (bullets[i]->getIsMove() == false) {
-			delete bullets[i];
-			bullets.erase(bullets.begin() + i);
-			i--;
-		}*/
 	}
 }
 

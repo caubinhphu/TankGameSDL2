@@ -2,12 +2,13 @@
 
 double check::rotationA_B(int xA, int yA, int xB, int yB) {
 	if (xA >= xB && yA <= yB)
-		return (90 - (180 * atan((double)abs(yA - yB) / abs(xA - xB)) / 3.14));
-	else if (xA > xB&& yA >= yB)
-		return (90 + (180 * atan((double)abs(yA - yB) / abs(xA - xB)) / 3.14));
+		return (PI / 2 - (atan((double)abs(yA - yB) / abs(xA - xB))));
+	else if (xA > xB && yA >= yB)
+		return (PI / 2 + (atan((double)abs(yA - yB) / abs(xA - xB))));
 	else if (xA <= xB && yA > yB)
-		return (180 + (90 - (180 * atan((double)abs(yA - yB) / abs(xA - xB)) / 3.14)));
-	else if (xA < xB && yA <= yB) return (270 + (180 * atan((double)abs(yA - yB) / abs(xA - xB)) / 3.14));
+		return (1.5 * PI - (atan((double)abs(yA - yB) / abs(xA - xB))));
+	else if (xA < xB && yA <= yB)
+		return (1.5 * PI + (atan((double)abs(yA - yB) / abs(xA - xB))));
 }
 
 bool check::checkRect_Rect(SDL_Rect a, SDL_Rect b) {
@@ -26,7 +27,7 @@ bool check::checkRect_Rect(SDL_Rect a, SDL_Rect b) {
 	return true;
 }
 
-int check::bingPhuongKhoangCach(int x1, int y1, int x2, int y2) {
+int check::binhPhuongKhoangCach(int x1, int y1, int x2, int y2) {
 	int dX = x2 - x1;
 	int dY = y2 - y1;
 	return dX * dX + dY * dY;
@@ -42,7 +43,7 @@ bool check::checkRect_Circle(SDL_Rect b, Circle a) {
 	else if (a.y > b.y + b.h) y = b.y + b.h;
 	else y = a.y;
 
-	int kc_mu2 = check::bingPhuongKhoangCach(a.x, a.y, x, y);
+	int kc_mu2 = check::binhPhuongKhoangCach(a.x, a.y, x, y);
 	if (kc_mu2 < a.r * a.r) return true;
 	return false;
 }
