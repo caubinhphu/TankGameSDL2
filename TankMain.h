@@ -16,6 +16,8 @@ private:
 	void setTankCircle();
 	std::vector<Bullet*> bullets;
 	bool isMouseDown, isMouseUp;
+	Uint32 saveTimeShoot;
+	Bullet::BulletType bulletType;
 public:
 	TankMain(int _x, int _y);
 	~TankMain();

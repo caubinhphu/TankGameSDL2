@@ -5,6 +5,8 @@ Bullet::Bullet() {
 	rotation = 0;
 	isMove = false;
 	isEffectShoot = true;
+	type = nomalBullet;
+	firtingRate = nomalRate;
 }
 
 Bullet::~Bullet() {

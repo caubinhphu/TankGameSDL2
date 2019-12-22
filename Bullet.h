@@ -6,9 +6,16 @@
 
 class Bullet : public BasicObj {
 public:
-	enum ShootDir
-	{
+	enum ShootDir {
 		TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT,
+	};
+	enum BulletType {
+		nomalBullet, fireBullet, rocketBullet,
+	};
+	enum BulletFirtingRate {
+		nomalRate= 300,
+		fireRate = 600,
+		rocketRate = 1000,
 	};
 	static const int speed = 20;
 private:
@@ -19,6 +26,8 @@ private:
 	BasicObj shootEffect;
 	BasicObj collisionEffect;
 	bool isEffectShoot;
+	BulletType type;
+	BulletFirtingRate firtingRate;
 public:
 	Bullet();
 	~Bullet();
@@ -36,6 +45,9 @@ public:
 	bool getIsEffectShoot() { return isEffectShoot; };
 	void renderShootEffect(SDL_Renderer* _renderer, SDL_Rect _camera, SDL_Rect _boxTankMain);
 	void renderCollisionEffect(SDL_Renderer* _renderer, SDL_Rect _camera);
+	BulletType getType() { return type; };
+	void setType(BulletType _type) { type = _type; };
+	BulletFirtingRate getFirtingRate() { return firtingRate; };
 };
 
 #endif // !BULLET_H_
