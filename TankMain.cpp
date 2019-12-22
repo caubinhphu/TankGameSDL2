@@ -155,29 +155,30 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 			int x, y; // vị trí ban đầu
 			if ((rotation >= 0 && rotation <= PI / 2)) {
 				bullet->setDir(Bullet::TOP_RIGHT);
-				bullet->setSpX(sin(rotation) * Bullet::speed); // độ lệch x
-				bullet->setSpY(cos(rotation) * Bullet::speed); // độ lệch y
+				bullet->setSpX(round(sin(rotation) * Bullet::speed)); // độ lệch x
+				bullet->setSpY(round(cos(rotation) * Bullet::speed)); // độ lệch y
 				x = tankCircle.x + (sin(rotation) * (box.h / 2)) - bullet->getW() / 2;
 				y = tankCircle.y - (cos(rotation) * (box.h / 2)) - bullet->getH() / 2;
+				std::cout << (sin(rotation) * Bullet::speed) << (cos(rotation) * Bullet::speed);
 			}
 			else if (rotation > PI / 2 && rotation <= PI) {
 				bullet->setDir(Bullet::BOTTOM_RIGHT);
-				bullet->setSpX(sin(PI - rotation) * Bullet::speed);
-				bullet->setSpY(cos(PI - rotation) * Bullet::speed);
+				bullet->setSpX(round(sin(PI - rotation) * Bullet::speed));
+				bullet->setSpY(round(cos(PI - rotation) * Bullet::speed));
 				x = tankCircle.x + (sin(PI - rotation) * (box.h / 2)) - bullet->getW() / 2;
 				y = tankCircle.y + (cos(PI - rotation) * (box.h / 2)) - bullet->getH() / 2;
 			}
 			else if (rotation > PI && rotation <= 1.5 * PI) {
 				bullet->setDir(Bullet::BOTTOM_LEFT);
-				bullet->setSpX(sin(rotation - PI) * Bullet::speed);
-				bullet->setSpY(cos(rotation - PI) * Bullet::speed);
+				bullet->setSpX(round(sin(rotation - PI) * Bullet::speed));
+				bullet->setSpY(round(cos(rotation - PI) * Bullet::speed));
 				x = tankCircle.x - (sin(rotation - PI) * (box.h / 2)) - bullet->getW() / 2;
 				y = tankCircle.y + (cos(rotation - PI) * (box.h / 2)) - bullet->getH() / 2;
 			}
 			else if (rotation > 1.5 * PI && rotation < 2 * PI) {
 				bullet->setDir(Bullet::TOP_LEFT);
-				bullet->setSpX(sin(2 * PI - rotation) * Bullet::speed);
-				bullet->setSpY(cos(2 * PI - rotation) * Bullet::speed);
+				bullet->setSpX(round(sin(2 * PI - rotation) * Bullet::speed));
+				bullet->setSpY(round(cos(2 * PI - rotation) * Bullet::speed));
 				x = tankCircle.x - (sin(2 * PI - rotation) * (box.h / 2)) - bullet->getW() / 2;
 				y = tankCircle.y - (cos(2 * PI - rotation) * (box.h / 2)) - bullet->getH() / 2;
 			}
