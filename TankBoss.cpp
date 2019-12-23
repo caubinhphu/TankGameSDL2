@@ -11,6 +11,7 @@ TankBoss::TankBoss() {
 	tankCircle = { 0, 0, 0 };
 	isDestroy = false;
 	speed = randomSpeed();
+	blood = { 0, 0, 60, 10, 40 };
 }
 
 TankBoss::~TankBoss() {
@@ -18,7 +19,19 @@ TankBoss::~TankBoss() {
 }
 
 void TankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
+	// render xe tank
 	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
+
+	// render thanh máu
+	blood.x = box.x;
+	blood.y = box.y - 20;
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 128, 0);
+	SDL_Rect rimBar = { blood.x - _camera.x, blood.y - _camera.y, blood.width, blood.height };
+	SDL_RenderDrawRect(_renderer, &rimBar);
+	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 0);
+	if (blood.percent <= 0) blood.percent = 0;
+	SDL_Rect _bloodBar = { blood.x - _camera.x + 1, blood.y - _camera.y + 1, (float)(blood.width - 2) * ((float)blood.percent / 100), blood.height - 2 };
+	SDL_RenderFillRect(_renderer, &_bloodBar);
 }
 
 int TankBoss::randomSpeed() {

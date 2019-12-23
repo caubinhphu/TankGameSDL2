@@ -22,6 +22,12 @@ private:
 	bool isMouseDown, isMouseUp;
 	Uint32 saveTimeShoot;
 	Bullet::BulletType bulletType;
+
+	BloodBar blood;//mau
+	int armor;//giap
+	int totalHealth;//tong mau
+	int power;
+
 public:
 	TankMain(int _x, int _y);
 	~TankMain();

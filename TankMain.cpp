@@ -9,6 +9,8 @@ TankMain::TankMain(int _x, int _y) {
 	isMouseDown = isMouseUp = false;
 	saveTimeShoot = 0;
 	bulletType = Bullet::BulletType::nomalBullet;
+	totalHealth = 100;
+	blood = { 0, 0, 60, 10, 100 };
 }
 
 TankMain::~TankMain() {
@@ -106,7 +108,27 @@ void TankMain::setCamera(SDL_Rect &_camera) {
 }
 
 void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
+	// render xe tank
 	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
+
+	// render thanh máu
+	blood.x = box.x;
+	blood.y = box.y - 20;
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 128, 0);
+	SDL_Rect rimBar = { blood.x - _camera.x, blood.y - _camera.y, blood.width, blood.height };
+	SDL_RenderDrawRect(_renderer, &rimBar);
+	SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 0);
+	if (blood.percent <= 0) blood.percent = 0;
+	SDL_Rect _bloodBar = { blood.x - _camera.x + 1, blood.y - _camera.y + 1, (float)(blood.width - 2) * ((float)blood.percent / 100), blood.height - 2 };
+	SDL_RenderFillRect(_renderer, &_bloodBar);
+
+	//if (is_damage == true)
+	//{
+	//	load_text_blood_wasted(RenDer, _font);
+	//	render_text_blood_wasted(RenDer, cam);
+	//	is_damage = false;
+	//	total_damage_wasted = 0;
+	//}
 }
 
 bool TankMain::loadTamBan(std::string _path, SDL_Renderer* _renderer) {
