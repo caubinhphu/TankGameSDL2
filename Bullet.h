@@ -10,13 +10,34 @@ public:
 		TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT,
 	};
 	enum BulletType {
-		nomalBullet, fireBullet, rocketBullet,
+		nomalBullet, fireBullet, rocketBullet, fireBossBullet, ballBullet, ballNomalBullet, iceBullet, triangleBullet,
+		marblesLv1Bullet, marblesLv2Bullet, marblesLv3Bullet, 
 	};
 	enum BulletFirtingRate {
 		nomalRate= 300,
 		fireRate = 600,
 		rocketRate = 1000,
+		fireBossRate = 500,
+		ballBossRate = 700,
+		ballNormalBoosRate = 600,
+		iceRate = 600,
+		triangleRate = 500,
+		marblesRate = 700,
 	};
+	enum DameBullet
+	{
+		normalDame = 10,
+		fireDame = 20,
+		fireBossDame = 50,
+		ballBossDame = 40,
+		ballNormalBossDame = 40,
+		redzoneDame = 50,
+		iceDame = 10,
+		triangleDame = 35,
+		marblesDame = 45,
+		rocketDame = 200,
+	};
+
 	static const int speed = 20; // 20
 private:
 	int spX, spY;

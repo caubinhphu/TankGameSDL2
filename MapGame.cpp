@@ -64,3 +64,14 @@ bool MapGame::checkCollitionBullet(SDL_Rect _bullet) {
 	}
 	return false;
 }
+
+bool MapGame::checkCollisionTankBoss(SDL_Rect _boxTank) {
+	for (int i = 0; i < TOTAL_TILE; i++) {
+		if (tiles[i]->getType() == TILE_WALL) {
+			if (check::checkRect_Rect(tiles[i]->getBox(), _boxTank)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}

@@ -1,12 +1,11 @@
 ﻿#include "TankMain.h"
 
 TankMain::TankMain(int _x, int _y) {
-	box.x = _x;
-	box.y = _y;
+	box = { _x, _y, TANK_WIDTH, TANK_HEIGHT };
 	speed = 5;
 	spX = spY = 0;
 	rotation = 0;
-	//setTankCircle();
+	setTankCircle();
 	isMouseDown = isMouseUp = false;
 	saveTimeShoot = 0;
 	bulletType = Bullet::BulletType::nomalBullet;
@@ -32,7 +31,7 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 		rotation = check::rotationA_B(mouseX, mouseY, box.x + box.w / 2 - _camera.x, box.y + box.h / 2 - _camera.y);
 	}
 	if (rotation < 0) rotation = 0;
-	std::cout << rotation << std::endl;
+	// std::cout << rotation << std::endl;
 
 	if (_e->type == SDL_KEYDOWN && _e->key.repeat == 0) {
 		switch (_e->key.keysym.sym) {
@@ -74,15 +73,15 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 	}
 }
 
-void TankMain::move(MapGame map) {
+void TankMain::move(MapGame map, TankBossList _bossList) {
 	box.x += spX;
 	box.y += spY;
 	setTankCircle();
-	if (map.checkCollision(tankCircle)) {
+	if (map.checkCollision(tankCircle) || _bossList.checkCollisionTankBossList(tankCircle, -1)) {
 		box.x -= spX;
 		setTankCircle();
 	}
-	if (map.checkCollision(tankCircle)) {
+	if (map.checkCollision(tankCircle) || _bossList.checkCollisionTankBossList(tankCircle, -1)) {
 		box.y -= spY;
 		setTankCircle();
 	}
@@ -159,7 +158,7 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 				bullet->setSpY(round(cos(rotation) * Bullet::speed)); // độ lệch y
 				x = tankCircle.x + (sin(rotation) * (box.h / 2)) - bullet->getW() / 2;
 				y = tankCircle.y - (cos(rotation) * (box.h / 2)) - bullet->getH() / 2;
-				std::cout << (sin(rotation) * Bullet::speed) << (cos(rotation) * Bullet::speed);
+				// std::cout << (sin(rotation) * Bullet::speed) << (cos(rotation) * Bullet::speed);
 			}
 			else if (rotation > PI / 2 && rotation <= PI) {
 				bullet->setDir(Bullet::BOTTOM_RIGHT);

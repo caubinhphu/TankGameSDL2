@@ -2,9 +2,13 @@
 #include "BasicObject.h"
 #include "MapGame.h"
 #include "Bullet.h"
+#include "TankBoss.h"
 
 #ifndef TANKMAIN_H_
 #define TANKMAIN_H_
+
+#define TANK_WIDTH 60
+#define TANK_HEIGHT 60
 
 class TankMain : public BasicObj {
 private:
@@ -29,7 +33,7 @@ public:
 	void createBullet(SDL_Renderer* _renderer);
 	void handleBullet(MapGame map, SDL_Renderer* _renderer, SDL_Rect _camera);
 	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
-	void move(MapGame map);
+	void move(MapGame map, TankBossList _bossList);
 	void setCamera(SDL_Rect &_camera);
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
 

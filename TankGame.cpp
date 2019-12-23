@@ -1,9 +1,11 @@
 ﻿#include "general.h"
 #include "TankMain.h"
 #include "MapGame.h";
+#include "TankBoss.h"
 
 MapGame map;
 TankMain tank(100, 100);
+TankBossList bossList;
 
 bool init() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
@@ -50,10 +52,12 @@ void close() {
 int main(int arc, char* arg[]) {
 
 	if (init()) {
+		srand(time(NULL));
 		bool out = false;
 		if (load()) {
 			SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 			SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
+			bossList.createListBoss(map, tank.getTankCircle(), 50, 4, renderer);
 			while (!out) {
 				while (SDL_PollEvent(&event) != 0) { // bắt các sự kiện
 					if (event.type == SDL_QUIT) {
@@ -65,12 +69,15 @@ int main(int arc, char* arg[]) {
 				SDL_RenderClear(renderer); // clear màn hình render
 				SDL_SetRenderDrawColor(renderer, 100, 50, 0, 0);
 				map.render(renderer, camera);
-				tank.move(map);
+				tank.move(map, bossList);
 				tank.setCamera(camera);
+				bossList.handleList(map, tank.getTankCircle());
 				tank.createBullet(renderer);
 				tank.handleBullet(map, renderer, camera);
 				tank.renderBullet(renderer, camera);
 				tank.render(renderer, camera);
+				bossList.renderList(renderer, camera);
+				bossList.renderList(renderer, camera);
 				tank.renderTam(renderer);
 				SDL_RenderPresent(renderer);
 			}
