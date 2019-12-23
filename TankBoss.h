@@ -106,7 +106,7 @@ public:
 	void createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer);
 	bool checkCollisionTankBossList(Circle _boss, int k);
 	void renderList(SDL_Renderer* _renderer, SDL_Rect _camera);
-	void handleList(MapGame _map, Circle _tankMain);
+	void handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera);
 	bool checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _damgeBullet);
 };
 

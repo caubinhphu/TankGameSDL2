@@ -13,6 +13,7 @@ TankBoss::TankBoss() {
 	speed = randomSpeed();
 	bloodBar = { 0, 0, 60, 10, 40 };
 	totalHealth = healthCurrent = 100;
+	frameDestroy = 0;
 }
 
 TankBoss::~TankBoss() {
@@ -138,6 +139,28 @@ void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams)
 	}
 }
 
+void TankBoss::loadDestroyImg(SDL_Renderer* _renderer) {
+	destroyImg[0].loadImg("./image/explosion_1.png", _renderer);
+	destroyImg[1].loadImg("./image/explosion_2.png", _renderer);
+	destroyImg[2].loadImg("./image/explosion_3.png", _renderer);
+	destroyImg[3].loadImg("./image/explosion_4.png", _renderer);
+}
+
+bool TankBoss::renderDestroy(SDL_Renderer* _renderer, SDL_Rect _camera)
+{
+	// img_effect_money.render(_renderer, width_camera - img_effect_money.get_width() - 160, 10, NULL, 0);
+
+	destroyImg[frameDestroy / 8].render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, 0);
+	frameDestroy++;
+	if (frameDestroy / 8 == 4)
+		return true;
+	return false;
+}
+
+
+
+
+
 
 
 
@@ -186,6 +209,7 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 		} while (_map.checkCollision(_bossCircle) || checkCollisionTankBossList(_bossCircle, -1)
 			|| check::checkCircle_Circle(_bossCircle, _tankMain)); // || _box.x % boss->getSpeed() != 0 || _box.y % boss->getSpeed() != 0
 		boss->setXY(_box.x, _box.y);
+		boss->loadDestroyImg(_renderer);
 		bossList.push_back(boss);
 	}
 }
@@ -202,18 +226,25 @@ bool TankBossList::checkCollisionTankBossList(Circle _boss, int k)
 
 void TankBossList::renderList(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	for (int i = 0; i < bossList.size(); i++) {
-		if (check::checkRect_Rect(bossList[i]->getBox(), _camera)) {
+		if (check::checkRect_Rect(bossList[i]->getBox(), _camera) && !bossList[i]->getIsDestroy()) {
 			bossList[i]->render(_renderer, _camera);
 		}
 	}
 }
 
-void TankBossList::handleList(MapGame _map, Circle _tankMain) {
+void TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera) {
 	for (int i = 0; i < bossList.size(); i++) {
 		if (!bossList[i]->getIsDestroy()) {
 			bossList[i]->handleDirection();
 			bool isCollisionTeam = checkCollisionTankBossList(bossList[i]->getTankCircle(), i);
 			bossList[i]->handleMove(_map, _tankMain, isCollisionTeam);
+		}
+		else {
+			if (bossList[i]->renderDestroy(_renderer, _camera)) {
+				delete bossList[i];
+				bossList.erase(bossList.begin() + i);
+				i--;
+			}
 		}
 	}
 }
