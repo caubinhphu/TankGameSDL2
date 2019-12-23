@@ -23,9 +23,10 @@ private:
 	Uint32 saveTimeShoot;
 	Bullet::BulletType bulletType;
 
-	BloodBar blood;//mau
+	BloodBar bloodBar;//mau
 	int armor;//giap
 	int totalHealth;//tong mau
+	int healthCurrent;
 	int power;
 
 public:
@@ -37,7 +38,7 @@ public:
 
 	void handleEvents(SDL_Event* _e, SDL_Rect _camera);
 	void createBullet(SDL_Renderer* _renderer);
-	void handleBullet(MapGame map, SDL_Renderer* _renderer, SDL_Rect _camera);
+	void handleBullet(MapGame map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList);
 	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void move(MapGame map, TankBossList _bossList);
 	void setCamera(SDL_Rect &_camera);

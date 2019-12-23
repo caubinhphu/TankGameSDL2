@@ -7,6 +7,7 @@ Bullet::Bullet() {
 	isEffectShoot = true;
 	type = nomalBullet;
 	firtingRate = nomalRate;
+	damge = nomalDamge;
 }
 
 Bullet::~Bullet() {

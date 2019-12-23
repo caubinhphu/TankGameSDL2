@@ -9,8 +9,8 @@ TankMain::TankMain(int _x, int _y) {
 	isMouseDown = isMouseUp = false;
 	saveTimeShoot = 0;
 	bulletType = Bullet::BulletType::nomalBullet;
-	totalHealth = 100;
-	blood = { 0, 0, 60, 10, 100 };
+	totalHealth = healthCurrent = 100;
+	bloodBar = { 0, 0, 60, 10, 100 };
 }
 
 TankMain::~TankMain() {
@@ -112,14 +112,15 @@ void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
 
 	// render thanh máu
-	blood.x = box.x;
-	blood.y = box.y - 20;
+	bloodBar.x = box.x;
+	bloodBar.y = box.y - 20;
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 128, 0);
-	SDL_Rect rimBar = { blood.x - _camera.x, blood.y - _camera.y, blood.width, blood.height };
+	SDL_Rect rimBar = { bloodBar.x - _camera.x, bloodBar.y - _camera.y, bloodBar.width, bloodBar.height };
 	SDL_RenderDrawRect(_renderer, &rimBar);
 	SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 0);
-	if (blood.percent <= 0) blood.percent = 0;
-	SDL_Rect _bloodBar = { blood.x - _camera.x + 1, blood.y - _camera.y + 1, (float)(blood.width - 2) * ((float)blood.percent / 100), blood.height - 2 };
+	bloodBar.percent = healthCurrent * 100 / totalHealth; // tính phần trăm máu còn lại
+	if (bloodBar.percent <= 0) bloodBar.percent = 0;
+	SDL_Rect _bloodBar = { bloodBar.x - _camera.x + 1, bloodBar.y - _camera.y + 1, (float)(bloodBar.width - 2) * ((float)bloodBar.percent / 100), bloodBar.height - 2 };
 	SDL_RenderFillRect(_renderer, &_bloodBar);
 
 	//if (is_damage == true)
@@ -159,15 +160,19 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 		// kiểm tra thời điểm bắn đạn trước so với thời điểm bắn đạn sau có lớn hơn tốc độ bắn hay không
 		if (SDL_GetTicks() - saveTimeShoot > firtingRate) {
 			std::string _imgBullet; // hình viên đạn
+			Bullet::DameBullet _damge = Bullet::nomalDamge; // damge viên đạn
 			if (bulletType == Bullet::nomalBullet) {
 				_imgBullet = "./image/ammo.png";
+				_damge = Bullet::nomalDamge;
 				
 			}
 			else if (bulletType == Bullet::fireBullet) {
 				_imgBullet = "./image/danlua4.png";
+				_damge = Bullet::fireDamge;
 			}
 			else if (bulletType == Bullet::rocketBullet) {
 				_imgBullet = "./image/bullet_rocket.png";
+				_damge = Bullet::rocketDamge;
 			}
 
 			Bullet* bullet = new Bullet(); // khai báo viên đạn mới
@@ -205,6 +210,7 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 			}
 			bullet->setXY(x, y);
 			bullet->setRotation(rotation);
+			bullet->setDamge(_damge);
 			bullet->setIsMove(true);
 
 			bullets.push_back(bullet);
@@ -213,11 +219,17 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 	}
 }
 
-void TankMain::handleBullet(MapGame map, SDL_Renderer* _renderer, SDL_Rect _camera) {
+void TankMain::handleBullet(MapGame map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList) {
 	for (int i = 0; i < bullets.size(); i++) {		
 		bullets[i]->move();
-		if (map.checkCollitionBullet(bullets[i]->getBox())) {
+
+
+		if (map.checkCollitionBullet(bullets[i]->getBox())
+			|| _tankList.checkCollisionBullet(bullets[i]->getBox(), true, bullets[i]->getDamge())) {
 			bullets[i]->setIsMove(false);
+		}
+
+		if (bullets[i]->getIsMove() == false) {
 			bullets[i]->renderCollisionEffect(_renderer, _camera);
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);

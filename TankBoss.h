@@ -28,12 +28,13 @@ private:
 	Circle tankCircle;
 	bool isDestroy;
 	int speed;
-	BloodBar blood;
+	BloodBar bloodBar;
 	BasicObj destroyImg[TOTAL_DESTROY_IMG];
 	int frameDestroy;
 	Uint32 saveTimeShoot;
 	int armor;
 	int totalHealth;
+	int healthCurrent;
 	Bullet::DameBullet dameBullet;
 	//BASIC_OBJECT text_blood_wasted;
 	bool isDamage;
@@ -55,12 +56,14 @@ public:
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
 	int getSpeed() { return speed; };
 
-	void setPercentBlood(int _subPercent) { blood.percent -= _subPercent; }
+	void setPercentBlood(int _subPercent) { bloodBar.percent -= _subPercent; }
 	void handleDirection();
 	void handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams);
 	double getRotation() { return rotation; }
 	void randomDirection(int k);
-	int getBloodPercent() { return blood.percent; }
+
+	void setMinusHealthCurrent(int _minus) { healthCurrent -= _minus; };
+	int getHealteCurrent() { return healthCurrent; };
 
 	void loadDestroyImg(SDL_Renderer* _renderer);
 	bool renderDestroy(SDL_Renderer* _renderer, SDL_Rect _camera);
@@ -104,6 +107,7 @@ public:
 	bool checkCollisionTankBossList(Circle _boss, int k);
 	void renderList(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void handleList(MapGame _map, Circle _tankMain);
+	bool checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _damgeBullet);
 };
 
 #endif // !TANKBOSSES_H_
