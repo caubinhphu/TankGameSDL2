@@ -116,7 +116,6 @@ public:
 	void renderList(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera);
 	bool checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _damgeBullet);
-	void createBulletOfTankList();
 	void handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera);
 	void renderBulletOfTankList(SDL_Renderer* _renderer, SDL_Rect _camera);
 };

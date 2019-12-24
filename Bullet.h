@@ -38,7 +38,7 @@ public:
 		rocketDamge = 200,
 	};
 
-	static const int speed = 20; // 20
+	static const int speed = 10; // 20
 private:
 	int spX, spY;
 	double rotation;

@@ -87,7 +87,6 @@ void TankBoss::randomDirection(int k)
 void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams)
 {
 	rotation = check::rotationA_B(_tankMain.x, _tankMain.y, box.x + box.w / 2, box.y + box.h / 2);
-
 	if (isCollisionTeams == true)
 	{
 		if (dir == LEFT)
@@ -168,7 +167,7 @@ void TankBoss::createBullet(SDL_Renderer* _renderer, Circle _tankMain)
 			bullet->setType(bulletType);
 			bullet->loadImg(pathBulletImg, "./image/effect_shoot.png", "./image/collision3.png", _renderer);
 			int x, y; // vị trí ban đầu
-			if ((rotation >= 0 && rotation <= PI / 2)) {
+			if (rotation >= 0 && rotation <= PI / 2) {
 				bullet->setDir(Bullet::TOP_RIGHT);
 				bullet->setSpX(round(sin(rotation) * Bullet::speed)); // độ lệch x
 				bullet->setSpY(round(cos(rotation) * Bullet::speed)); // độ lệch y
@@ -183,7 +182,7 @@ void TankBoss::createBullet(SDL_Renderer* _renderer, Circle _tankMain)
 				x = tankCircle.x + (sin(PI - rotation) * (box.h / 2)) - bullet->getW() / 2;
 				y = tankCircle.y + (cos(PI - rotation) * (box.h / 2)) - bullet->getH() / 2;
 			}
-			else if (rotation > PI&& rotation <= 1.5 * PI) {
+			else if (rotation > PI && rotation <= 1.5 * PI) {
 				bullet->setDir(Bullet::BOTTOM_LEFT);
 				bullet->setSpX(round(sin(rotation - PI) * Bullet::speed));
 				bullet->setSpY(round(cos(rotation - PI) * Bullet::speed));
@@ -204,77 +203,64 @@ void TankBoss::createBullet(SDL_Renderer* _renderer, Circle _tankMain)
 
 			bullets.push_back(bullet);
 
-			/* if (type_bullet == AMMO::triangle)
-			{
+			if (type == triangleTank) {
 				for (int i = 0; i < 2; i++)
 				{
-					AMMO* AMmo = new AMMO;
-					int rotation_deviation = 0;
-					if (i == 0) rotation_deviation = 20;
-					else if (i == 1) rotation_deviation = -20;
-					//AMmo->loadimg("image\\triangle_bullet.png", RenDer);
-					bullet_order++;
-
-					AMmo = ds_bullet_reuse[bullet_order];
-
-					AMmo->set_time_replace_bullet(AMMO::triangle_firing_rate);
-					AMmo->set_dame_bullet(AMMO::triangle_dame);
-					AMmo->set_type_bullet(AMMO::triangle);
-
-					int x = 0, y = 0;
-
-					AMmo->set_ismove(true);
-					//AMmo->load_img_hieu_ung("image\\collision3.png", RenDer);
-					//AMmo->load_img_effect_shoot("image\\effect_shoot.png", RenDer);
-
-					if (rotation + rotation_deviation >= 0 && rotation + rotation_deviation <= 90)
-					{
-						AMmo->set_shoot_dir(AMMO::TOP_RIGHT);
-						AMmo->set_sp_x(sin(((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
-						AMmo->set_sp_y(cos(((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
-
-						x = box.x + box.w / 2 + (sin(((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_width() / 2;
-						y = box.y + box.h / 2 - (cos(((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_height() / 2;
+					Bullet* _bullet = new Bullet();
+					double rotationDeviation = 0;
+					if (i == 0) {
+						rotationDeviation = 0.35;
 					}
-					else if (rotation + rotation_deviation > 90 && rotation + rotation_deviation <= 180)
-					{
-						AMmo->set_shoot_dir(AMMO::BUTTON_RIGHT);
-						AMmo->set_sp_x(sin(3.14 - ((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
-						AMmo->set_sp_y(cos(3.14 - ((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
-
-						x = box.x + box.w / 2 + (sin(3.14 - ((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_width() / 2;
-						y = box.y + box.h / 2 + (cos(3.14 - ((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_height() / 2;
+					else if (i == 1) {
+						rotationDeviation = -0.35;
 					}
-					else if (rotation + rotation_deviation > 180 && rotation + rotation_deviation <= 270)
-					{
-						AMmo->set_shoot_dir(AMMO::BUTTON_LEFT);
-						AMmo->set_sp_x(sin(((rotation + rotation_deviation) * 3.14) / 180 - 3.14) * AMMO::speed_ammo);
-						AMmo->set_sp_y(cos(((rotation + rotation_deviation) * 3.14) / 180 - 3.14) * AMMO::speed_ammo);
-
-						x = box.x + box.w / 2 - (sin(((rotation + rotation_deviation) * 3.14) / 180 - 3.14) * (box.h / 2)) - AMmo->get_width() / 2;
-						y = box.y + box.h / 2 + (cos(((rotation + rotation_deviation) * 3.14) / 180 - 3.14) * (box.h / 2)) - AMmo->get_height() / 2;
+					double _rotation = rotation + rotationDeviation;
+					if (_rotation < 0.0) _rotation = 2 * PI + _rotation;
+					else if (_rotation > 2 * PI) _rotation -= 2 * PI;
+					_bullet->setType(bulletType);
+					_bullet->loadImg(pathBulletImg, "./image/effect_shoot.png", "./image/collision3.png", _renderer);
+					int _x{}, _y{}; // vị trí ban đầu
+					if (_rotation >= 0 && _rotation <= PI / 2) {
+						_bullet->setDir(Bullet::TOP_RIGHT);
+						_bullet->setSpX(round(sin(_rotation) * Bullet::speed)); // độ lệch x
+						_bullet->setSpY(round(cos(_rotation) * Bullet::speed)); // độ lệch y
+						_x = tankCircle.x + (sin(_rotation) * (box.h / 2)) - _bullet->getW() / 2;
+						_y = tankCircle.y - (cos(_rotation) * (box.h / 2)) - _bullet->getH() / 2;
 					}
-					else if (rotation + rotation_deviation > 270 && rotation + rotation_deviation < 360)
-					{
-						AMmo->set_shoot_dir(AMMO::TOP_LEFT);
-						AMmo->set_sp_x(sin(6.28 - ((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
-						AMmo->set_sp_y(cos(6.28 - ((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
-
-						x = box.x + box.w / 2 - (sin(6.28 - ((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_width() / 2;
-						y = box.y + box.h / 2 - (cos(6.28 - ((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_height() / 2;
+					else if (_rotation > PI / 2 && _rotation <= PI) {
+						_bullet->setDir(Bullet::BOTTOM_RIGHT);
+						_bullet->setSpX(round(sin(PI - _rotation) * Bullet::speed));
+						_bullet->setSpY(round(cos(PI - _rotation) * Bullet::speed));
+						_x = tankCircle.x + (sin(PI - _rotation) * (box.h / 2)) - _bullet->getW() / 2;
+						_y = tankCircle.y + (cos(PI - _rotation) * (box.h / 2)) - _bullet->getH() / 2;
 					}
-					AMmo->set_box_x_y(x, y);
-					AMmo->set_rotation(rotation + rotation_deviation);
-					AMmo->set_is_render_shoot(true);
+					else if (_rotation > PI&& _rotation <= 1.5 * PI) {
+						_bullet->setDir(Bullet::BOTTOM_LEFT);
+						_bullet->setSpX(round(sin(_rotation - PI) * Bullet::speed));
+						_bullet->setSpY(round(cos(_rotation - PI) * Bullet::speed));
+						_x = tankCircle.x - (sin(_rotation - PI) * (box.h / 2)) - _bullet->getW() / 2;
+						_y = tankCircle.y + (cos(_rotation - PI) * (box.h / 2)) - _bullet->getH() / 2;
+					}
+					else if (_rotation > 1.5 * PI && _rotation < 2 * PI) {
+						_bullet->setDir(Bullet::TOP_LEFT);
+						_bullet->setSpX(round(sin(2 * PI - _rotation) * Bullet::speed));
+						_bullet->setSpY(round(cos(2 * PI - _rotation) * Bullet::speed));
+						_x = tankCircle.x - (sin(2 * PI - _rotation) * (box.h / 2)) - _bullet->getW() / 2;
+						_y = tankCircle.y - (cos(2 * PI - _rotation) * (box.h / 2)) - _bullet->getH() / 2;
+					}
+					_bullet->setXY(_x, _y);
+					_bullet->setRotation(_rotation);
+					_bullet->setDamge(bulletDamge);
+					_bullet->setIsMove(true);
 
-					ds_ammo.push_back(AMmo);
+					bullets.push_back(_bullet);
 				}
-
-				}*/
-				saveTimeShoot = SDL_GetTicks();
-			}
+			 }
+			saveTimeShoot = SDL_GetTicks();
 		}
+	}
 }
+
 
 void TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera) {
 	for (int i = 0; i < bullets.size(); i++) {
@@ -331,6 +317,7 @@ TankBossList::~TankBossList() {
 void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer) {
 	for (int i = 0; i < _quality; i++) {
 		int type = 1 + rand() % _typeNum;
+		type = 4;
 		TankBoss* boss = new TankBoss;
 		if (type == 1) {
 			boss->setType(TankBoss::nomalTank);
