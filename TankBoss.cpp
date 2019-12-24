@@ -262,7 +262,7 @@ void TankBoss::createBullet(SDL_Renderer* _renderer, Circle _tankMain)
 }
 
 
-int TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain) {
+int TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool& _isSlowedTankMain) {
 	int _damge = 0;
 	for (int i = 0; i < bullets.size(); i++) {
 		bullets[i]->move();
@@ -273,6 +273,9 @@ int TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _came
 		else if (check::checkRect_Circle(bullets[i]->getBox(), _tankMain)) {
 			bullets[i]->setIsMove(false);
 			_damge += bullets[i]->getDamge();
+			if (type == iceTank) {
+				_isSlowedTankMain = true;
+			}
 		}
 		if (bullets[i]->getIsMove() == false) {
 			bullets[i]->renderCollisionEffect(_renderer, _camera);
@@ -322,6 +325,7 @@ TankBossList::~TankBossList() {
 void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer) {
 	for (int i = 0; i < _quality; i++) {
 		int type = 1 + rand() % _typeNum;
+		type = 3;
 		TankBoss* boss = new TankBoss;
 		if (type == 1) {
 			boss->setType(TankBoss::nomalTank);
@@ -437,10 +441,10 @@ bool TankBossList::checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _
 	return false;
 }
 
-int TankBossList::handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain) {
+int TankBossList::handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool& _isSlowedTankMain) {
 	int _damge = 0;
 	for (int i = 0; i < bossList.size(); i++) {
-		_damge += bossList[i]->handleBullet(_map, _renderer, _camera, _tankMain);
+		_damge += bossList[i]->handleBullet(_map, _renderer, _camera, _tankMain, _isSlowedTankMain);
 	}
 	return _damge;
 }

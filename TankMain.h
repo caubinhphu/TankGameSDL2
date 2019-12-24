@@ -10,6 +10,7 @@
 
 #define TANK_WIDTH 60
 #define TANK_HEIGHT 60
+#define TIME_SLOWED 500
 
 class TankMain : public BasicObj {
 private:
@@ -30,11 +31,17 @@ private:
 	int healthCurrent;
 	int power;
 
+	BasicObj snowFlake;
+	bool isSlowed;
+	Uint32 saveTimeIsSlowed;
+
 public:
 	TankMain(int _x, int _y);
 	~TankMain();
 
-	bool loadTamBan(std::string _path, SDL_Renderer* _renderer);
+	bool loadImg(SDL_Renderer* _renderer);
+
+	// bool loadTamBan(std::string _path, SDL_Renderer* _renderer);
 	void renderTam(SDL_Renderer* _renderer);
 
 	void handleEvents(SDL_Event* _e, SDL_Rect _camera);
@@ -56,6 +63,9 @@ public:
 	void setPlusTotalHealth(int _totalPlus) { totalHealth += _totalPlus; };
 	void setPlusPower(int _powerPlus) { power += _powerPlus; };
 	void setDamageReceived(int _dam_damgeReceivedge);
+
+	void setIsSlowed(bool _is) { isSlowed = _is; };
+	void setSaveTimeIsSlowed(Uint32 _time) { saveTimeIsSlowed = _time; };
 };
 
 #endif // !TANKMAIN_H_

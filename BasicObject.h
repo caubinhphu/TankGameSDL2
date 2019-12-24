@@ -20,6 +20,8 @@ public:
 	int getH() { return box.h; }; // hàm lấy heigth của đối tượng
 	void setXY(int _x, int _y) { box.x = _x; box.y = _y; }; // hàm set toạ độ (x, y) cho đối tượng
 	SDL_Rect getBox() { return box; };
+
+	void setAlphaMod(Uint8 _alpha) { SDL_SetTextureAlphaMod(texture, _alpha); };
 };
 
 

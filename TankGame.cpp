@@ -27,17 +27,18 @@ bool init() {
 }
 
 bool load() {
-	bool res = true;
-	if (!tank.loadImg("./image/tank5.png", renderer)) {
-		res = false;
-	}
-	if (!tank.loadTamBan("./image/tamban.png", renderer)) {
-		res = false;
+	//if (!tank.loadImg("./image/tank5.png", renderer)) {
+	//	res = false;
+	//}
+	//if (!tank.loadTamBan("./image/tamban.png", renderer)) {
+	//	res = false;
+	//}
+	if (!tank.loadImg(renderer)) {
+		return false;
 	}
 	if (!map.loadMap("./image/mapimg5.png", "./general/mapgame.map", renderer)) {
-		res = false;
+		return false;
 	}
-	return res;
 }
 
 void close() {
@@ -73,7 +74,12 @@ int main(int arc, char* arg[]) {
 				tank.setCamera(camera);
 				bossList.handleList(map, tank.getTankCircle(), renderer, camera);
 				tank.createBullet(renderer);
-				tank.setDamageReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle()));
+				bool _isSlowedTnakMain = false;
+				tank.setDamageReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTnakMain));
+				if (_isSlowedTnakMain) {
+					tank.setIsSlowed(true);
+					tank.setSaveTimeIsSlowed(SDL_GetTicks());
+				}
 				tank.handleBullet(map, renderer, camera, bossList);
 				tank.renderBullet(renderer, camera);
 				bossList.renderBulletOfTankList(renderer, camera);
