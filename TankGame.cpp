@@ -73,8 +73,10 @@ int main(int arc, char* arg[]) {
 				tank.setCamera(camera);
 				bossList.handleList(map, tank.getTankCircle(), renderer, camera);
 				tank.createBullet(renderer);
+				bossList.handleBulletOfTankList(map, renderer, camera);
 				tank.handleBullet(map, renderer, camera, bossList);
 				tank.renderBullet(renderer, camera);
+				bossList.renderBulletOfTankList(renderer, camera);
 				tank.render(renderer, camera);
 				bossList.renderList(renderer, camera);
 				bossList.renderList(renderer, camera);

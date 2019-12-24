@@ -38,7 +38,7 @@ public:
 
 	void handleEvents(SDL_Event* _e, SDL_Rect _camera);
 	void createBullet(SDL_Renderer* _renderer);
-	void handleBullet(MapGame map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList);
+	void handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList);
 	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void move(MapGame map, TankBossList _bossList);
 	void setCamera(SDL_Rect &_camera);

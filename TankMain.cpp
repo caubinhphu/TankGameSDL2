@@ -146,7 +146,7 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 	if (isMouseDown && !isMouseUp) { // kiểm tra chuột trái có đang được nhấn
 		Bullet::BulletFirtingRate firtingRate;
 
-		// Kiểm tra tốc độ bắn của loại đạn đan sử dung
+		// Kiểm tra tốc độ bắn của loại đạn đang sử dung
 		if (bulletType == Bullet::nomalBullet) {
 			firtingRate = Bullet::nomalRate;
 		}
@@ -219,12 +219,12 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 	}
 }
 
-void TankMain::handleBullet(MapGame map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList) {
+void TankMain::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList) {
 	for (int i = 0; i < bullets.size(); i++) {		
 		bullets[i]->move();
 
 
-		if (map.checkCollitionBullet(bullets[i]->getBox())
+		if (_map.checkCollitionBullet(bullets[i]->getBox())
 			|| _tankList.checkCollisionBullet(bullets[i]->getBox(), true, bullets[i]->getDamge())) {
 			bullets[i]->setIsMove(false);
 		}

@@ -14,6 +14,8 @@ TankBoss::TankBoss() {
 	bloodBar = { 0, 0, 60, 10, 40 };
 	totalHealth = healthCurrent = 100;
 	frameDestroy = 0;
+	armor = 0;
+	saveTimeShoot = 0;
 }
 
 TankBoss::~TankBoss() {
@@ -157,6 +159,157 @@ bool TankBoss::renderDestroy(SDL_Renderer* _renderer, SDL_Rect _camera)
 	return false;
 }
 
+void TankBoss::createBullet(SDL_Renderer* _renderer, Circle _tankMain)
+{
+	if (!isDestroy && check::binhPhuongKhoangCach(box.x, box.y, _tankMain.x, _tankMain.y) <= RANGE_SQUARE)
+	{
+		if (SDL_GetTicks() - saveTimeShoot > bulletRate) {
+			Bullet* bullet = new Bullet(); // khai báo viên đạn mới
+			bullet->setType(bulletType);
+			bullet->loadImg(pathBulletImg, "./image/effect_shoot.png", "./image/collision3.png", _renderer);
+			int x, y; // vị trí ban đầu
+			if ((rotation >= 0 && rotation <= PI / 2)) {
+				bullet->setDir(Bullet::TOP_RIGHT);
+				bullet->setSpX(round(sin(rotation) * Bullet::speed)); // độ lệch x
+				bullet->setSpY(round(cos(rotation) * Bullet::speed)); // độ lệch y
+				x = tankCircle.x + (sin(rotation) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y - (cos(rotation) * (box.h / 2)) - bullet->getH() / 2;
+				// std::cout << (sin(rotation) * Bullet::speed) << (cos(rotation) * Bullet::speed);
+			}
+			else if (rotation > PI / 2 && rotation <= PI) {
+				bullet->setDir(Bullet::BOTTOM_RIGHT);
+				bullet->setSpX(round(sin(PI - rotation) * Bullet::speed));
+				bullet->setSpY(round(cos(PI - rotation) * Bullet::speed));
+				x = tankCircle.x + (sin(PI - rotation) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y + (cos(PI - rotation) * (box.h / 2)) - bullet->getH() / 2;
+			}
+			else if (rotation > PI&& rotation <= 1.5 * PI) {
+				bullet->setDir(Bullet::BOTTOM_LEFT);
+				bullet->setSpX(round(sin(rotation - PI) * Bullet::speed));
+				bullet->setSpY(round(cos(rotation - PI) * Bullet::speed));
+				x = tankCircle.x - (sin(rotation - PI) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y + (cos(rotation - PI) * (box.h / 2)) - bullet->getH() / 2;
+			}
+			else if (rotation > 1.5 * PI && rotation < 2 * PI) {
+				bullet->setDir(Bullet::TOP_LEFT);
+				bullet->setSpX(round(sin(2 * PI - rotation) * Bullet::speed));
+				bullet->setSpY(round(cos(2 * PI - rotation) * Bullet::speed));
+				x = tankCircle.x - (sin(2 * PI - rotation) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y - (cos(2 * PI - rotation) * (box.h / 2)) - bullet->getH() / 2;
+			}
+			bullet->setXY(x, y);
+			bullet->setRotation(rotation);
+			bullet->setDamge(bulletDamge);
+			bullet->setIsMove(true);
+
+			bullets.push_back(bullet);
+
+			/* if (type_bullet == AMMO::triangle)
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					AMMO* AMmo = new AMMO;
+					int rotation_deviation = 0;
+					if (i == 0) rotation_deviation = 20;
+					else if (i == 1) rotation_deviation = -20;
+					//AMmo->loadimg("image\\triangle_bullet.png", RenDer);
+					bullet_order++;
+
+					AMmo = ds_bullet_reuse[bullet_order];
+
+					AMmo->set_time_replace_bullet(AMMO::triangle_firing_rate);
+					AMmo->set_dame_bullet(AMMO::triangle_dame);
+					AMmo->set_type_bullet(AMMO::triangle);
+
+					int x = 0, y = 0;
+
+					AMmo->set_ismove(true);
+					//AMmo->load_img_hieu_ung("image\\collision3.png", RenDer);
+					//AMmo->load_img_effect_shoot("image\\effect_shoot.png", RenDer);
+
+					if (rotation + rotation_deviation >= 0 && rotation + rotation_deviation <= 90)
+					{
+						AMmo->set_shoot_dir(AMMO::TOP_RIGHT);
+						AMmo->set_sp_x(sin(((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
+						AMmo->set_sp_y(cos(((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
+
+						x = box.x + box.w / 2 + (sin(((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_width() / 2;
+						y = box.y + box.h / 2 - (cos(((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_height() / 2;
+					}
+					else if (rotation + rotation_deviation > 90 && rotation + rotation_deviation <= 180)
+					{
+						AMmo->set_shoot_dir(AMMO::BUTTON_RIGHT);
+						AMmo->set_sp_x(sin(3.14 - ((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
+						AMmo->set_sp_y(cos(3.14 - ((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
+
+						x = box.x + box.w / 2 + (sin(3.14 - ((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_width() / 2;
+						y = box.y + box.h / 2 + (cos(3.14 - ((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_height() / 2;
+					}
+					else if (rotation + rotation_deviation > 180 && rotation + rotation_deviation <= 270)
+					{
+						AMmo->set_shoot_dir(AMMO::BUTTON_LEFT);
+						AMmo->set_sp_x(sin(((rotation + rotation_deviation) * 3.14) / 180 - 3.14) * AMMO::speed_ammo);
+						AMmo->set_sp_y(cos(((rotation + rotation_deviation) * 3.14) / 180 - 3.14) * AMMO::speed_ammo);
+
+						x = box.x + box.w / 2 - (sin(((rotation + rotation_deviation) * 3.14) / 180 - 3.14) * (box.h / 2)) - AMmo->get_width() / 2;
+						y = box.y + box.h / 2 + (cos(((rotation + rotation_deviation) * 3.14) / 180 - 3.14) * (box.h / 2)) - AMmo->get_height() / 2;
+					}
+					else if (rotation + rotation_deviation > 270 && rotation + rotation_deviation < 360)
+					{
+						AMmo->set_shoot_dir(AMMO::TOP_LEFT);
+						AMmo->set_sp_x(sin(6.28 - ((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
+						AMmo->set_sp_y(cos(6.28 - ((rotation + rotation_deviation) * 3.14) / 180) * AMMO::speed_ammo);
+
+						x = box.x + box.w / 2 - (sin(6.28 - ((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_width() / 2;
+						y = box.y + box.h / 2 - (cos(6.28 - ((rotation + rotation_deviation) * 3.14) / 180) * (box.h / 2)) - AMmo->get_height() / 2;
+					}
+					AMmo->set_box_x_y(x, y);
+					AMmo->set_rotation(rotation + rotation_deviation);
+					AMmo->set_is_render_shoot(true);
+
+					ds_ammo.push_back(AMmo);
+				}
+
+				}*/
+				saveTimeShoot = SDL_GetTicks();
+			}
+		}
+}
+
+void TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera) {
+	for (int i = 0; i < bullets.size(); i++) {
+		bullets[i]->move();
+
+		if (_map.checkCollitionBullet(bullets[i]->getBox())) {
+			bullets[i]->setIsMove(false);
+		}
+
+		if (bullets[i]->getIsMove() == false) {
+			bullets[i]->renderCollisionEffect(_renderer, _camera);
+			delete bullets[i];
+			bullets.erase(bullets.begin() + i);
+			i--;
+		}
+	}
+}
+
+void TankBoss::renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera) {
+	for (int i = 0; i < bullets.size(); i++) {
+
+		if (bullets[i]->getIsEffectShoot()) {
+			bullets[i]->setIsEffectShoot(false);
+			bullets[i]->renderShootEffect(_renderer, _camera, box);
+		}
+		bullets[i]->render(_renderer, _camera);
+	}
+}
+
+
+
+
+
+
+
 
 
 
@@ -183,21 +336,37 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 			boss->setType(TankBoss::nomalTank);
 			boss->setBulletType(Bullet::nomalBullet);
 			boss->loadImg("./image/tank_boss.png", _renderer);
+			boss->setBulletDamge(Bullet::nomalDamge);
+			boss->setBulletType(Bullet::nomalBullet);
+			boss->setBulletRate(Bullet::nomalRate);
+			boss->setPathBullet("./image/ammo.png");
 		}
 		else if (type == 2) {
 			boss->setType(TankBoss::fireTank);
 			boss->setBulletType(Bullet::fireBullet);
 			boss->loadImg("./image/tank_boss_fire.png", _renderer);
+			boss->setBulletDamge(Bullet::fireDamge);
+			boss->setBulletType(Bullet::fireBullet);
+			boss->setBulletRate(Bullet::fireRate);
+			boss->setPathBullet("./image/danlua4.png");
 		}
 		else if (type == 3) {
 			boss->setType(TankBoss::iceTank);
 			boss->setBulletType(Bullet::iceBullet);
 			boss->loadImg("./image/ice_tank.png", _renderer);
+			boss->setBulletDamge(Bullet::iceDamge);
+			boss->setBulletType(Bullet::iceBullet);
+			boss->setBulletRate(Bullet::iceRate);
+			boss->setPathBullet("./image/ice_bullet.png");
 		}
 		else if (type == 4) {
 			boss->setType(TankBoss::triangleTank);
 			boss->setBulletType(Bullet::triangleBullet);
 			boss->loadImg("./image/three_head_tank.png", _renderer);
+			boss->setBulletDamge(Bullet::triangleDamge);
+			boss->setBulletType(Bullet::triangleBullet);
+			boss->setBulletRate(Bullet::triangleRate);
+			boss->setPathBullet("./image/triangle_bullet.png");
 		}
 		SDL_Rect _box = { 0, 0, boss->getW(), boss->getH() };
 		Circle _bossCircle = { 0, 0, 0 };
@@ -236,6 +405,7 @@ void TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _ren
 	for (int i = 0; i < bossList.size(); i++) {
 		if (!bossList[i]->getIsDestroy()) {
 			bossList[i]->handleDirection();
+			bossList[i]->createBullet(_renderer, _tankMain);
 			bool isCollisionTeam = checkCollisionTankBossList(bossList[i]->getTankCircle(), i);
 			bossList[i]->handleMove(_map, _tankMain, isCollisionTeam);
 		}
@@ -274,4 +444,16 @@ bool TankBossList::checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _
 		}
 	}
 	return false;
+}
+
+void TankBossList::handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera) {
+	for (int i = 0; i < bossList.size(); i++) {
+		bossList[i]->handleBullet(_map, _renderer, _camera);
+	}
+}
+
+void TankBossList::renderBulletOfTankList(SDL_Renderer* _renderer, SDL_Rect _camera) {
+	for (int i = 0; i < bossList.size(); i++) {
+		bossList[i]->renderBullet(_renderer, _camera);
+	}
 }

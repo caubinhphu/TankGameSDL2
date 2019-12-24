@@ -25,6 +25,9 @@ private:
 	Direction dir;
 	std::vector<Bullet*> bullets;
 	Bullet::BulletType bulletType;
+	Bullet::DameBullet bulletDamge;
+	Bullet::BulletFirtingRate bulletRate;
+	std::string pathBulletImg;
 	Circle tankCircle;
 	bool isDestroy;
 	int speed;
@@ -35,7 +38,7 @@ private:
 	int armor;
 	int totalHealth;
 	int healthCurrent;
-	Bullet::DameBullet dameBullet;
+
 	//BASIC_OBJECT text_blood_wasted;
 	bool isDamage;
 	int totalDamageWasted;
@@ -50,7 +53,6 @@ public:
 	Direction getDirection() { return dir; };
 	void setType(TankType _type) { type = _type; };
 	TankType getType() { return type; };
-	void setBulletType(Bullet::BulletType _type) { bulletType = _type; };
 	void setIsDestroy(bool _is) { isDestroy = _is; };
 	bool getIsDestroy() { return isDestroy; };
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
@@ -71,8 +73,9 @@ public:
 	//std::vector<AMMO*> get_list_ammo() const { return ds_ammo; };
 	//void set_list_ammo(std::vector<AMMO*> list_ammo) { ds_ammo = list_ammo; }
 
-	void handleBullet(SDL_Renderer* _renderer, SDL_Rect _boxTankMain);
-	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera, MapGame _map, Circle _tankMain);
+	void createBullet(SDL_Renderer* _renderer, Circle _tankMain);
+	void handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera);
+	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
 
 	void setArmor(int _armor) { armor = _armor; }
 	int getArmor() { return armor; }
@@ -90,6 +93,11 @@ public:
 	void setIsDamage(bool _flag) { isDamage = _flag; }
 
 	//void load_img_effect_money(SDL_Renderer* RenDer);
+
+	void setBulletDamge(Bullet::DameBullet _damge) { bulletDamge = _damge; };
+	void setBulletType(Bullet::BulletType _type) { bulletType = _type; };
+	void setBulletRate(Bullet::BulletFirtingRate _rate) { bulletRate = _rate; };
+	void setPathBullet(std::string _path) { pathBulletImg = _path; };
 };
 
 #endif // !TANKBOSS_H_
@@ -108,6 +116,9 @@ public:
 	void renderList(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera);
 	bool checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _damgeBullet);
+	void createBulletOfTankList();
+	void handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera);
+	void renderBulletOfTankList(SDL_Renderer* _renderer, SDL_Rect _camera);
 };
 
 #endif // !TANKBOSSES_H_
