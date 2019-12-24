@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef TANKBOSS_H_
 #define TANKBOSS_H_
 
@@ -74,7 +74,7 @@ public:
 	//void set_list_ammo(std::vector<AMMO*> list_ammo) { ds_ammo = list_ammo; }
 
 	void createBullet(SDL_Renderer* _renderer, Circle _tankMain);
-	void handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera);
+	int handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain); // Trả về tổng damge mà tankMain nhận phải
 	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
 
 	void setArmor(int _armor) { armor = _armor; }
@@ -116,7 +116,7 @@ public:
 	void renderList(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera);
 	bool checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _damgeBullet);
-	void handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera);
+	int handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain);
 	void renderBulletOfTankList(SDL_Renderer* _renderer, SDL_Rect _camera);
 };
 

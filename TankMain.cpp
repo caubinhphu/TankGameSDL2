@@ -11,6 +11,7 @@ TankMain::TankMain(int _x, int _y) {
 	bulletType = Bullet::BulletType::nomalBullet;
 	totalHealth = healthCurrent = 100;
 	bloodBar = { 0, 0, 60, 10, 100 };
+	armor = 50;
 }
 
 TankMain::~TankMain() {
@@ -130,6 +131,18 @@ void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	//	is_damage = false;
 	//	total_damage_wasted = 0;
 	//}
+}
+
+void TankMain::setDamageReceived(int _damgeReceived) {
+	if (_damgeReceived != 0) {
+		int _damge = _damgeReceived * (1 - (armor / 100.0));
+		std::cout << _damgeReceived << ", " << _damge << std::endl;
+		healthCurrent -= _damge;
+	}
+	if (healthCurrent < 0) {
+		std::cout << "Game Over" << std::endl;
+		healthCurrent = totalHealth;
+	}
 }
 
 bool TankMain::loadTamBan(std::string _path, SDL_Renderer* _renderer) {

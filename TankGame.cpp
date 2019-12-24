@@ -57,7 +57,7 @@ int main(int arc, char* arg[]) {
 		if (load()) {
 			SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 			SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
-			bossList.createListBoss(map, tank.getTankCircle(), 50, 4, renderer);
+			bossList.createListBoss(map, tank.getTankCircle(), 5, 4, renderer);
 			while (!out) {
 				while (SDL_PollEvent(&event) != 0) { // bắt các sự kiện
 					if (event.type == SDL_QUIT) {
@@ -73,7 +73,7 @@ int main(int arc, char* arg[]) {
 				tank.setCamera(camera);
 				bossList.handleList(map, tank.getTankCircle(), renderer, camera);
 				tank.createBullet(renderer);
-				bossList.handleBulletOfTankList(map, renderer, camera);
+				tank.setDamageReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle()));
 				tank.handleBullet(map, renderer, camera, bossList);
 				tank.renderBullet(renderer, camera);
 				bossList.renderBulletOfTankList(renderer, camera);

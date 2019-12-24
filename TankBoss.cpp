@@ -14,7 +14,7 @@ TankBoss::TankBoss() {
 	bloodBar = { 0, 0, 60, 10, 40 };
 	totalHealth = healthCurrent = 100;
 	frameDestroy = 0;
-	armor = 0;
+	armor = 50;
 	saveTimeShoot = 0;
 }
 
@@ -33,9 +33,9 @@ void TankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	SDL_Rect rimBar = { bloodBar.x - _camera.x, bloodBar.y - _camera.y, bloodBar.width, bloodBar.height };
 	SDL_RenderDrawRect(_renderer, &rimBar);
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 0);
-	bloodBar.percent = healthCurrent * 100 / totalHealth; // tính phần trăm máu còn lại
+	bloodBar.percent = (healthCurrent * 100.0) / totalHealth; // tính phần trăm máu còn lại
 	if (bloodBar.percent <= 0) bloodBar.percent = 0;
-	SDL_Rect _bloodBar = { bloodBar.x - _camera.x + 1, bloodBar.y - _camera.y + 1, (float)(bloodBar.width - 2) * ((float)bloodBar.percent / 100), bloodBar.height - 2 };
+	SDL_Rect _bloodBar = { bloodBar.x - _camera.x + 1, bloodBar.y - _camera.y + 1, (bloodBar.width - 2) * (bloodBar.percent / 100.0), bloodBar.height - 2 };
 	SDL_RenderFillRect(_renderer, &_bloodBar);
 }
 
@@ -262,14 +262,18 @@ void TankBoss::createBullet(SDL_Renderer* _renderer, Circle _tankMain)
 }
 
 
-void TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera) {
+int TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain) {
+	int _damge = 0;
 	for (int i = 0; i < bullets.size(); i++) {
 		bullets[i]->move();
 
 		if (_map.checkCollitionBullet(bullets[i]->getBox())) {
 			bullets[i]->setIsMove(false);
 		}
-
+		else if (check::checkRect_Circle(bullets[i]->getBox(), _tankMain)) {
+			bullets[i]->setIsMove(false);
+			_damge += bullets[i]->getDamge();
+		}
 		if (bullets[i]->getIsMove() == false) {
 			bullets[i]->renderCollisionEffect(_renderer, _camera);
 			delete bullets[i];
@@ -277,6 +281,7 @@ void TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _cam
 			i--;
 		}
 	}
+	return _damge;
 }
 
 void TankBoss::renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera) {
@@ -317,7 +322,6 @@ TankBossList::~TankBossList() {
 void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer) {
 	for (int i = 0; i < _quality; i++) {
 		int type = 1 + rand() % _typeNum;
-		type = 4;
 		TankBoss* boss = new TankBoss;
 		if (type == 1) {
 			boss->setType(TankBoss::nomalTank);
@@ -433,10 +437,12 @@ bool TankBossList::checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _
 	return false;
 }
 
-void TankBossList::handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera) {
+int TankBossList::handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain) {
+	int _damge = 0;
 	for (int i = 0; i < bossList.size(); i++) {
-		bossList[i]->handleBullet(_map, _renderer, _camera);
+		_damge += bossList[i]->handleBullet(_map, _renderer, _camera, _tankMain);
 	}
+	return _damge;
 }
 
 void TankBossList::renderBulletOfTankList(SDL_Renderer* _renderer, SDL_Rect _camera) {

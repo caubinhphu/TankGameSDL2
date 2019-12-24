@@ -1,11 +1,12 @@
 ﻿#pragma once
+
+#ifndef TANKMAIN_H_
+#define TANKMAIN_H_
+
 #include "BasicObject.h"
 #include "MapGame.h"
 #include "Bullet.h"
 #include "TankBoss.h"
-
-#ifndef TANKMAIN_H_
-#define TANKMAIN_H_
 
 #define TANK_WIDTH 60
 #define TANK_HEIGHT 60
@@ -48,6 +49,13 @@ public:
 	void setSpeed(int _speed) { speed = _speed; };
 
 	Circle getTankCircle() { return tankCircle; };
+
+	void setPlusAmor(int _armorPlus) { armor += _armorPlus; };
+	void setPlusHealthCurrent(int _healthPlus) { healthCurrent += _healthPlus; };
+	int getHealthCurrent() { return healthCurrent; };
+	void setPlusTotalHealth(int _totalPlus) { totalHealth += _totalPlus; };
+	void setPlusPower(int _powerPlus) { power += _powerPlus; };
+	void setDamageReceived(int _dam_damgeReceivedge);
 };
 
 #endif // !TANKMAIN_H_
