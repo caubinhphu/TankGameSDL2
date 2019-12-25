@@ -27,12 +27,6 @@ bool init() {
 }
 
 bool load() {
-	//if (!tank.loadImg("./image/tank5.png", renderer)) {
-	//	res = false;
-	//}
-	//if (!tank.loadTamBan("./image/tamban.png", renderer)) {
-	//	res = false;
-	//}
 	if (!tank.loadImg(renderer)) {
 		return false;
 	}
@@ -55,16 +49,25 @@ int main(int arc, char* arg[]) {
 	if (init()) {
 		srand(time(NULL));
 		bool out = false;
+		int level = 1;
+		bool isLevelUp = false;
 		if (load()) {
 			SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 			SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
-			bossList.createListBoss(map, tank.getTankCircle(), 40, 4, renderer);
+			bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer);
 			while (!out) {
 				while (SDL_PollEvent(&event) != 0) { // bắt các sự kiện
 					if (event.type == SDL_QUIT) {
 						out = true;
 					}
 					tank.handleEvents(&event, camera);
+				}
+
+				if (isLevelUp) { // tăng độ level game
+					level++;
+					bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer);
+					isLevelUp = false;
+					std::cout << "level up" << std::endl;
 				}
 
 				SDL_RenderClear(renderer); // clear màn hình render
@@ -81,6 +84,11 @@ int main(int arc, char* arg[]) {
 					tank.setSaveTimeIsSlowed(SDL_GetTicks());
 				}
 				tank.handleBullet(map, renderer, camera, bossList);
+
+				if (bossList.getQualityBoss() == 0) {
+					isLevelUp = true;
+				}
+
 				tank.renderBullet(renderer, camera);
 				bossList.renderBulletOfTankList(renderer, camera);
 				tank.render(renderer, camera);

@@ -4,12 +4,15 @@
 #define GENERAL_H_
 
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <string>
 #include <fstream>
 #include <time.h>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 #define backgroundWidth 1600
 #define backgroundHeight 1600
@@ -20,7 +23,9 @@
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 static SDL_Event event;
-
+static TTF_Font* font = NULL;
+static TTF_Font* smallFont = NULL;
+static TTF_Font* bigFont = NULL;
 struct Circle
 {
 	int x, y, r;

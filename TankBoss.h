@@ -118,6 +118,7 @@ public:
 	bool checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _damgeBullet);
 	int handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool &_isSlowedTankMain);
 	void renderBulletOfTankList(SDL_Renderer* _renderer, SDL_Rect _camera);
+	int getQualityBoss() { return bossList.size(); };
 };
 
 #endif // !TANKBOSSES_H_
