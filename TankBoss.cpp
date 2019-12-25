@@ -16,13 +16,15 @@ TankBoss::TankBoss() {
 	frameDestroy = 0;
 	armor = 50;
 	saveTimeShoot = 0;
+	damgeReceive = 0;
+	isDamgeReceived = 0;
 }
 
 TankBoss::~TankBoss() {
 	;
 }
 
-void TankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
+void TankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Font* _font) {
 	// render xe tank
 	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
 
@@ -37,6 +39,17 @@ void TankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	if (bloodBar.percent <= 0) bloodBar.percent = 0;
 	SDL_Rect _bloodBar = { bloodBar.x - _camera.x + 1, bloodBar.y - _camera.y + 1, (bloodBar.width - 2) * (bloodBar.percent / 100.0), bloodBar.height - 2 };
 	SDL_RenderFillRect(_renderer, &_bloodBar);
+
+	// load + render minus health
+	if (isDamgeReceived) {
+		isDamgeReceived = false;
+		SDL_Color _color = { 255, 0, 0 };
+		std::stringstream _minus;
+		_minus.str("");
+		_minus << "- " << damgeReceive;
+		textDamgeReceive.loadText(_font, _minus.str(), _color, _renderer);
+		textDamgeReceive.render(_renderer, box.x + box.w - _camera.x, box.y - 20 - _camera.y, NULL, 0);
+	}
 }
 
 int TankBoss::randomSpeed() {
@@ -395,10 +408,10 @@ bool TankBossList::checkCollisionTankBossList(Circle _boss, int k)
 	return false;
 }
 
-void TankBossList::renderList(SDL_Renderer* _renderer, SDL_Rect _camera) {
+void TankBossList::renderList(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Font* _font) {
 	for (int i = 0; i < bossList.size(); i++) {
 		if (check::checkRect_Rect(bossList[i]->getBox(), _camera) && !bossList[i]->getIsDestroy()) {
-			bossList[i]->render(_renderer, _camera);
+			bossList[i]->render(_renderer, _camera, _font);
 		}
 	}
 }
@@ -432,10 +445,10 @@ bool TankBossList::checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _
 			{
 				int _damge = _damgeBullet * (1 - (bossList[i]->getArmor() / 100.0));
 
+				bossList[i]->setIsDamgeReceived(true);
+				bossList[i]->setDamgeReceive(_damge);
+
 				bossList[i]->setMinusHealthCurrent(_damge);
-				// bossList[i]->setPercentBlood((100.0 * _damge) / bossList[i]->getTotalHealth());
-				// bossList[i]->set_total_damage_wasted(_damge);
-				//ds_boss[i]->set_is_damage(true);
 				if (bossList[i]->getHealteCurrent() <= 0) // kiểm tra xe boss còn sống?
 				{
 					//ds_boss[i]->set_sound_destroy(true);

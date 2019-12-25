@@ -34,6 +34,21 @@ bool BasicObj::loadImg(std::string _path, SDL_Renderer* _renderer) {
 	return true;
 }
 
+#ifdef _SDL_TTF_H
+bool BasicObj::loadText(TTF_Font* _font, std::string _text, SDL_Color _color, SDL_Renderer* _renderer)
+{
+	SDL_Surface* surface = TTF_RenderText_Solid(_font, _text.c_str(), _color);
+	if (surface == NULL) return false;
+	box.w = surface->w;
+	box.h = surface->h;
+	texture = SDL_CreateTextureFromSurface(_renderer, surface);
+	if (texture == NULL)
+		return false;
+	SDL_FreeSurface(surface);
+	return true;
+}
+#endif
+
 void BasicObj::render(SDL_Renderer* _renderer, int _x, int _y, SDL_Rect* _clip = NULL, double _aRadian = 0) {
 	SDL_Rect rect = { _x, _y, box.w, box.h };
 	if (_clip != NULL) {

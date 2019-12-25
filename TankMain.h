@@ -35,13 +35,14 @@ private:
 	bool isSlowed;
 	Uint32 saveTimeIsSlowed;
 
+	BasicObj textMinusHealth;
+	bool isDamgeReceived;
 public:
 	TankMain(int _x, int _y);
 	~TankMain();
 
 	bool loadImg(SDL_Renderer* _renderer);
 
-	// bool loadTamBan(std::string _path, SDL_Renderer* _renderer);
 	void renderTam(SDL_Renderer* _renderer);
 
 	void handleEvents(SDL_Event* _e, SDL_Rect _camera);
@@ -62,7 +63,7 @@ public:
 	int getHealthCurrent() { return healthCurrent; };
 	void setPlusTotalHealth(int _totalPlus) { totalHealth += _totalPlus; };
 	void setPlusPower(int _powerPlus) { power += _powerPlus; };
-	void setDamageReceived(int _dam_damgeReceivedge);
+	void setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TTF_Font* _font);
 
 	void setIsSlowed(bool _is) { isSlowed = _is; };
 	void setSaveTimeIsSlowed(Uint32 _time) { saveTimeIsSlowed = _time; };

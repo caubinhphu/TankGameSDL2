@@ -38,12 +38,12 @@ private:
 	int armor;
 	int totalHealth;
 	int healthCurrent;
-
-	//BASIC_OBJECT text_blood_wasted;
-	bool isDamage;
-	int totalDamageWasted;
+	
 	// BASIC_OBJECT img_effect_money;
 	int randomSpeed();
+	bool isDamgeReceived;
+	int damgeReceive;
+	BasicObj textDamgeReceive;
 public:
 	TankBoss();
 	~TankBoss();
@@ -55,7 +55,7 @@ public:
 	TankType getType() { return type; };
 	void setIsDestroy(bool _is) { isDestroy = _is; };
 	bool getIsDestroy() { return isDestroy; };
-	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
+	void render(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Font* _font);
 	int getSpeed() { return speed; };
 
 	void setPercentBlood(int _subPercent) { bloodBar.percent -= _subPercent; }
@@ -70,9 +70,6 @@ public:
 	void loadDestroyImg(SDL_Renderer* _renderer);
 	bool renderDestroy(SDL_Renderer* _renderer, SDL_Rect _camera);
 
-	//std::vector<AMMO*> get_list_ammo() const { return ds_ammo; };
-	//void set_list_ammo(std::vector<AMMO*> list_ammo) { ds_ammo = list_ammo; }
-
 	void createBullet(SDL_Renderer* _renderer, Circle _tankMain);
 	int handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool& _isSlowedTankMain); // Trả về tổng damge mà tankMain nhận phải
 	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
@@ -83,14 +80,8 @@ public:
 	void setTotalHealth(int _health) { totalHealth = _health; }
 	int getTotalHealth() const { return totalHealth; }
 
-	//void set_sound_destroy(const bool flag) {sound_destroy = flag;}
-	//bool get_sound_destroy() const {return  sound_destroy;}
-
-	//void load_text_blood_wasted(SDL_Renderer* RenDer, TTF_Font* font);
-	//void render_text_blood_wasted(SDL_Renderer* RenDer, SDL_Rect cam);
-
-	void setTotalDamageWasted(int _damge) { totalDamageWasted = _damge; }
-	void setIsDamage(bool _flag) { isDamage = _flag; }
+	void setDamgeReceive(int _damge) { damgeReceive = _damge; }
+	void setIsDamgeReceived(bool _is) { isDamgeReceived = _is; }
 
 	//void load_img_effect_money(SDL_Renderer* RenDer);
 
@@ -113,7 +104,7 @@ public:
 	~TankBossList();
 	void createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer);
 	bool checkCollisionTankBossList(Circle _boss, int k);
-	void renderList(SDL_Renderer* _renderer, SDL_Rect _camera);
+	void renderList(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Font* _font);
 	void handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera);
 	bool checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _damgeBullet);
 	int handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool &_isSlowedTankMain);

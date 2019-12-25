@@ -14,6 +14,7 @@ TankMain::TankMain(int _x, int _y) {
 	armor = 50;
 	isSlowed = false;
 	saveTimeIsSlowed = 0;
+	isDamgeReceived = false;
 }
 
 TankMain::~TankMain() {
@@ -151,13 +152,10 @@ void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	SDL_Rect _bloodBar = { bloodBar.x - _camera.x + 1, bloodBar.y - _camera.y + 1, (float)(bloodBar.width - 2) * ((float)bloodBar.percent / 100), bloodBar.height - 2 };
 	SDL_RenderFillRect(_renderer, &_bloodBar);
 
-	//if (is_damage == true)
-	//{
-	//	load_text_blood_wasted(RenDer, _font);
-	//	render_text_blood_wasted(RenDer, cam);
-	//	is_damage = false;
-	//	total_damage_wasted = 0;
-	//}
+	// render minus health
+	if (isDamgeReceived) {
+		textMinusHealth.render(_renderer, box.x + box.w - _camera.x, box.y - 20 - _camera.y, NULL, 0);
+	}
 
 	// render bông tuyết
 	if (isSlowed) {
@@ -165,11 +163,22 @@ void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	}
 }
 
-void TankMain::setDamageReceived(int _damgeReceived) {
+void TankMain::setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TTF_Font* _font) {
 	if (_damgeReceived != 0) {
 		int _damge = _damgeReceived * (1 - (armor / 100.0));
 		// std::cout << _damgeReceived << ", " << _damge << std::endl;
 		healthCurrent -= _damge;
+
+		isDamgeReceived = true;
+		// load text minus health
+		SDL_Color _color = { 255, 0, 0 };
+		std::stringstream _minus;
+		_minus.str("");
+		_minus << "- " << _damge;
+		textMinusHealth.loadText(_font, _minus.str(), _color, _renderer);
+	}
+	else {
+		isDamgeReceived = false;
 	}
 	if (healthCurrent < 0) {
 		std::cout << "Game Over" << std::endl;

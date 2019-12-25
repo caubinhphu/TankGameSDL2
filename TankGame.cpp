@@ -22,7 +22,10 @@ bool init() {
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
 		return false;
 	}
-
+#ifdef _SDL_TTF_H
+	if (TTF_Init() == -1)
+		return false;
+#endif
 	return true;
 }
 
@@ -33,6 +36,13 @@ bool load() {
 	if (!map.loadMap("./image/mapimg5.png", "./general/mapgame.map", renderer)) {
 		return false;
 	}
+
+	// load font
+	font = TTF_OpenFont("./font/turok.ttf", 30);
+	smallFont = TTF_OpenFont("./font/turok.ttf", 25);
+	bigFont = TTF_OpenFont("./font/turok.ttf", 50);
+
+	return true;
 }
 
 void close() {
@@ -77,9 +87,9 @@ int main(int arc, char* arg[]) {
 				tank.setCamera(camera);
 				bossList.handleList(map, tank.getTankCircle(), renderer, camera);
 				tank.createBullet(renderer);
-				bool _isSlowedTnakMain = false;
-				tank.setDamageReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTnakMain));
-				if (_isSlowedTnakMain) {
+				bool _isSlowedTankMain = false;
+				tank.setDamageReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTankMain), renderer, smallFont);
+				if (_isSlowedTankMain) {
 					tank.setIsSlowed(true);
 					tank.setSaveTimeIsSlowed(SDL_GetTicks());
 				}
@@ -92,8 +102,7 @@ int main(int arc, char* arg[]) {
 				tank.renderBullet(renderer, camera);
 				bossList.renderBulletOfTankList(renderer, camera);
 				tank.render(renderer, camera);
-				bossList.renderList(renderer, camera);
-				bossList.renderList(renderer, camera);
+				bossList.renderList(renderer, camera, smallFont);
 				tank.renderTam(renderer);
 				SDL_RenderPresent(renderer);
 			}

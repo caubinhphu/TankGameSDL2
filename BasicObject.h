@@ -13,6 +13,9 @@ public:
 	~BasicObj(); // hàm hủy
 	void free(); // hàm giải phóng bộ nhớ
 	virtual bool loadImg(std::string _path, SDL_Renderer* _renderer); // hàm load hình ảnh
+#ifdef _SDL_TTF_H
+	bool loadText(TTF_Font* _font, std::string _text, SDL_Color _color, SDL_Renderer* _renderer);
+#endif
 	virtual void render(SDL_Renderer* _renderer, int _x, int _y, SDL_Rect* _clip, double _aRadian); // hàm render
 	int getX() { return box.x; }; // hàm lấy toạ độ x của đối tượng
 	int getY() { return box.y; }; // hàm lấy toạ độ y của đối tượng

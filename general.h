@@ -26,6 +26,7 @@ static SDL_Event event;
 static TTF_Font* font = NULL;
 static TTF_Font* smallFont = NULL;
 static TTF_Font* bigFont = NULL;
+
 struct Circle
 {
 	int x, y, r;
