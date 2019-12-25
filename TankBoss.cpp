@@ -49,25 +49,24 @@ int TankBoss::randomSpeed() {
 
 void TankBoss::handleDirection()
 {
-	if (dir == LEFT)
-	{
+	if (dir == LEFT) {
 		spX = -speed;
 		spY = 0;
 	}
-	else if (dir == RIGHT)
-	{
+	else if (dir == RIGHT) {
 		spX = speed;
 		spY = 0;
 	}
-	else if (dir == TOP)
-	{
+	else if (dir == TOP) {
 		spY = -speed;
 		spX = 0;
 	}
-	else if (dir == BOTTOM)
-	{
+	else if (dir == BOTTOM) {
 		spY = speed;
 		spX = 0;
+	}
+	else if (dir == STAND_STILL) {
+		spX = spY = 0;
 	}
 }
 
@@ -76,12 +75,13 @@ void TankBoss::randomDirection(int k)
 	int _direction;
 	do
 	{
-		_direction = 1 + rand() % 4;
+		_direction = 1 + rand() % 5;
 	} while (_direction == k);
 	if (_direction == 1) dir = RIGHT;
 	else if (_direction == 2) dir = LEFT;
 	else if (_direction == 3) dir = TOP;
 	else if (_direction == 4) dir = BOTTOM;
+	else if (_direction == 5) dir = STAND_STILL;
 }
 
 void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams)
@@ -91,25 +91,25 @@ void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams)
 	{
 		if (dir == LEFT)
 		{
-			spX = 6;
+			spX = 5;
 			spY = 0;
 			dir = RIGHT;
 		}
 		else if (dir == RIGHT)
 		{
-			spX = -6;
+			spX = -5;
 			spY = 0;
 			dir = LEFT;
 		}
 		else if (dir == TOP)
 		{
-			spY = 6;
+			spY = 5;
 			spX = 0;
 			dir = BOTTOM;
 		}
 		else if (dir == BOTTOM)
 		{
-			spY = -6;
+			spY = -5;
 			spX = 0;
 			dir = TOP;
 		}
@@ -133,7 +133,7 @@ void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams)
 		if (isCollisionTeams == false) randomDirection(0);
 	}
 
-	if (isCollisionTeams == false)
+	if (isCollisionTeams == false) // đổi hướng ngẫu nhiên
 	{
 		int _random = 1 + rand() % 50;
 		if (_random == 1) randomDirection(0);
@@ -325,7 +325,6 @@ TankBossList::~TankBossList() {
 void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer) {
 	for (int i = 0; i < _quality; i++) {
 		int type = 1 + rand() % _typeNum;
-		type = 3;
 		TankBoss* boss = new TankBoss;
 		if (type == 1) {
 			boss->setType(TankBoss::nomalTank);
@@ -380,10 +379,18 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 
 bool TankBossList::checkCollisionTankBossList(Circle _boss, int k)
 {
+	if (k != -1) {
+		_boss.r += 10;
+	}
 	for (int i = 0; i < bossList.size(); i++)
 	{
-		if (check::checkCircle_Circle(_boss, bossList[i]->getTankCircle()) == true && i != k)
+		Circle _boss2 = bossList[i]->getTankCircle();
+		if (k != -1) {
+			_boss2.r += 10;
+		}
+		if (i != k && check::checkCircle_Circle(_boss, _boss2)) {
 			return true;
+		}
 	}
 	return false;
 }

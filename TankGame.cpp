@@ -58,7 +58,7 @@ int main(int arc, char* arg[]) {
 		if (load()) {
 			SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 			SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
-			bossList.createListBoss(map, tank.getTankCircle(), 5, 4, renderer);
+			bossList.createListBoss(map, tank.getTankCircle(), 40, 4, renderer);
 			while (!out) {
 				while (SDL_PollEvent(&event) != 0) { // bắt các sự kiện
 					if (event.type == SDL_QUIT) {

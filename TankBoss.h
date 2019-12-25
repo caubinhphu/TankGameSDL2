@@ -16,7 +16,7 @@ public:
 		nomalTank, fireTank, iceTank, triangleTank,
 	};
 	enum Direction {
-		TOP, BOTTOM, LEFT, RIGHT
+		TOP, BOTTOM, LEFT, RIGHT, STAND_STILL,
 	};
 private:
 	int spX, spY;
