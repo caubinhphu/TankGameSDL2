@@ -64,7 +64,7 @@ int main(int arc, char* arg[]) {
 		if (load()) {
 			SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 			SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
-			bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer);
+			bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 100, level * 5);
 			while (!out) {
 				while (SDL_PollEvent(&event) != 0) { // bắt các sự kiện
 					if (event.type == SDL_QUIT) {
@@ -75,7 +75,7 @@ int main(int arc, char* arg[]) {
 
 				if (isLevelUp) { // tăng độ level game
 					level++;
-					bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer);
+					bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 100, level * 5);
 					isLevelUp = false;
 					std::cout << "level up" << std::endl;
 				}

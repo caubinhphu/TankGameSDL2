@@ -335,7 +335,7 @@ TankBossList::~TankBossList() {
 	;
 }
 
-void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer) {
+void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer, int _health, int _armor) {
 	for (int i = 0; i < _quality; i++) {
 		int type = 1 + rand() % _typeNum;
 		TankBoss* boss = new TankBoss;
@@ -347,6 +347,8 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 			boss->setBulletType(Bullet::nomalBullet);
 			boss->setBulletRate(Bullet::nomalRate);
 			boss->setPathBullet("./image/ammo.png");
+			boss->setHealth(_health);
+			boss->setArmor(_armor * 1.5);
 		}
 		else if (type == 2) {
 			boss->setType(TankBoss::fireTank);
@@ -356,6 +358,8 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 			boss->setBulletType(Bullet::fireBullet);
 			boss->setBulletRate(Bullet::fireRate);
 			boss->setPathBullet("./image/danlua4.png");
+			boss->setHealth(_health * 1.5);
+			boss->setArmor(_armor);
 		}
 		else if (type == 3) {
 			boss->setType(TankBoss::iceTank);
@@ -365,6 +369,8 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 			boss->setBulletType(Bullet::iceBullet);
 			boss->setBulletRate(Bullet::iceRate);
 			boss->setPathBullet("./image/ice_bullet.png");
+			boss->setHealth(_health);
+			boss->setArmor(_armor);
 		}
 		else if (type == 4) {
 			boss->setType(TankBoss::triangleTank);
@@ -374,6 +380,8 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 			boss->setBulletType(Bullet::triangleBullet);
 			boss->setBulletRate(Bullet::triangleRate);
 			boss->setPathBullet("./image/triangle_bullet.png");
+			boss->setHealth(_health * 2);
+			boss->setArmor(_armor * 2);
 		}
 		SDL_Rect _box = { 0, 0, boss->getW(), boss->getH() };
 		Circle _bossCircle = { 0, 0, 0 };
