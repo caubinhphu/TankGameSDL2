@@ -10,14 +10,35 @@ public:
 		TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT,
 	};
 	enum BulletType {
-		nomalBullet, fireBullet, rocketBullet,
+		nomalBullet, fireBullet, rocketBullet, fireBossBullet, ballBullet, ballNomalBullet, iceBullet, triangleBullet,
+		marblesLv1Bullet, marblesLv2Bullet, marblesLv3Bullet, 
 	};
 	enum BulletFirtingRate {
 		nomalRate= 300,
 		fireRate = 600,
 		rocketRate = 1000,
+		fireBossRate = 500,
+		ballBossRate = 700,
+		ballNormalBoosRate = 600,
+		iceRate = 600,
+		triangleRate = 500,
+		marblesRate = 700,
 	};
-	static const int speed = 20; // 20
+	enum DameBullet
+	{
+		nomalDamge = 10,
+		fireDamge = 20,
+		fireBossDamge = 50,
+		ballBossDamge = 40,
+		ballNormalBossDamge = 40,
+		redzoneDamge = 50,
+		iceDamge = 10,
+		triangleDamge = 35,
+		marblesDamge = 45,
+		rocketDamge = 200,
+	};
+
+	static const int speed = 10; // 20
 private:
 	int spX, spY;
 	double rotation;
@@ -28,6 +49,7 @@ private:
 	bool isEffectShoot;
 	BulletType type;
 	BulletFirtingRate firtingRate;
+	DameBullet damge;
 public:
 	Bullet();
 	~Bullet();
@@ -48,6 +70,8 @@ public:
 	BulletType getType() { return type; };
 	void setType(BulletType _type) { type = _type; };
 	BulletFirtingRate getFirtingRate() { return firtingRate; };
+	void setDamge(DameBullet _damge) { damge = _damge; };
+	DameBullet getDamge() { return damge; };
 };
 
 #endif // !BULLET_H_

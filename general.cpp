@@ -47,3 +47,12 @@ bool check::checkRect_Circle(SDL_Rect b, Circle a) {
 	if (kc_mu2 < a.r * a.r) return true;
 	return false;
 }
+
+bool check::checkCircle_Circle(Circle a, Circle b)
+{
+	int tongBanKinh = a.r + b.r;
+	int tongBanKinhBinhPhuong = tongBanKinh * tongBanKinh;
+	if (check::binhPhuongKhoangCach(a.x, a.y, b.x, b.y) < tongBanKinhBinhPhuong)
+		return true;
+	return false;
+}

@@ -16,6 +16,7 @@ public:
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
 	bool checkCollision(Circle tankMain);
 	bool checkCollitionBullet(SDL_Rect _bullet);
+	bool checkCollisionTankBoss(SDL_Rect _boxTank);
 };
 
 #endif // !MAPGAME_H_

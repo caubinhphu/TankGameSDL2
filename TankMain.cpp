@@ -1,19 +1,39 @@
 ﻿#include "TankMain.h"
 
 TankMain::TankMain(int _x, int _y) {
-	box.x = _x;
-	box.y = _y;
+	box = { _x, _y, TANK_WIDTH, TANK_HEIGHT };
 	speed = 5;
 	spX = spY = 0;
 	rotation = 0;
-	//setTankCircle();
+	setTankCircle();
 	isMouseDown = isMouseUp = false;
 	saveTimeShoot = 0;
 	bulletType = Bullet::BulletType::nomalBullet;
+	totalHealth = healthCurrent = 100;
+	bloodBar = { 0, 0, 60, 10, 100 };
+	armor = 50;
+	isSlowed = false;
+	saveTimeIsSlowed = 0;
+	isDamgeReceived = false;
 }
 
 TankMain::~TankMain() {
 	free();
+}
+
+bool TankMain::loadImg(SDL_Renderer* _renderer)
+{
+	if (!BasicObj::loadImg("./image/tank5.png", _renderer)) {
+		return false;
+	}
+	if (!tamBan.loadImg("./image/tamban.png", _renderer)) {
+		return false;
+	}
+	if (!snowFlake.loadImg("./image/snowflakes2.png", _renderer)) {
+		return false;
+	}
+	snowFlake.setAlphaMod(191);
+	return true;
 }
 
 void TankMain::setTankCircle() {
@@ -32,7 +52,7 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 		rotation = check::rotationA_B(mouseX, mouseY, box.x + box.w / 2 - _camera.x, box.y + box.h / 2 - _camera.y);
 	}
 	if (rotation < 0) rotation = 0;
-	std::cout << rotation << std::endl;
+	// std::cout << rotation << std::endl;
 
 	if (_e->type == SDL_KEYDOWN && _e->key.repeat == 0) {
 		switch (_e->key.keysym.sym) {
@@ -74,15 +94,25 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 	}
 }
 
-void TankMain::move(MapGame map) {
-	box.x += spX;
-	box.y += spY;
+void TankMain::move(MapGame map, TankBossList _bossList) {
+	if (SDL_GetTicks() - saveTimeIsSlowed >= TIME_SLOWED)
+	{
+		isSlowed = false;
+		box.x += spX;
+		box.y += spY;
+	}
+
+	else
+	{
+		box.x += spX * 0.5;
+		box.y += spY * 0.5;
+	}
 	setTankCircle();
-	if (map.checkCollision(tankCircle)) {
+	if (map.checkCollision(tankCircle) || _bossList.checkCollisionTankBossList(tankCircle, -1)) {
 		box.x -= spX;
 		setTankCircle();
 	}
-	if (map.checkCollision(tankCircle)) {
+	if (map.checkCollision(tankCircle) || _bossList.checkCollisionTankBossList(tankCircle, -1)) {
 		box.y -= spY;
 		setTankCircle();
 	}
@@ -107,13 +137,59 @@ void TankMain::setCamera(SDL_Rect &_camera) {
 }
 
 void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
+	// render xe tank
 	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
+
+	// render thanh máu
+	bloodBar.x = box.x;
+	bloodBar.y = box.y - 20;
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 128, 0);
+	SDL_Rect rimBar = { bloodBar.x - _camera.x, bloodBar.y - _camera.y, bloodBar.width, bloodBar.height };
+	SDL_RenderDrawRect(_renderer, &rimBar);
+	SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 0);
+	bloodBar.percent = healthCurrent * 100 / totalHealth; // tính phần trăm máu còn lại
+	if (bloodBar.percent <= 0) bloodBar.percent = 0;
+	SDL_Rect _bloodBar = { bloodBar.x - _camera.x + 1, bloodBar.y - _camera.y + 1, (float)(bloodBar.width - 2) * ((float)bloodBar.percent / 100), bloodBar.height - 2 };
+	SDL_RenderFillRect(_renderer, &_bloodBar);
+
+	// render minus health
+	if (isDamgeReceived) {
+		textMinusHealth.render(_renderer, box.x + box.w - _camera.x, box.y - 20 - _camera.y, NULL, 0);
+	}
+
+	// render bông tuyết
+	if (isSlowed) {
+		snowFlake.render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, 0);
+	}
 }
 
-bool TankMain::loadTamBan(std::string _path, SDL_Renderer* _renderer) {
-	return tamBan.loadImg(_path, _renderer);
+void TankMain::setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TTF_Font* _font) {
+	if (_damgeReceived != 0) {
+		int _damge = _damgeReceived * (1 - (armor / 100.0));
+		// std::cout << _damgeReceived << ", " << _damge << std::endl;
+		healthCurrent -= _damge;
+
+		isDamgeReceived = true;
+		// load text minus health
+		SDL_Color _color = { 255, 0, 0 };
+		std::stringstream _minus;
+		_minus.str("");
+		_minus << "- " << _damge;
+		textMinusHealth.loadText(_font, _minus.str(), _color, _renderer);
+	}
+	else {
+		isDamgeReceived = false;
+	}
+	if (healthCurrent < 0) {
+		std::cout << "Game Over" << std::endl;
+		healthCurrent = totalHealth;
+	}
 }
 
+//bool TankMain::loadTamBan(std::string _path, SDL_Renderer* _renderer) {
+//	return tamBan.loadImg(_path, _renderer);
+//}
+//
 void TankMain::renderTam(SDL_Renderer* _renderer) {
 	int mouseX = 0, mouseY = 0;
 	SDL_GetMouseState(&mouseX, &mouseY);
@@ -122,9 +198,9 @@ void TankMain::renderTam(SDL_Renderer* _renderer) {
 
 void TankMain::createBullet(SDL_Renderer* _renderer) {
 	if (isMouseDown && !isMouseUp) { // kiểm tra chuột trái có đang được nhấn
-		Bullet::BulletFirtingRate firtingRate;
+		Bullet::BulletFirtingRate firtingRate{};
 
-		// Kiểm tra tốc độ bắn của loại đạn đan sử dung
+		// Kiểm tra tốc độ bắn của loại đạn đang sử dung
 		if (bulletType == Bullet::nomalBullet) {
 			firtingRate = Bullet::nomalRate;
 		}
@@ -138,15 +214,19 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 		// kiểm tra thời điểm bắn đạn trước so với thời điểm bắn đạn sau có lớn hơn tốc độ bắn hay không
 		if (SDL_GetTicks() - saveTimeShoot > firtingRate) {
 			std::string _imgBullet; // hình viên đạn
+			Bullet::DameBullet _damge = Bullet::nomalDamge; // damge viên đạn
 			if (bulletType == Bullet::nomalBullet) {
 				_imgBullet = "./image/ammo.png";
+				_damge = Bullet::nomalDamge;
 				
 			}
 			else if (bulletType == Bullet::fireBullet) {
 				_imgBullet = "./image/danlua4.png";
+				_damge = Bullet::fireDamge;
 			}
 			else if (bulletType == Bullet::rocketBullet) {
 				_imgBullet = "./image/bullet_rocket.png";
+				_damge = Bullet::rocketDamge;
 			}
 
 			Bullet* bullet = new Bullet(); // khai báo viên đạn mới
@@ -159,7 +239,7 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 				bullet->setSpY(round(cos(rotation) * Bullet::speed)); // độ lệch y
 				x = tankCircle.x + (sin(rotation) * (box.h / 2)) - bullet->getW() / 2;
 				y = tankCircle.y - (cos(rotation) * (box.h / 2)) - bullet->getH() / 2;
-				std::cout << (sin(rotation) * Bullet::speed) << (cos(rotation) * Bullet::speed);
+				// std::cout << (sin(rotation) * Bullet::speed) << (cos(rotation) * Bullet::speed);
 			}
 			else if (rotation > PI / 2 && rotation <= PI) {
 				bullet->setDir(Bullet::BOTTOM_RIGHT);
@@ -184,6 +264,7 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 			}
 			bullet->setXY(x, y);
 			bullet->setRotation(rotation);
+			bullet->setDamge(_damge);
 			bullet->setIsMove(true);
 
 			bullets.push_back(bullet);
@@ -192,11 +273,17 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 	}
 }
 
-void TankMain::handleBullet(MapGame map, SDL_Renderer* _renderer, SDL_Rect _camera) {
+void TankMain::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList) {
 	for (int i = 0; i < bullets.size(); i++) {		
 		bullets[i]->move();
-		if (map.checkCollitionBullet(bullets[i]->getBox())) {
+
+
+		if (_map.checkCollitionBullet(bullets[i]->getBox())
+			|| _tankList.checkCollisionBullet(bullets[i]->getBox(), true, bullets[i]->getDamge())) {
 			bullets[i]->setIsMove(false);
+		}
+
+		if (bullets[i]->getIsMove() == false) {
 			bullets[i]->renderCollisionEffect(_renderer, _camera);
 			delete bullets[i];
 			bullets.erase(bullets.begin() + i);
