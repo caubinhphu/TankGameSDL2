@@ -2,10 +2,12 @@
 #include "TankMain.h"
 #include "MapGame.h";
 #include "TankBoss.h"
+#include "Item.h"
 
 MapGame map;
 TankMain tank(100, 100);
 TankBossList bossList;
+ItemList itemList;
 
 bool init() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
@@ -64,7 +66,7 @@ int main(int arc, char* arg[]) {
 		if (load()) {
 			SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 			SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
-			bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 100, level * 5);
+			bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 50, level * 2);
 			while (!out) {
 				while (SDL_PollEvent(&event) != 0) { // bắt các sự kiện
 					if (event.type == SDL_QUIT) {
@@ -75,9 +77,13 @@ int main(int arc, char* arg[]) {
 
 				if (isLevelUp) { // tăng độ level game
 					level++;
-					bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 100, level * 5);
+					bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 50, level * 2);
 					isLevelUp = false;
 					std::cout << "level up" << std::endl;
+				}
+
+				if (level >= 2 && SDL_GetTicks() - itemList.getSaveTimeCreate() >= TIME_RECREATE_ITEM) {
+					itemList.createList(renderer, map);
 				}
 
 				SDL_RenderClear(renderer); // clear màn hình render
@@ -86,6 +92,10 @@ int main(int arc, char* arg[]) {
 				tank.move(map, bossList);
 				tank.setCamera(camera);
 				bossList.handleList(map, tank.getTankCircle(), renderer, camera);
+				if (level >= 2) {
+					itemList.handleList();
+					tank.handleEatItem(itemList.getItemList());
+				}
 				tank.createBullet(renderer);
 				bool _isSlowedTankMain = false;
 				tank.setDamageReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTankMain), renderer, smallFont);
@@ -98,7 +108,7 @@ int main(int arc, char* arg[]) {
 				if (bossList.getQualityBoss() == 0) {
 					isLevelUp = true;
 				}
-
+				itemList.renderItemlist(renderer, camera);
 				tank.renderBullet(renderer, camera);
 				bossList.renderBulletOfTankList(renderer, camera);
 				tank.render(renderer, camera);

@@ -54,10 +54,11 @@ bool MapGame::checkCollision(Circle tankMain) {
 	return false;
 }
 
-bool MapGame::checkCollitionBullet(SDL_Rect _bullet) {
+bool MapGame::checkCollisionRect(SDL_Rect _box)
+{
 	for (int i = 0; i < tiles.size(); i++) {
 		if (tiles[i]->getType() == TILE_WALL) {
-			if (check::checkRect_Rect(tiles[i]->getBox(), _bullet)) {
+			if (check::checkRect_Rect(tiles[i]->getBox(), _box)) {
 				return true;
 			}
 		}
@@ -65,13 +66,24 @@ bool MapGame::checkCollitionBullet(SDL_Rect _bullet) {
 	return false;
 }
 
-bool MapGame::checkCollisionTankBoss(SDL_Rect _boxTank) {
-	for (int i = 0; i < TOTAL_TILE; i++) {
-		if (tiles[i]->getType() == TILE_WALL) {
-			if (check::checkRect_Rect(tiles[i]->getBox(), _boxTank)) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
+//bool MapGame::checkCollitionBullet(SDL_Rect _bullet) {
+//	for (int i = 0; i < tiles.size(); i++) {
+//		if (tiles[i]->getType() == TILE_WALL) {
+//			if (check::checkRect_Rect(tiles[i]->getBox(), _bullet)) {
+//				return true;
+//			}
+//		}
+//	}
+//	return false;
+//}
+//
+//bool MapGame::checkCollisionTankBoss(SDL_Rect _boxTank) {
+//	for (int i = 0; i < TOTAL_TILE; i++) {
+//		if (tiles[i]->getType() == TILE_WALL) {
+//			if (check::checkRect_Rect(tiles[i]->getBox(), _boxTank)) {
+//				return true;
+//			}
+//		}
+//	}
+//	return false;
+//}

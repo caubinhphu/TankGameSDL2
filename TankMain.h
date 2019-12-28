@@ -7,6 +7,7 @@
 #include "MapGame.h"
 #include "Bullet.h"
 #include "TankBoss.h"
+#include "Item.h"
 
 #define TANK_WIDTH 60
 #define TANK_HEIGHT 60
@@ -67,6 +68,7 @@ public:
 
 	void setIsSlowed(bool _is) { isSlowed = _is; };
 	void setSaveTimeIsSlowed(Uint32 _time) { saveTimeIsSlowed = _time; };
+	void handleEatItem(std::vector<Item*> _itemlist);
 };
 
 #endif // !TANKMAIN_H_

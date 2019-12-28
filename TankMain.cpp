@@ -186,6 +186,24 @@ void TankMain::setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TT
 	}
 }
 
+void TankMain::handleEatItem(std::vector<Item*> _itemlist) {
+	for (int i = 0; i < _itemlist.size(); i++) {
+		if (check::checkRect_Circle(_itemlist[i]->getBox(), tankCircle)) {
+			_itemlist[i]->setIsEat(true);
+			
+			if (_itemlist[i]->getType() == Item::healthItem) {
+				std::cout << "health" << std::endl;
+			}
+			else if (_itemlist[i]->getType() == Item::fireBulletItem) {
+				std::cout << "fire bullet" << std::endl;
+			}
+			else if (_itemlist[i]->getType() == Item::moneyItem) {
+				std::cout << "money" << std::endl;
+			}
+		}
+	}
+}
+
 //bool TankMain::loadTamBan(std::string _path, SDL_Renderer* _renderer) {
 //	return tamBan.loadImg(_path, _renderer);
 //}
@@ -278,7 +296,7 @@ void TankMain::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _cam
 		bullets[i]->move();
 
 
-		if (_map.checkCollitionBullet(bullets[i]->getBox())
+		if (_map.checkCollisionRect(bullets[i]->getBox())
 			|| _tankList.checkCollisionBullet(bullets[i]->getBox(), true, bullets[i]->getDamge())) {
 			bullets[i]->setIsMove(false);
 		}

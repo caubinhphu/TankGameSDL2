@@ -280,7 +280,7 @@ int TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _came
 	for (int i = 0; i < bullets.size(); i++) {
 		bullets[i]->move();
 
-		if (_map.checkCollitionBullet(bullets[i]->getBox())) {
+		if (_map.checkCollisionRect(bullets[i]->getBox())) {
 			bullets[i]->setIsMove(false);
 		}
 		else if (check::checkRect_Circle(bullets[i]->getBox(), _tankMain)) {
