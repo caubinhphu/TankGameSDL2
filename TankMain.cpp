@@ -14,7 +14,8 @@ TankMain::TankMain(int _x, int _y) {
 	armor = 50;
 	isSlowed = false;
 	saveTimeIsSlowed = 0;
-	isDamgeReceived = false;
+	isMinusHealth = false;
+	isPlusHealth = false;
 }
 
 TankMain::~TankMain() {
@@ -153,7 +154,7 @@ void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	SDL_RenderFillRect(_renderer, &_bloodBar);
 
 	// render minus health
-	if (isDamgeReceived) {
+	if (isMinusHealth || isPlusHealth) {
 		textMinusHealth.render(_renderer, box.x + box.w - _camera.x, box.y - 20 - _camera.y, NULL, 0);
 	}
 
@@ -169,7 +170,7 @@ void TankMain::setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TT
 		// std::cout << _damgeReceived << ", " << _damge << std::endl;
 		healthCurrent -= _damge;
 
-		isDamgeReceived = true;
+		isMinusHealth = true;
 		// load text minus health
 		SDL_Color _color = { 255, 0, 0 };
 		std::stringstream _minus;
@@ -178,7 +179,7 @@ void TankMain::setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TT
 		textMinusHealth.loadText(_font, _minus.str(), _color, _renderer);
 	}
 	else {
-		isDamgeReceived = false;
+		isMinusHealth = false;
 	}
 	if (healthCurrent < 0) {
 		std::cout << "Game Over" << std::endl;
@@ -186,22 +187,34 @@ void TankMain::setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TT
 	}
 }
 
-void TankMain::handleEatItem(std::vector<Item*> _itemlist) {
+void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _font) {
 	for (int i = 0; i < _itemlist.size(); i++) {
 		if (check::checkRect_Circle(_itemlist[i]->getBox(), tankCircle)) {
 			_itemlist[i]->setIsEat(true);
 			
 			if (_itemlist[i]->getType() == Item::healthItem) {
 				std::cout << "health" << std::endl;
+				healthCurrent = healthCurrent + PLUS_HEALTH_ITEM < totalHealth ? healthCurrent + PLUS_HEALTH_ITEM : totalHealth;
+
+				isPlusHealth = true;
+				SDL_Color _color = { 0, 255, 0 };
+				std::stringstream _plus;
+				_plus.str("");
+				_plus << "+ " << PLUS_HEALTH_ITEM;
+				textMinusHealth.loadText(_font, _plus.str(), _color, _renderer);
 			}
 			else if (_itemlist[i]->getType() == Item::fireBulletItem) {
 				std::cout << "fire bullet" << std::endl;
+				isPlusHealth = false;
 			}
 			else if (_itemlist[i]->getType() == Item::moneyItem) {
 				std::cout << "money" << std::endl;
+				isPlusHealth = false;
 			}
+			return;
 		}
 	}
+	isPlusHealth = false;
 }
 
 //bool TankMain::loadTamBan(std::string _path, SDL_Renderer* _renderer) {

@@ -82,7 +82,7 @@ int main(int arc, char* arg[]) {
 					std::cout << "level up" << std::endl;
 				}
 
-				if (level >= 2 && SDL_GetTicks() - itemList.getSaveTimeCreate() >= TIME_RECREATE_ITEM) {
+				if (level >= 1 && SDL_GetTicks() - itemList.getSaveTimeCreate() >= TIME_RECREATE_ITEM) {
 					itemList.createList(renderer, map);
 				}
 
@@ -92,9 +92,9 @@ int main(int arc, char* arg[]) {
 				tank.move(map, bossList);
 				tank.setCamera(camera);
 				bossList.handleList(map, tank.getTankCircle(), renderer, camera);
-				if (level >= 2) {
+				if (level >= 1) {
 					itemList.handleList();
-					tank.handleEatItem(itemList.getItemList());
+					tank.handleEatItem(itemList.getItemList(), renderer, smallFont);
 				}
 				tank.createBullet(renderer);
 				bool _isSlowedTankMain = false;

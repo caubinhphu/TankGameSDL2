@@ -37,7 +37,8 @@ private:
 	Uint32 saveTimeIsSlowed;
 
 	BasicObj textMinusHealth;
-	bool isDamgeReceived;
+	bool isMinusHealth;
+	bool isPlusHealth;
 public:
 	TankMain(int _x, int _y);
 	~TankMain();
@@ -68,7 +69,7 @@ public:
 
 	void setIsSlowed(bool _is) { isSlowed = _is; };
 	void setSaveTimeIsSlowed(Uint32 _time) { saveTimeIsSlowed = _time; };
-	void handleEatItem(std::vector<Item*> _itemlist);
+	void handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _font);
 };
 
 #endif // !TANKMAIN_H_

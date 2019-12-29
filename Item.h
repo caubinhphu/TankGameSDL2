@@ -15,6 +15,10 @@
 
 #define TIME_RECREATE_ITEM 20000
 
+#define PLUS_HEALTH_ITEM 10
+#define PLUS_FIREBULLET_ITEM 5
+#define PLUS_MONEY_ITEM 10
+
 class Item : public BasicObj {
 public:
 	enum ItemType {
