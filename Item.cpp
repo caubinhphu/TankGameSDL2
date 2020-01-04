@@ -5,6 +5,7 @@ Item::Item() {
 	type = fireBulletItem;
 	timeExists = 0;
 	isEat = false;
+	timeCreate = 0;
 }
 
 Item::~Item() {
@@ -65,12 +66,47 @@ void ItemList::handleList() {
 			i--;
 		}
 	}
+	//if (itemListFromBossDestroy.size() != 0) std::cout << 1 << std::endl;
+	//for (int i = 0; i < itemListFromBossDestroy.size(); i++) {
+	//	if (itemListFromBossDestroy[i]->getIsEat()
+	//			|| SDL_GetTicks() - itemListFromBossDestroy[i]->getTimeCreate() > itemListFromBossDestroy[i]->getTimeExists() * 1000) {
+	//		delete itemListFromBossDestroy[i];
+	//		itemListFromBossDestroy.erase(itemListFromBossDestroy.begin() + i);
+	//		i--;
+	//	}
+	//}
 }
 
 void ItemList::renderItemlist(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	for (int i = 0; i < itemList.size(); i++) {
 		itemList[i]->render(_renderer, _camera);
 	}
+	//for (int i = 0; i < itemListFromBossDestroy.size(); i++) {
+	//	itemListFromBossDestroy[i]->render(_renderer, _camera);
+	//}
 }
+
+//void ItemList::createItemListFromBossDestroy(SDL_Renderer* _renderer, Circle _tank) {
+//	Item* _item = new Item();
+//	int _type = 1 + rand() % TOTAL_ITEM_TYPE;
+//	if (_type == 1) {
+//		_item->loadImg("./image/bullet_item.png", _renderer);
+//		_item->setType(Item::fireBulletItem);
+//		_item->setTimeExists(TIME_EXISTS_FIREBULLET_ITEM);
+//	}
+//	else if (_type == 2) {
+//		_item->loadImg("./image/health_item.png", _renderer);
+//		_item->setType(Item::healthItem);
+//		_item->setTimeExists(TIME_EXISTS_HEALTH_ITEM);
+//	}
+//	else if (_type == 3) {
+//		_item->loadImg("./image/money_item.png", _renderer);
+//		_item->setType(Item::moneyItem);
+//		_item->setTimeExists(TIME_EXISTS_MONEY_ITEM);
+//	}
+//	_item->setXY(_tank.x - _item->getW() / 2, _tank.y - _item->getH() / 2);
+//	_item->setTimeCreate(SDL_GetTicks());
+//	itemListFromBossDestroy.push_back(_item);
+//}
 
 

@@ -28,6 +28,7 @@ private:
 	ItemType type;
 	Uint8 timeExists;
 	bool isEat;
+	Uint32 timeCreate;
 public:
 	Item();
 	~Item();
@@ -38,6 +39,8 @@ public:
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void setIsEat(bool _is) { isEat = _is; };
 	bool getIsEat() { return isEat; };
+	void setTimeCreate(Uint32 _time) { timeCreate = _time; };
+	Uint32 getTimeCreate() { return timeCreate; };
 };
 
 #endif // !ITEM_H_
@@ -49,6 +52,7 @@ class ItemList {
 private:
 	std::vector<Item*> itemList;
 	Uint32 saveTimeCreate;
+	// std::vector<Item*> itemListFromBossDestroy;
 public:
 	ItemList() { saveTimeCreate = 0; };
 	~ItemList() { ; };
@@ -57,6 +61,10 @@ public:
 	void renderItemlist(SDL_Renderer* _renderer, SDL_Rect _camera);
 	Uint32 getSaveTimeCreate() { return saveTimeCreate; }
 	std::vector<Item*> getItemList() { return itemList; };
+	// std::vector<Item*> getItemListFromBossDestroy() { return itemListFromBossDestroy; };
+	// void createItemListFromBossDestroy(SDL_Renderer* _renderer, Circle _tank);
+	// int getSize() { return itemListFromBossDestroy.size(); };
+	// void setList(Item* _item) { itemList.push_back(_item); };
 };
 
 #endif // !ITEMLIST_H_

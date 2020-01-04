@@ -66,6 +66,31 @@ bool MapGame::checkCollisionRect(SDL_Rect _box)
 	return false;
 }
 
+std::vector<int> MapGame::getMapWallDigital() {
+	std::vector<int> map(TOTAL_TILE, 0);
+	for (int i = 0; i < TOTAL_TILE; i++)
+	{
+		if (tiles[i]->getType() == TILE_WALL)
+			map[i] = 1;
+	}
+	return map;
+}
+
+void MapGame::reload() {
+	std::vector<int> mapWall = getMapWallDigital();
+	for (int i = 0; i < mapWall.size(); i++)
+	{
+		if (mapWall[i] == 1)
+		{
+			if (i / 20 != 0 && i / 20 != 19 && i % 20 != 0 && i % 20 != 19)
+			{
+				tiles[i]->setType(TILE_WALL_2);
+				tiles[i]->setTileClip({ TILE_WIDTH, TILE_HEIGHT, 80, 80 });
+			}
+		}
+	}
+}
+
 //bool MapGame::checkCollitionBullet(SDL_Rect _bullet) {
 //	for (int i = 0; i < tiles.size(); i++) {
 //		if (tiles[i]->getType() == TILE_WALL) {

@@ -26,6 +26,7 @@ public:
 	
 	int getType() { return type; };
 	void setType(int _type) { type = _type; };
+	void setTileClip(SDL_Rect _clip) { tileClip = _clip; };
 };
 
 

@@ -5,6 +5,8 @@
 #include "BasicObject.h"
 #include "MapGame.h"
 #include "Bullet.h"
+#include "Item.h"
+
 
 #define TOTAL_TANKBOSS_TYPE 4
 #define TOTAL_DESTROY_IMG 4
@@ -106,7 +108,7 @@ public:
 	void createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer, int _health, int _armor);
 	bool checkCollisionTankBossList(Circle _boss, int k);
 	void renderList(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Font* _font);
-	void handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera);
+	void handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera, ItemList _itemList);
 	bool checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _damgeBullet);
 	int handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool &_isSlowedTankMain);
 	void renderBulletOfTankList(SDL_Renderer* _renderer, SDL_Rect _camera);

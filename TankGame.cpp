@@ -3,11 +3,16 @@
 #include "MapGame.h";
 #include "TankBoss.h"
 #include "Item.h"
+#include "SuperTankBoss.h"
+
+#define TOTAL_LEVEL_GAME 2
 
 MapGame map;
 TankMain tank(100, 100);
 TankBossList bossList;
 ItemList itemList;
+SuperTankBoss* superTankBoss;
+
 
 bool init() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
@@ -63,6 +68,10 @@ int main(int arc, char* arg[]) {
 		bool out = false;
 		int level = 1;
 		bool isLevelUp = false;
+		bool isLoadedSuperTank = false;
+		bool isAllowRenderEffectSuperTank = false;
+		bool isMoveTankMain = true;
+		bool isAllowHandleAppearSuperTank = false;
 		if (load()) {
 			SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 			SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
@@ -89,9 +98,44 @@ int main(int arc, char* arg[]) {
 				SDL_RenderClear(renderer); // clear màn hình render
 				SDL_SetRenderDrawColor(renderer, 100, 50, 0, 0);
 				map.render(renderer, camera);
+				if (level == TOTAL_LEVEL_GAME && !isLoadedSuperTank) {
+					SuperTankBoss* _superTank = new SuperTankBoss;
+
+					_superTank->loadImg("./image/super_tank_boss_2.png", renderer);
+					_superTank->loadEffectAppear(renderer);
+					_superTank->handleEffectAppear(map.getMapWallDigital());
+				//	_superTank->load_ball_fire(renderer, "image\\ball_fire_3.png");
+				//	_superTank->load_ds_bullet_reuse(renderer);
+				//	_superTank->load_img_shield(renderer, "image\\shield.png");
+				//	_superTank->set_is_destroy(false);
+					isLoadedSuperTank = true;
+					isAllowRenderEffectSuperTank = true;
+					/*BossEs.set_flag_tank_boss(false);
+					BossEs.set_level(99);*/
+					superTankBoss = _superTank;
+				}
+				if (isAllowRenderEffectSuperTank) {
+					if (superTankBoss->renderEffectAppear(renderer, camera))
+					{
+						isAllowRenderEffectSuperTank = false;
+						isAllowHandleAppearSuperTank = true;
+						superTankBoss->freePositionWallTileList();
+					}
+				}
+				if (isAllowHandleAppearSuperTank && !isAllowRenderEffectSuperTank)
+				{
+					map.reload();
+					map.render(renderer, camera);
+					isMoveTankMain = false;
+					//main_char.handle_move_automatic(width_background / 2 - main_char.get_width() / 2, height_background - 90 - main_char.get_height());
+					//main_char.set_box_x_y(width_background / 2 - main_char.get_width() / 2, height_background - 82 - main_char.get_height());
+					//Tank_boss->set_box_x_y(width_background / 2 - Tank_boss->get_width() / 2, height_background - 2 * height_camera);
+					isAllowHandleAppearSuperTank = false;
+					//is_appear_boss = true;
+				}
 				tank.move(map, bossList);
 				tank.setCamera(camera);
-				bossList.handleList(map, tank.getTankCircle(), renderer, camera);
+				bossList.handleList(map, tank.getTankCircle(), renderer, camera, itemList);
 				if (level >= 1) {
 					itemList.handleList();
 					tank.handleEatItem(itemList.getItemList(), renderer, smallFont);

@@ -18,6 +18,8 @@ public:
 	//bool checkCollitionBullet(SDL_Rect _bullet);
 	//bool checkCollisionTankBoss(SDL_Rect _boxTank);
 	bool checkCollisionRect(SDL_Rect _box);
+	std::vector<int> getMapWallDigital();
+	void reload();
 };
 
 #endif // !MAPGAME_H_

@@ -424,7 +424,7 @@ void TankBossList::renderList(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Fon
 	}
 }
 
-void TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera) {
+void TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera, ItemList _itemList) {
 	for (int i = 0; i < bossList.size(); i++) {
 		if (!bossList[i]->getIsDestroy()) {
 			bossList[i]->handleDirection();
@@ -434,12 +434,40 @@ void TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _ren
 		}
 		else {
 			if (bossList[i]->renderDestroy(_renderer, _camera)) {
+				Item* _item = new Item();
+				int _type = 1 + rand() % TOTAL_ITEM_TYPE;
+				if (_type == 1) {
+					_item->loadImg("./image/bullet_item.png", _renderer);
+					_item->setType(Item::fireBulletItem);
+					_item->setTimeExists(TIME_EXISTS_FIREBULLET_ITEM);
+				}
+				else if (_type == 2) {
+					_item->loadImg("./image/health_item.png", _renderer);
+					_item->setType(Item::healthItem);
+					_item->setTimeExists(TIME_EXISTS_HEALTH_ITEM);
+				}
+				else if (_type == 3) {
+					_item->loadImg("./image/money_item.png", _renderer);
+					_item->setType(Item::moneyItem);
+					_item->setTimeExists(TIME_EXISTS_MONEY_ITEM);
+				}
+				_item->setXY(bossList[i]->getTankCircle().x - _item->getW() / 2, bossList[i]->getTankCircle().y - _item->getH() / 2);
+				_item->setTimeCreate(SDL_GetTicks());
+
+				// _itemList.setList(_item);
+				//_itemList.createItemListFromBossDestroy(_renderer, bossList[i]->getTankCircle());
+
+
+				//std::cout <<_itemList.getSize() << std::endl;
 				delete bossList[i];
+			//	std::cout << _itemList.getSize() << std::endl;
 				bossList.erase(bossList.begin() + i);
+		//		std::cout << _itemList.getSize() << std::endl;
 				i--;
 			}
 		}
 	}
+	// if (_itemList.getSize() != 0) std::cout << _itemList.getSize() << std::endl;
 }
 
 bool TankBossList::checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _damgeBullet)
