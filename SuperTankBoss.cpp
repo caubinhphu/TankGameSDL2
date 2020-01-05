@@ -3,6 +3,7 @@
 SuperTankBoss::SuperTankBoss() {
 	spX = spY = 0;
 	rotation = 0;
+	speed = 1;
 }
 
 SuperTankBoss::~SuperTankBoss() {
@@ -59,4 +60,56 @@ bool SuperTankBoss::renderEffectAppear(SDL_Renderer* _renderer, SDL_Rect _camera
 	frame++;
 	if (frame / 20 != 5) return false;
 	return true;
+}
+
+void SuperTankBoss::handleMoveAppear() {
+	spX = 0;
+	spY = 2;
+}
+
+bool SuperTankBoss::moveAuto(int _y) {
+	box.x += spX;
+	box.y += spY;
+	if (box.y >= _y)
+		return true;
+	return false;
+}
+
+void SuperTankBoss::handleMove(Circle _tankMain, int _y) {
+	rotation = check::rotationA_B(_tankMain.x, _tankMain.y, box.x + box.w / 2, box.y + box.h / 2);
+	//handle
+	if (box.y != _y) {
+		spX = 0;
+		if (box.y > _y) spY = -speed;
+		else if (box.y < _y) spY = speed;
+	}
+	else{
+		spX = spY = 0;
+	}
+}
+
+void SuperTankBoss::move() {
+	box.x += spX;
+	box.y += spY;
+	setTankCircle(box.x, box.y);
+	setCircleBallFire(box.x - 45, box.y - 45);
+}
+
+bool SuperTankBoss::loadImg(SDL_Renderer* _renderer) {
+	if (!BasicObj::loadImg("./image/super_tank_boss_2.png", _renderer))
+		return false;
+	if (!ballFire.loadImg("./image/ball_fire_3.png", _renderer))
+		return false;
+	return true;
+}
+
+void SuperTankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
+	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
+	ballFire.render(_renderer, box.x - 45 - _camera.x, box.y - 45 - _camera.y, NULL, 0);
+}
+
+void SuperTankBoss::setCircleBallFire(int _x, int _y) {
+	ballFireCircle.x = _x + ballFire.getW() / 2;
+	ballFireCircle.y = _y + ballFire.getH() / 2;
+	ballFireCircle.r = ballFire.getW() / 2;
 }

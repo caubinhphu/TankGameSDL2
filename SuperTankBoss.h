@@ -56,13 +56,14 @@ public:
 	void handleEffectAppear(std::vector<int> _mapWall);
 	bool renderEffectAppear(SDL_Renderer* _renderer, SDL_Rect _camera);
 
-	//void handle_effect();
-	//bool move_auto(int x, int y);
+	void handleMoveAppear();
+	bool moveAuto(int _y);
 
-	//void handle_move(circle char_main, int _y);
-	//void move();
+	void handleMove(Circle _tankMain, int _y);
+	void move();
 
-	//void render_tank(SDL_Renderer* RenDer, SDL_Rect cam);
+	bool loadImg(SDL_Renderer* _renderer);
+	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
 
 	//void set_armor(const int ar) { armor = ar; }
 	//int get_armor() const { return armor; }
@@ -81,8 +82,8 @@ public:
 	//void load_ball_fire(SDL_Renderer* RenDer, std::string path);
 	//void render_ball_fire(SDL_Renderer* RenDer, SDL_Rect cam);
 
-	//void set_circle_ball_fire(int x, int y);
-	//circle get_circle_ball_fire() const { return circle_ball_fire; }
+	void setCircleBallFire(int _x, int _y);
+	Circle getCircleBallFire() { return ballFireCircle; };
 
 	//std::vector<AMMO*> get_list_bullet() const { return ds_bullet; };
 	//void set_list_bullet(std::vector<AMMO*> list_bl) { ds_bullet = list_bl; }

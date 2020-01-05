@@ -67,13 +67,15 @@ int main(int arc, char* arg[]) {
 		srand(time(NULL));
 		bool out = false;
 		int level = 1;
-		bool isLevelUp = false;
-		bool isLoadedSuperTank = false;
-		bool isAllowRenderEffectSuperTank = false;
-		bool isAllowHandleAppearSuperTank = false;
-		bool isAllowTankMainMove = true;
-		bool isAllowCreateTankBossList = false;
-		bool isSuperTankAppear = false;
+		bool isLevelUp = false; // level up?
+		bool isLoadedSuperTank = false; // đã load super tank?
+		bool isSuperTankAppear = false; // super tank xuất hiện?
+		bool isAllowRenderSuperTank = false; // cho phép render super tank?
+		bool isAllowRenderEffectSuperTank = false; // cho phép render hiện ứng xuất hiện super tank?
+		bool isAllowSuperTankMove = false;
+		bool isAllowHandleAppearSuperTank = false; // cho phép xử lý sau khi tường nổ?
+		bool isAllowTankMainMove = true; // cho phép tank main di chuyển?
+		bool isAllowCreateTankBossList = false; // cho phép tạo bost list?
 		if (load()) {
 			SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 			SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
@@ -115,7 +117,7 @@ int main(int arc, char* arg[]) {
 				if (level == TOTAL_LEVEL_GAME && !isLoadedSuperTank) {
 					SuperTankBoss* _superTank = new SuperTankBoss;
 
-					_superTank->loadImg("./image/super_tank_boss_2.png", renderer);
+					_superTank->loadImg(renderer);
 					_superTank->loadEffectAppear(renderer);
 					_superTank->handleEffectAppear(map.getMapWallDigital());
 				//	_superTank->load_ball_fire(renderer, "image\\ball_fire_3.png");
@@ -145,20 +147,36 @@ int main(int arc, char* arg[]) {
 
 					tank.handleMoveAutomatic(backgroundWidth / 2 - tank.getW() / 2, backgroundHeight - 90 - tank.getH());
 					// tank.setXY(backgroundWidth / 2 - tank.getW() / 2, backgroundHeight - 82 - tank.getH());
-					//Tank_boss->set_box_x_y(width_background / 2 - Tank_boss->get_width() / 2, height_background - 2 * height_camera);
+					superTankBoss->setXY(backgroundWidth / 2 - superTankBoss->getW() / 2, backgroundHeight - 2 * cameraHeight);
+					superTankBoss->setTankCircle(superTankBoss->getX(), superTankBoss->getY());
+					superTankBoss->handleMoveAppear();
 					isAllowHandleAppearSuperTank = false;
 					//is_appear_boss = true;
 				}
 				if (!isAllowTankMainMove) {
 					if (tank.moveAutomatic(renderer, backgroundWidth / 2 - tank.getW() / 2, backgroundHeight - 90 - tank.getH())) {
 						tank.setSpXY(0, 0);
-						isAllowTankMainMove = true;
-						// is_render_boss = true;
-						//Tank_boss->set_circle_tank_boss(Tank_boss->get_x(), Tank_boss->get_y());
-						//Tank_boss->handle_effect();
+						isAllowRenderSuperTank = true;
 					}
 				}
 
+				if (isSuperTankAppear && isAllowRenderSuperTank)
+				{
+					if (superTankBoss->moveAuto(backgroundHeight - cameraHeight + 20))
+					{
+						isAllowTankMainMove = true;
+						isSuperTankAppear = false;
+						isAllowSuperTankMove = true;
+					}
+				}
+
+				if (isAllowRenderSuperTank) {
+					if (isAllowSuperTankMove) {
+						superTankBoss->handleMove(tank.getTankCircle(), 100);
+						superTankBoss->move();
+					}
+					superTankBoss->render(renderer, camera);
+				}
 
 				if (isAllowCreateTankBossList) {
 					bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 50, level * 2);

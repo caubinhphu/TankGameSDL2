@@ -220,24 +220,20 @@ void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _render
 void TankMain::handleMoveAutomatic(int _x, int _y) {
 	rotationMoveAuto = check::rotationA_B(box.x, box.y, _x, _y);
 	spX = spY = 0;
-	if (rotationMoveAuto >= 0 && rotationMoveAuto <= 0.5 * PI)
-	{
+	if (rotationMoveAuto >= 0 && rotationMoveAuto <= 0.5 * PI) {
 		spX = (sin(rotationMoveAuto) * 5);
 		spY = (cos(rotationMoveAuto) * 5);
 	}
-	else if (rotationMoveAuto > 0.5 * PI && rotationMoveAuto <= PI)
-	{
+	else if (rotationMoveAuto > 0.5 * PI && rotationMoveAuto <= PI) {
 		spX = (sin(PI - rotationMoveAuto) * 5);
 		spY = (cos(PI - rotationMoveAuto) * 5);
 
 	}
-	else if (rotationMoveAuto > PI && rotationMoveAuto <= 1.5 * PI)
-	{
+	else if (rotationMoveAuto > PI && rotationMoveAuto <= 1.5 * PI) {
 		spX = (sin(rotationMoveAuto - PI) * 5);
 		spY = (cos(rotationMoveAuto - PI) * 5);
 	}
-	else if (rotationMoveAuto > 1.5 * PI && rotationMoveAuto < 2 * PI)
-	{
+	else if (rotationMoveAuto > 1.5 * PI && rotationMoveAuto < 2 * PI) {
 		spX = (sin(2 * PI - rotationMoveAuto) * 5);
 		spY = (cos(2 * PI - rotationMoveAuto) * 5);
 	}
@@ -247,8 +243,7 @@ void TankMain::handleMoveAutomatic(int _x, int _y) {
 }
 
 bool TankMain::moveAutomatic(SDL_Renderer* _renderer, int _x, int _y) {
-	if (rotationMoveAuto >= 0 && rotationMoveAuto <= 0.5 * PI)
-	{
+	if (rotationMoveAuto >= 0 && rotationMoveAuto <= 0.5 * PI) {
 		box.x -= spX;
 		if (box.x < _x)
 			box.x += spX;
@@ -256,9 +251,7 @@ bool TankMain::moveAutomatic(SDL_Renderer* _renderer, int _x, int _y) {
 		if (box.y + box.h > backgroundHeight - 81)
 			box.y -= spY;
 	}
-
-	else if (rotationMoveAuto > 0.5 * PI && rotationMoveAuto <= PI)
-	{
+	else if (rotationMoveAuto > 0.5 * PI && rotationMoveAuto <= PI) {
 		box.x -= spX;
 		if (box.x < _x)
 			box.x += spX;
@@ -266,9 +259,7 @@ bool TankMain::moveAutomatic(SDL_Renderer* _renderer, int _x, int _y) {
 		if (box.y + box.h > backgroundHeight - 81)
 			box.y += spY;
 	}
-
-	else if (rotationMoveAuto > PI && rotationMoveAuto <= 1.5 * PI)
-	{
+	else if (rotationMoveAuto > PI && rotationMoveAuto <= 1.5 * PI) {
 		box.x += spX;
 		if (box.x > _x)
 			box.x -= spX;
@@ -276,9 +267,7 @@ bool TankMain::moveAutomatic(SDL_Renderer* _renderer, int _x, int _y) {
 		if (box.y + box.h > backgroundHeight - 81)
 			box.y += spY;
 	}
-
-	else if (rotationMoveAuto > 1.5 * PI && rotationMoveAuto < 2 * PI)
-	{
+	else if (rotationMoveAuto > 1.5 * PI && rotationMoveAuto < 2 * PI) {
 		box.x += spX;
 		if (box.x > _x)
 			box.x -= spX;
@@ -286,15 +275,13 @@ bool TankMain::moveAutomatic(SDL_Renderer* _renderer, int _x, int _y) {
 		if (box.y + box.h > backgroundHeight - 81)
 			box.y -= spY;
 	}
-	if (box.y >= _y)
-	{
-		if (rotationMoveAuto >= 0 && rotationMoveAuto <= PI)
-		{
+
+	if (box.y >= _y){
+		if (rotationMoveAuto >= 0 && rotationMoveAuto <= PI) {
 			if (box.x <= _x + 5)
 				return true;
 		}
-		else
-		{
+		else {
 			if (box.x >= _x - 5)
 				return true;
 		}
