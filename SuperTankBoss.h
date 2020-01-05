@@ -16,10 +16,11 @@ private:
 	Circle tankCircle; // dạng hình tròn
 	BloodBar bloodBar; // thanh máu
 	int totalHealth; // tổng máu
+	int healthCurrent; // máu hiện tại
 	int armor; // giáp
 	double rotation; // góc quay
 	BasicObj effectAppear[TOTAL_IMG_EFFECT_APPEAR]; // mảng hình ảnh hiệu ứng xuất hiện
-	int frame; // khung hiện tại
+	int frame; // khung load hình ảnh xuất hiện (nổ tường) hiện tại
 	std::vector<std::vector<int>> positionWallTileList;
 	bool isDestroy; // bị phá hủy?
 	BasicObj ballFire; // hình ảnh cầu lửa xung quanh tank

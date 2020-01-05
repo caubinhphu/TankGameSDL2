@@ -1,9 +1,12 @@
-#include "SuperTankBoss.h"
+﻿#include "SuperTankBoss.h"
 
 SuperTankBoss::SuperTankBoss() {
 	spX = spY = 0;
 	rotation = 0;
 	speed = 1;
+	totalHealth = healthCurrent = 1000;
+	armor = 0;
+	bloodBar = { 0, 0, 205, 15, 100 };
 }
 
 SuperTankBoss::~SuperTankBoss() {
@@ -104,8 +107,25 @@ bool SuperTankBoss::loadImg(SDL_Renderer* _renderer) {
 }
 
 void SuperTankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
+	// render tank
 	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
+
+	// render vòng lửa
 	ballFire.render(_renderer, box.x - 45 - _camera.x, box.y - 45 - _camera.y, NULL, 0);
+
+	// render thanh máu
+	bloodBar.x = box.x;
+	bloodBar.y = box.y - 60;
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 128, 0);
+	SDL_Rect rimBar = { bloodBar.x - _camera.x, bloodBar.y - _camera.y, bloodBar.width, bloodBar.height };
+	SDL_RenderDrawRect(_renderer, &rimBar);
+	SDL_SetRenderDrawColor(_renderer, 77, 1, 201, 0);
+	bloodBar.percent = healthCurrent * 100 / totalHealth; // tính phần trăm máu còn lại
+	if (bloodBar.percent <= 0) bloodBar.percent = 0;
+	SDL_Rect _bloodBar = { bloodBar.x - _camera.x + 1, bloodBar.y - _camera.y + 1, (float)(bloodBar.width - 2) * ((float)bloodBar.percent / 100), bloodBar.height - 2 };
+	SDL_RenderFillRect(_renderer, &_bloodBar);
+
+	// render text máu mất
 }
 
 void SuperTankBoss::setCircleBallFire(int _x, int _y) {
