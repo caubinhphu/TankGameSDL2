@@ -27,7 +27,8 @@ private:
 	Circle ballFireCircle; // danh hình tròn cầu lửa xung quanh tank
 
 	std::vector<Bullet*> bullets; // ds đạn
-
+	int damgeReceived;
+	bool isMinusHealth;
 	Bullet::BulletType bulletType; // loại đạn hiện tại
 	//AMMO::dame_bullet damebullet;
 	Uint32 saveTimeShoot; // lưu thời gian bắn viên đạn trước
@@ -39,7 +40,7 @@ private:
 	// bool is_create_red_zone;
 	// bool allow_create_rz;
 	// bool is_render_circle_rz;
-	//BASIC_OBJECT text_blood_wasted;
+	BasicObj textMinusHealth;
 	//bool is_damage;
 	//int total_damage_wasted;
 	//bool is_create_boss;
@@ -65,6 +66,9 @@ public:
 
 	bool loadImg(SDL_Renderer* _renderer);
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
+
+	void setDamgeReceived(int _damgeReceived) { damgeReceived += _damgeReceived; };
+	void handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font);
 
 	//void set_armor(const int ar) { armor = ar; }
 	//int get_armor() const { return armor; }

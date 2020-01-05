@@ -7,6 +7,8 @@ SuperTankBoss::SuperTankBoss() {
 	totalHealth = healthCurrent = 1000;
 	armor = 0;
 	bloodBar = { 0, 0, 205, 15, 100 };
+	damgeReceived = 0;
+	isMinusHealth = false;
 }
 
 SuperTankBoss::~SuperTankBoss() {
@@ -115,7 +117,7 @@ void SuperTankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 
 	// render thanh máu
 	bloodBar.x = box.x;
-	bloodBar.y = box.y - 60;
+	bloodBar.y = box.y - 65;
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 128, 0);
 	SDL_Rect rimBar = { bloodBar.x - _camera.x, bloodBar.y - _camera.y, bloodBar.width, bloodBar.height };
 	SDL_RenderDrawRect(_renderer, &rimBar);
@@ -126,6 +128,26 @@ void SuperTankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	SDL_RenderFillRect(_renderer, &_bloodBar);
 
 	// render text máu mất
+	if (isMinusHealth) {
+		isMinusHealth = false;
+		textMinusHealth.render(_renderer, box.x + box.w - _camera.x + 5, box.y - 65 - _camera.y, NULL, 0);
+	}
+}
+
+void SuperTankBoss::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font) {
+	if (damgeReceived != 0) {
+		int _damge = damgeReceived * (1 - (armor / 100.0));
+		// std::cout << _damgeReceived << ", " << _damge << std::endl;
+		healthCurrent -= _damge;
+		isMinusHealth = true;
+		// load text minus health
+		SDL_Color _color = { 255, 0, 0 };
+		std::stringstream _minus;
+		_minus.str("");
+		_minus << "- " << _damge;
+		textMinusHealth.loadText(_font, _minus.str(), _color, _renderer);
+		damgeReceived = 0;
+	}
 }
 
 void SuperTankBoss::setCircleBallFire(int _x, int _y) {

@@ -189,7 +189,7 @@ void TankMain::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font) {
 		isMinusHealth = false;
 	}
 	if (healthCurrent < 0) {
-		std::cout << "Game Over" << std::endl;
+		// std::cout << "Game Over" << std::endl;
 		healthCurrent = totalHealth;
 	}
 }
@@ -200,7 +200,7 @@ void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _render
 			_itemlist[i]->setIsEat(true);
 			
 			if (_itemlist[i]->getType() == Item::healthItem) {
-				std::cout << "health" << std::endl;
+				// std::cout << "health" << std::endl;
 				healthCurrent = healthCurrent + PLUS_HEALTH_ITEM < totalHealth ? healthCurrent + PLUS_HEALTH_ITEM : totalHealth;
 
 				isPlusHealth = true;
@@ -383,16 +383,20 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 	}
 }
 
-void TankMain::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList) {
+void TankMain::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList, SuperTankBoss* _superTank) {
 	for (int i = 0; i < bullets.size(); i++) {		
 		bullets[i]->move();
-
 
 		if (_map.checkCollisionRect(bullets[i]->getBox())
 			|| _tankList.checkCollisionBullet(bullets[i]->getBox(), true, bullets[i]->getDamge())) {
 			bullets[i]->setIsMove(false);
 		}
-
+		if (_superTank != NULL) {
+			if (check::checkRect_Circle(bullets[i]->getBox(), _superTank->getTankCircle())) {
+				_superTank->setDamgeReceived(bullets[i]->getDamge());
+				bullets[i]->setIsMove(false);
+			}
+		}
 		if (bullets[i]->getIsMove() == false) {
 			bullets[i]->renderCollisionEffect(_renderer, _camera);
 			delete bullets[i];

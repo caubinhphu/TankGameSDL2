@@ -195,6 +195,10 @@ int main(int arc, char* arg[]) {
 					else {
 						tank.move(map, bossList, { 0, 0, 0 }, { 0, 0, 0 });
 						bossList.handleList(map, tank.getTankCircle(), renderer, camera, itemList, { 0, 0, 0 });
+						if (!isSuperTankAppear && bossList.getQualityBoss() == 0) {
+							isLevelUp = true;
+							std::cout << level << std::endl;
+						}
 					}
 					tank.handleDamgeReceived(renderer, smallFont);
 					
@@ -209,22 +213,26 @@ int main(int arc, char* arg[]) {
 				tank.createBullet(renderer);
 				bool _isSlowedTankMain = false;
 
-				if (isAllowRenderSuperTank) {
+				if (isAllowRenderSuperTank) { // có super tank
 					tank.setDamgeReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTankMain, superTankBoss->getCircleBallFire()));
+					tank.handleBullet(map, renderer, camera, bossList, superTankBoss);
+					superTankBoss->handleDamgeReceived(renderer, font);
 				}
-				else {
+				else { // không có super tank
 					tank.setDamgeReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTankMain, { 0, 0, 0 }));
+					tank.handleBullet(map, renderer, camera, bossList, NULL);
 				}
 
 				if (_isSlowedTankMain) {
 					tank.setIsSlowed(true);
 					tank.setSaveTimeIsSlowed(SDL_GetTicks());
 				}
-				tank.handleBullet(map, renderer, camera, bossList);
 
-				if (!isSuperTankAppear && bossList.getQualityBoss() == 0) {
+				
+
+				/*if (!isSuperTankAppear && bossList.getQualityBoss() == 0) {
 					isLevelUp = true;
-				}
+				}*/
 				itemList.renderItemlist(renderer, camera);
 				tank.renderBullet(renderer, camera);
 				bossList.renderBulletOfTankList(renderer, camera);

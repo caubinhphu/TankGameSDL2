@@ -8,6 +8,7 @@
 #include "Bullet.h"
 #include "TankBoss.h"
 #include "Item.h"
+#include "SuperTankBoss.h"
 
 #define TANK_WIDTH 60
 #define TANK_HEIGHT 60
@@ -51,7 +52,7 @@ public:
 
 	void handleEvents(SDL_Event* _e, SDL_Rect _camera);
 	void createBullet(SDL_Renderer* _renderer);
-	void handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList);
+	void handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList, SuperTankBoss* _superTank);
 	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void move(MapGame map, TankBossList _bossList, Circle _superTank, Circle _fireBall);
 	void setCamera(SDL_Rect &_camera);
