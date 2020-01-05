@@ -188,7 +188,13 @@ int main(int arc, char* arg[]) {
 				}
 
 				if (isAllowTankMainMove) {
-					tank.move(map, bossList);
+					if (isAllowRenderSuperTank) {
+						tank.move(map, bossList, superTankBoss->getTankCircle(), superTankBoss->getCircleBallFire());
+					}
+					else {
+						tank.move(map, bossList, { 0, 0, 0 }, { 0, 0, 0 });
+					}
+					tank.handleDamgeReceived(renderer, smallFont);
 				}
 				
 				tank.setCamera(camera);
@@ -199,7 +205,7 @@ int main(int arc, char* arg[]) {
 				}
 				tank.createBullet(renderer);
 				bool _isSlowedTankMain = false;
-				tank.setDamageReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTankMain), renderer, smallFont);
+				tank.setDamgeReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTankMain));
 				if (_isSlowedTankMain) {
 					tank.setIsSlowed(true);
 					tank.setSaveTimeIsSlowed(SDL_GetTicks());

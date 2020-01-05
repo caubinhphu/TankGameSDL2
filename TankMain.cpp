@@ -16,6 +16,7 @@ TankMain::TankMain(int _x, int _y) {
 	saveTimeIsSlowed = 0;
 	isMinusHealth = false;
 	isPlusHealth = false;
+	damgeReceived = 0;
 }
 
 TankMain::~TankMain() {
@@ -95,27 +96,32 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 	}
 }
 
-void TankMain::move(MapGame map, TankBossList _bossList) {
-	if (SDL_GetTicks() - saveTimeIsSlowed >= TIME_SLOWED)
-	{
+void TankMain::move(MapGame map, TankBossList _bossList, Circle _superTank, Circle _fireBall) {
+	if (SDL_GetTicks() - saveTimeIsSlowed >= TIME_SLOWED) {
 		isSlowed = false;
 		box.x += spX;
 		box.y += spY;
 	}
-
-	else
-	{
+	else {
 		box.x += spX * 0.5;
 		box.y += spY * 0.5;
 	}
 	setTankCircle();
-	if (map.checkCollision(tankCircle) || _bossList.checkCollisionTankBossList(tankCircle, -1)) {
+	if (map.checkCollision(tankCircle) ||
+		_bossList.checkCollisionTankBossList(tankCircle, -1) ||
+		check::checkCircle_Circle(tankCircle, _superTank)) {
 		box.x -= spX;
 		setTankCircle();
 	}
-	if (map.checkCollision(tankCircle) || _bossList.checkCollisionTankBossList(tankCircle, -1)) {
+	if (map.checkCollision(tankCircle) ||
+		_bossList.checkCollisionTankBossList(tankCircle, -1) ||
+		check::checkCircle_Circle(tankCircle, _superTank)) {
 		box.y -= spY;
 		setTankCircle();
+	}
+
+	if (check::checkCircle_Circle(tankCircle, _fireBall)) {
+		damgeReceived += 20;
 	}
 }
 
@@ -164,9 +170,9 @@ void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	}
 }
 
-void TankMain::setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TTF_Font* _font) {
-	if (_damgeReceived != 0) {
-		int _damge = _damgeReceived * (1 - (armor / 100.0));
+void TankMain::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font) {
+	if (damgeReceived != 0) {
+		int _damge = damgeReceived * (1 - (armor / 100.0));
 		// std::cout << _damgeReceived << ", " << _damge << std::endl;
 		healthCurrent -= _damge;
 
@@ -177,6 +183,7 @@ void TankMain::setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TT
 		_minus.str("");
 		_minus << "- " << _damge;
 		textMinusHealth.loadText(_font, _minus.str(), _color, _renderer);
+		damgeReceived = 0;
 	}
 	else {
 		isMinusHealth = false;

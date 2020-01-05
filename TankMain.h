@@ -40,6 +40,7 @@ private:
 	bool isMinusHealth;
 	bool isPlusHealth;
 	double rotationMoveAuto;
+	int damgeReceived;
 public:
 	TankMain(int _x, int _y);
 	~TankMain();
@@ -52,7 +53,7 @@ public:
 	void createBullet(SDL_Renderer* _renderer);
 	void handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList);
 	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
-	void move(MapGame map, TankBossList _bossList);
+	void move(MapGame map, TankBossList _bossList, Circle _superTank, Circle _fireBall);
 	void setCamera(SDL_Rect &_camera);
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
 
@@ -66,8 +67,9 @@ public:
 	int getHealthCurrent() { return healthCurrent; };
 	void setPlusTotalHealth(int _totalPlus) { totalHealth += _totalPlus; };
 	void setPlusPower(int _powerPlus) { power += _powerPlus; };
-	void setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TTF_Font* _font);
-
+	// void setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TTF_Font* _font);
+	void setDamgeReceived(int _damgeReceived) { damgeReceived += _damgeReceived; };
+	void handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font);
 	void setIsSlowed(bool _is) { isSlowed = _is; };
 	void setSaveTimeIsSlowed(Uint32 _time) { saveTimeIsSlowed = _time; };
 	void handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _font);
