@@ -9,7 +9,7 @@ Item::Item() {
 }
 
 Item::~Item() {
-	;
+	BasicObj::free();
 }
 
 void Item::render(SDL_Renderer* _renderer, SDL_Rect _camera)

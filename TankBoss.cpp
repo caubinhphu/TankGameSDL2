@@ -97,7 +97,7 @@ void TankBoss::randomDirection(int k)
 	else if (_direction == 5) dir = STAND_STILL;
 }
 
-void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams)
+void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams, Circle _fireBall)
 {
 	rotation = check::rotationA_B(_tankMain.x, _tankMain.y, box.x + box.w / 2, box.y + box.h / 2);
 	if (isCollisionTeams == true)
@@ -130,8 +130,10 @@ void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams)
 
 	box.x += spX;
 	setTankCircle(box.x, box.y);
-	if (_map.checkCollision(tankCircle) || check::checkCircle_Circle(tankCircle, _tankMain))
-	{
+	if (_map.checkCollision(tankCircle) ||
+		check::checkCircle_Circle(tankCircle, _tankMain) ||
+		check::checkCircle_Circle(tankCircle, _fireBall)) {
+
 		box.x -= spX;
 		setTankCircle(box.x, box.y);
 		if (isCollisionTeams == false) randomDirection(0);
@@ -139,8 +141,10 @@ void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams)
 
 	box.y += spY;
 	setTankCircle(box.x, box.y);
-	if (_map.checkCollision(tankCircle) || check::checkCircle_Circle(tankCircle, _tankMain))
-	{
+	if (_map.checkCollision(tankCircle) ||
+		check::checkCircle_Circle(tankCircle, _tankMain) ||
+		check::checkCircle_Circle(tankCircle, _fireBall)) {
+
 		box.y -= spY;
 		setTankCircle(box.x, box.y);
 		if (isCollisionTeams == false) randomDirection(0);
@@ -275,7 +279,7 @@ void TankBoss::createBullet(SDL_Renderer* _renderer, Circle _tankMain)
 }
 
 
-int TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool& _isSlowedTankMain) {
+int TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool& _isSlowedTankMain, Circle _fireBall) {
 	int _damge = 0;
 	for (int i = 0; i < bullets.size(); i++) {
 		bullets[i]->move();
@@ -289,6 +293,9 @@ int TankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _came
 			if (type == iceTank) {
 				_isSlowedTankMain = true;
 			}
+		}
+		else if (check::checkRect_Circle(bullets[i]->getBox(), _fireBall)) {
+			bullets[i]->setIsMove(false);
 		}
 		if (bullets[i]->getIsMove() == false) {
 			bullets[i]->renderCollisionEffect(_renderer, _camera);
@@ -424,17 +431,17 @@ void TankBossList::renderList(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Fon
 	}
 }
 
-void TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera, ItemList _itemList) {
+void TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera, ItemList _itemList, Circle _fireBall) {
 	for (int i = 0; i < bossList.size(); i++) {
 		if (!bossList[i]->getIsDestroy()) {
 			bossList[i]->handleDirection();
 			bossList[i]->createBullet(_renderer, _tankMain);
 			bool isCollisionTeam = checkCollisionTankBossList(bossList[i]->getTankCircle(), i);
-			bossList[i]->handleMove(_map, _tankMain, isCollisionTeam);
+			bossList[i]->handleMove(_map, _tankMain, isCollisionTeam, _fireBall);
 		}
 		else {
 			if (bossList[i]->renderDestroy(_renderer, _camera)) {
-				Item* _item = new Item();
+				/*Item* _item = new Item();
 				int _type = 1 + rand() % TOTAL_ITEM_TYPE;
 				if (_type == 1) {
 					_item->loadImg("./image/bullet_item.png", _renderer);
@@ -452,7 +459,7 @@ void TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _ren
 					_item->setTimeExists(TIME_EXISTS_MONEY_ITEM);
 				}
 				_item->setXY(bossList[i]->getTankCircle().x - _item->getW() / 2, bossList[i]->getTankCircle().y - _item->getH() / 2);
-				_item->setTimeCreate(SDL_GetTicks());
+				_item->setTimeCreate(SDL_GetTicks());*/
 
 				// _itemList.setList(_item);
 				//_itemList.createItemListFromBossDestroy(_renderer, bossList[i]->getTankCircle());
@@ -497,10 +504,10 @@ bool TankBossList::checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _
 	return false;
 }
 
-int TankBossList::handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool& _isSlowedTankMain) {
+int TankBossList::handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool& _isSlowedTankMain, Circle _fireBall) {
 	int _damge = 0;
 	for (int i = 0; i < bossList.size(); i++) {
-		_damge += bossList[i]->handleBullet(_map, _renderer, _camera, _tankMain, _isSlowedTankMain);
+		_damge += bossList[i]->handleBullet(_map, _renderer, _camera, _tankMain, _isSlowedTankMain, _fireBall);
 	}
 	return _damge;
 }

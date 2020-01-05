@@ -190,22 +190,32 @@ int main(int arc, char* arg[]) {
 				if (isAllowTankMainMove) {
 					if (isAllowRenderSuperTank) {
 						tank.move(map, bossList, superTankBoss->getTankCircle(), superTankBoss->getCircleBallFire());
+						bossList.handleList(map, tank.getTankCircle(), renderer, camera, itemList, superTankBoss->getCircleBallFire());
 					}
 					else {
 						tank.move(map, bossList, { 0, 0, 0 }, { 0, 0, 0 });
+						bossList.handleList(map, tank.getTankCircle(), renderer, camera, itemList, { 0, 0, 0 });
 					}
 					tank.handleDamgeReceived(renderer, smallFont);
+					
 				}
 				
 				tank.setCamera(camera);
-				bossList.handleList(map, tank.getTankCircle(), renderer, camera, itemList);
+				
 				if (level >= 1) {
 					itemList.handleList();
 					tank.handleEatItem(itemList.getItemList(), renderer, smallFont);
 				}
 				tank.createBullet(renderer);
 				bool _isSlowedTankMain = false;
-				tank.setDamgeReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTankMain));
+
+				if (isAllowRenderSuperTank) {
+					tank.setDamgeReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTankMain, superTankBoss->getCircleBallFire()));
+				}
+				else {
+					tank.setDamgeReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTankMain, { 0, 0, 0 }));
+				}
+
 				if (_isSlowedTankMain) {
 					tank.setIsSlowed(true);
 					tank.setSaveTimeIsSlowed(SDL_GetTicks());

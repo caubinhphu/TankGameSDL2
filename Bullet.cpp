@@ -11,10 +11,9 @@ Bullet::Bullet() {
 }
 
 Bullet::~Bullet() {
-	/*BasicObj::~BasicObj();
+	BasicObj::free();
 	shootEffect.free();
-	collisionEffect.free();*/
-	;
+	collisionEffect.free();
 }
 
 void Bullet::move() {
