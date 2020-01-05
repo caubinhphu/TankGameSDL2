@@ -39,6 +39,7 @@ private:
 	BasicObj textMinusHealth;
 	bool isMinusHealth;
 	bool isPlusHealth;
+	double rotationMoveAuto;
 public:
 	TankMain(int _x, int _y);
 	~TankMain();
@@ -57,7 +58,7 @@ public:
 
 	int getSpeed() { return speed; };
 	void setSpeed(int _speed) { speed = _speed; };
-
+	void setSpXY(int _spX, int _spY) { spX = _spX; spY = _spY; };
 	Circle getTankCircle() { return tankCircle; };
 
 	void setPlusAmor(int _armorPlus) { armor += _armorPlus; };
@@ -70,6 +71,9 @@ public:
 	void setIsSlowed(bool _is) { isSlowed = _is; };
 	void setSaveTimeIsSlowed(Uint32 _time) { saveTimeIsSlowed = _time; };
 	void handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _font);
+
+	void handleMoveAutomatic(int _x, int _y);
+	bool moveAutomatic(SDL_Renderer* _renderer, int _x, int _y);
 };
 
 #endif // !TANKMAIN_H_

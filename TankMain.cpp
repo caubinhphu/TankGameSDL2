@@ -217,6 +217,91 @@ void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _render
 	isPlusHealth = false;
 }
 
+void TankMain::handleMoveAutomatic(int _x, int _y) {
+	rotationMoveAuto = check::rotationA_B(box.x, box.y, _x, _y);
+	spX = spY = 0;
+	if (rotationMoveAuto >= 0 && rotationMoveAuto <= 0.5 * PI)
+	{
+		spX = (sin(rotationMoveAuto) * 5);
+		spY = (cos(rotationMoveAuto) * 5);
+	}
+	else if (rotationMoveAuto > 0.5 * PI && rotationMoveAuto <= PI)
+	{
+		spX = (sin(PI - rotationMoveAuto) * 5);
+		spY = (cos(PI - rotationMoveAuto) * 5);
+
+	}
+	else if (rotationMoveAuto > PI && rotationMoveAuto <= 1.5 * PI)
+	{
+		spX = (sin(rotationMoveAuto - PI) * 5);
+		spY = (cos(rotationMoveAuto - PI) * 5);
+	}
+	else if (rotationMoveAuto > 1.5 * PI && rotationMoveAuto < 2 * PI)
+	{
+		spX = (sin(2 * PI - rotationMoveAuto) * 5);
+		spY = (cos(2 * PI - rotationMoveAuto) * 5);
+	}
+	if (spY == 0) spY = 1;
+	if (spX == 0) spX = 1;
+	if (box.y >= _y) spY = 0;
+}
+
+bool TankMain::moveAutomatic(SDL_Renderer* _renderer, int _x, int _y) {
+	if (rotationMoveAuto >= 0 && rotationMoveAuto <= 0.5 * PI)
+	{
+		box.x -= spX;
+		if (box.x < _x)
+			box.x += spX;
+		box.y += spY;
+		if (box.y + box.h > backgroundHeight - 81)
+			box.y -= spY;
+	}
+
+	else if (rotationMoveAuto > 0.5 * PI && rotationMoveAuto <= PI)
+	{
+		box.x -= spX;
+		if (box.x < _x)
+			box.x += spX;
+		box.y -= spY;
+		if (box.y + box.h > backgroundHeight - 81)
+			box.y += spY;
+	}
+
+	else if (rotationMoveAuto > PI && rotationMoveAuto <= 1.5 * PI)
+	{
+		box.x += spX;
+		if (box.x > _x)
+			box.x -= spX;
+		box.y -= spY;
+		if (box.y + box.h > backgroundHeight - 81)
+			box.y += spY;
+	}
+
+	else if (rotationMoveAuto > 1.5 * PI && rotationMoveAuto < 2 * PI)
+	{
+		box.x += spX;
+		if (box.x > _x)
+			box.x -= spX;
+		box.y += spY;
+		if (box.y + box.h > backgroundHeight - 81)
+			box.y -= spY;
+	}
+	if (box.y >= _y)
+	{
+		if (rotationMoveAuto >= 0 && rotationMoveAuto <= PI)
+		{
+			if (box.x <= _x + 5)
+				return true;
+		}
+		else
+		{
+			if (box.x >= _x - 5)
+				return true;
+		}
+	}
+	return false;
+}
+
 //bool TankMain::loadTamBan(std::string _path, SDL_Renderer* _renderer) {
 //	return tamBan.loadImg(_path, _renderer);
 //}
