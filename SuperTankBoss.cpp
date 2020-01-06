@@ -93,6 +93,105 @@ void SuperTankBoss::handleMove(Circle _tankMain, int _y) {
 	}
 }
 
+void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
+	if (bloodBar.percent > 95) {
+		//ban dan lua
+		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
+		bulletType = Bullet::fireBossBullet;
+		//damebullet = AMMO::fire_boss_dame;
+	}
+	else if (bloodBar.percent > 85) {
+		//ban danj lua
+		//ban red zone
+		handleMove(_tankMain, 85);
+		//type_bullet = AMMO::marbles_lv1;
+		bulletType = Bullet::fireBossBullet;
+		//if (allow_create_rz == true)
+		//{
+		//	is_create_red_zone = true;
+		//	allow_create_rz = false;//red zone
+		//}
+		//damebullet = AMMO::fire_boss_dame;
+	}
+	else if (bloodBar.percent > 75) {
+		//ban dan cau
+		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
+		//type_bullet = AMMO::ball_normal;
+		bulletType = Bullet::fireBossBullet;
+		//if (allow_create_boss == true)
+		//{
+		//	is_create_boss = true;
+		//	allow_create_boss = false;//red zone
+		//}
+		//damebullet = AMMO::ball_normal_boss_dame;
+		//sinh boss
+	}
+	else if (bloodBar.percent > 55) {
+		//ban dan lua
+		//sinh nhieu boss
+		handleMove(_tankMain, backgroundHeight - 85 - box.h);
+		bulletType = Bullet::fireBossBullet;
+		//damebullet = AMMO::fire_boss_dame;
+
+	}
+	else if (bloodBar.percent > 45) {
+		//ban dan cau sin
+		//ban red_zone
+		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
+		bulletType = Bullet::fireBossBullet;
+
+		//if (allow_create_rz == true)
+		//{
+		//	is_create_red_zone = true;
+		//	allow_create_rz = false;//red zone
+		//}
+
+		//damebullet = AMMO::ball_boss_dame;
+	}
+	else if (bloodBar.percent > 10) {
+		//tang giap
+		//bien hinh
+		//ban dan moi, sin hon (dan bi)
+		handleMove(_tankMain, backgroundHeight / 2 - 2 * box.h);
+		bulletType = Bullet::fireBossBullet;
+		armor = 50;
+		// is_render_shield = true;
+		/*if (allow_create_boss == true)
+		{
+			is_create_boss = true;
+			allow_create_boss = false;
+		}*/
+		//damebullet = AMMO::fire_boss_dame;
+	}
+	else if (bloodBar.percent > 0) {
+		//tang giap
+		//la chan
+		//sinh boss
+		//ban dan cau
+		//ban dan cau sin
+		//ban red zone
+		//sinh rat nhieu boss
+		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
+		bulletType = Bullet::fireBossBullet;
+		armor = 80;
+		//is_render_shield = true;
+		/*if (allow_create_boss == true)
+		{
+			is_create_boss = true;
+			allow_create_boss = false;
+		}*/
+
+		//if (allow_create_rz == true)
+		//{
+		//	is_create_red_zone = true;
+		//	allow_create_rz = false;//red zone
+		//}
+		//damebullet = AMMO::fire_boss_dame;
+	}
+	else if (bloodBar.percent <= 0)
+		isDestroy = true;
+}
+
 void SuperTankBoss::move() {
 	box.x += spX;
 	box.y += spY;

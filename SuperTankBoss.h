@@ -62,6 +62,7 @@ public:
 	bool moveAuto(int _y);
 
 	void handleMove(Circle _tankMain, int _y);
+	void handleSwitchLevel(Circle _tankMain);
 	void move();
 
 	bool loadImg(SDL_Renderer* _renderer);
@@ -82,7 +83,7 @@ public:
 
 	void freePositionWallTileList() { positionWallTileList.clear(); }
 
-	//void control_move(circle main_char);
+	
 
 	//void load_ball_fire(SDL_Renderer* RenDer, std::string path);
 	//void render_ball_fire(SDL_Renderer* RenDer, SDL_Rect cam);

@@ -172,7 +172,7 @@ int main(int arc, char* arg[]) {
 
 				if (isAllowRenderSuperTank) {
 					if (isAllowSuperTankMove) {
-						superTankBoss->handleMove(tank.getTankCircle(), 100);
+						superTankBoss->handleSwitchLevel(tank.getTankCircle());
 						superTankBoss->move();
 					}
 					superTankBoss->render(renderer, camera);
