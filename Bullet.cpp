@@ -8,6 +8,7 @@ Bullet::Bullet() {
 	type = nomalBullet;
 	firtingRate = nomalRate;
 	damge = nomalDamge;
+	timeShoot = 0;
 }
 
 Bullet::~Bullet() {

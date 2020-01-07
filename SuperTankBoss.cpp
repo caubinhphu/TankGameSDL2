@@ -9,6 +9,7 @@ SuperTankBoss::SuperTankBoss() {
 	bloodBar = { 0, 0, 205, 15, 100 };
 	damgeReceived = 0;
 	isMinusHealth = false;
+	saveTimeShoot = timeBulletLv1 = timeBulletLv2 = 0;
 }
 
 SuperTankBoss::~SuperTankBoss() {
@@ -342,6 +343,8 @@ void SuperTankBoss::createBullet(SDL_Renderer* _renderer) {
 			bullet->setRotation(rotationBullet);
 			bullet->setDamge(_damge);
 			bullet->setIsMove(true);
+			if (bulletType == Bullet::marblesLv1Bullet)
+				bullet->setTimeShoot(SDL_GetTicks());
 
 			bullets.push_back(bullet);
 
@@ -422,6 +425,16 @@ int SuperTankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect 
 			_damge += bullets[i]->getDamge();
 		}
 
+		if (bullets[i]->getType() == Bullet::marblesLv1Bullet || bullets[i]->getType() == Bullet::marblesLv2Bullet) {
+			if (SDL_GetTicks() - bullets[i]->getTimeShoot() >= 200) {
+				bullets[i]->setIsMove(false);
+				if (bullets[i]->getType() == Bullet::marblesLv1Bullet)
+					createMarblesBullet(2, _renderer, bullets[i]->getBox(), bullets[i]->getRotation());
+				else if (bullets[i]->getType() == Bullet::marblesLv2Bullet)
+					createMarblesBullet(3, _renderer, bullets[i]->getBox(), bullets[i]->getRotation());
+			}
+		}
+
 		if (bullets[i]->getIsMove() == false) {
 			bullets[i]->renderCollisionEffect(_renderer, _camera);
 			delete bullets[i];
@@ -439,6 +452,67 @@ void SuperTankBoss::renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera) {
 			bullets[i]->renderShootEffect(_renderer, _camera, box);
 		}
 		bullets[i]->render(_renderer, _camera);
+	}
+}
+
+void SuperTankBoss::createMarblesBullet(int _marblesLv, SDL_Renderer* _renderer, SDL_Rect _parentBullet, double _rotationParentBullet) {
+	int x = 0, y = 0;
+	double _angleDeviation = 0.0;
+	double _rotation = 0.0;
+	for (int i = 0; i < 3; i++) {
+		Bullet* bullet = new Bullet();
+		
+		if (i == 0) _angleDeviation = PI / 18;
+		else if (i == 1) _angleDeviation = -(PI / 18);
+		else if (i == 2) _angleDeviation = 0.0;
+
+		_rotation = _rotationParentBullet + _angleDeviation;
+		if (_rotation < 0.0) _rotation = 2 * PI + _rotation;
+		else if (_rotation > 2 * PI) _rotation -= 2 * PI;
+
+		if (_marblesLv == 2) {
+			bullet->loadImg("./image/marbles_bullet_lv2.png", "./image/effect_shoot_2.png", "./image/collision3.png", _renderer);
+			bullet->setType(Bullet::marblesLv2Bullet);
+		}
+		else if (_marblesLv == 3) {
+			bullet->loadImg("./image/marbles_bullet_lv3.png", "./image/effect_shoot_2.png", "./image/collision3.png", _renderer);
+			bullet->setType(Bullet::marblesLv3Bullet);
+		}
+
+		if (_rotation >= 0 && _rotation <= PI / 2) {
+			bullet->setDir(Bullet::TOP_RIGHT);
+			bullet->setSpX(round(sin(_rotation) * Bullet::speed)); // độ lệch x
+			bullet->setSpY(round(cos(_rotation) * Bullet::speed)); // độ lệch y
+			x = _parentBullet.x + _parentBullet.w / 2 + (sin(_rotation) * (_parentBullet.h / 2)) - bullet->getW() / 2;
+			y = _parentBullet.y + _parentBullet.h / 2 - (cos(_rotation) * (_parentBullet.h / 2)) - bullet->getH() / 2;
+		}
+		else if (_rotation > PI / 2 && _rotation <= PI) {
+			bullet->setDir(Bullet::BOTTOM_RIGHT);
+			bullet->setSpX(round(sin(PI - _rotation) * Bullet::speed));
+			bullet->setSpY(round(cos(PI - _rotation) * Bullet::speed));
+			x = _parentBullet.x + _parentBullet.w / 2 + (sin(PI - _rotation) * (_parentBullet.h / 2)) - bullet->getW() / 2;
+			y = _parentBullet.y + _parentBullet.h / 2 + (cos(PI - _rotation) * (_parentBullet.h / 2)) - bullet->getH() / 2;
+		}
+		else if (_rotation > PI&& _rotation <= 1.5 * PI) {
+			bullet->setDir(Bullet::BOTTOM_LEFT);
+			bullet->setSpX(round(sin(_rotation - PI) * Bullet::speed));
+			bullet->setSpY(round(cos(_rotation - PI) * Bullet::speed));
+			x = _parentBullet.x + _parentBullet.w / 2 - (sin(_rotation - PI) * (_parentBullet.h / 2)) - bullet->getW() / 2;
+			y = _parentBullet.y + _parentBullet.h / 2 + (cos(_rotation - PI) * (_parentBullet.h / 2)) - bullet->getH() / 2;
+		}
+		else if (_rotation > 1.5 * PI && _rotation < 2 * PI) {
+			bullet->setDir(Bullet::TOP_LEFT);
+			bullet->setSpX(round(sin(2 * PI - _rotation) * Bullet::speed));
+			bullet->setSpY(round(cos(2 * PI - _rotation) * Bullet::speed));
+			x = _parentBullet.x + _parentBullet.w / 2 - (sin(2 * PI - _rotation) * (_parentBullet.h / 2)) - bullet->getW() / 2;
+			y = _parentBullet.y + _parentBullet.h / 2 - (cos(2 * PI - _rotation) * (_parentBullet.h / 2)) - bullet->getH() / 2;
+		}
+		bullet->setXY(x, y);
+		bullet->setRotation(_rotation);
+		bullet->setIsMove(true);
+		bullet->setTimeShoot(SDL_GetTicks());
+
+		bullets.push_back(bullet);
 	}
 }
 

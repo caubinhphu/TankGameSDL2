@@ -50,6 +50,7 @@ private:
 	BulletType type;
 	BulletFirtingRate firtingRate;
 	DameBullet damge;
+	Uint32 timeShoot;
 public:
 	Bullet();
 	~Bullet();
@@ -62,6 +63,7 @@ public:
 	void setDir(ShootDir _dir) { dir = _dir; };
 	ShootDir getDir() { return dir; };
 	void setRotation(double _rotation) { rotation = _rotation; };
+	double getRotation() { return rotation; };
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void setIsEffectShoot(bool _is) { isEffectShoot = _is; };
 	bool getIsEffectShoot() { return isEffectShoot; };
@@ -72,6 +74,8 @@ public:
 	BulletFirtingRate getFirtingRate() { return firtingRate; };
 	void setDamge(DameBullet _damge) { damge = _damge; };
 	DameBullet getDamge() { return damge; };
+	void setTimeShoot(Uint32 _time) { timeShoot = _time; };
+	Uint32 getTimeShoot() { return timeShoot; };
 };
 
 #endif // !BULLET_H_
