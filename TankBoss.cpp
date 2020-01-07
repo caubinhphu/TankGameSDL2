@@ -250,7 +250,7 @@ void TankBoss::createBullet(SDL_Renderer* _renderer, Circle _tankMain)
 						_x = tankCircle.x + (sin(PI - _rotation) * (box.h / 2)) - _bullet->getW() / 2;
 						_y = tankCircle.y + (cos(PI - _rotation) * (box.h / 2)) - _bullet->getH() / 2;
 					}
-					else if (_rotation > PI&& _rotation <= 1.5 * PI) {
+					else if (_rotation > PI && _rotation <= 1.5 * PI) {
 						_bullet->setDir(Bullet::BOTTOM_LEFT);
 						_bullet->setSpX(round(sin(_rotation - PI) * Bullet::speed));
 						_bullet->setSpY(round(cos(_rotation - PI) * Bullet::speed));
