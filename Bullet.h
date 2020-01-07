@@ -19,7 +19,7 @@ public:
 		rocketRate = 1000,
 		fireBossRate = 500,
 		ballBossRate = 700,
-		ballNormalBoosRate = 600,
+		ballNormalBossRate = 600,
 		iceRate = 600,
 		triangleRate = 500,
 		marblesRate = 700,

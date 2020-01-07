@@ -171,11 +171,15 @@ int main(int arc, char* arg[]) {
 				}
 
 				if (isAllowRenderSuperTank) {
+					superTankBoss->render(renderer, camera);
 					if (isAllowSuperTankMove) {
 						superTankBoss->handleSwitchLevel(tank.getTankCircle());
 						superTankBoss->move();
+						superTankBoss->createBullet(renderer);
+						tank.setDamgeReceived(superTankBoss->handleBullet(map, renderer, camera, tank.getTankCircle()));
+						superTankBoss->renderBullet(renderer, camera);
+						
 					}
-					superTankBoss->render(renderer, camera);
 				}
 
 				if (isAllowCreateTankBossList) {

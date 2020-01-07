@@ -117,7 +117,7 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		//ban dan cau
 		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
 		//type_bullet = AMMO::ball_normal;
-		bulletType = Bullet::fireBossBullet;
+		bulletType = Bullet::ballNomalBullet;
 		//if (allow_create_boss == true)
 		//{
 		//	is_create_boss = true;
@@ -138,7 +138,7 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		//ban dan cau sin
 		//ban red_zone
 		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
-		bulletType = Bullet::fireBossBullet;
+		bulletType = Bullet::ballBullet;
 
 		//if (allow_create_rz == true)
 		//{
@@ -153,7 +153,7 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		//bien hinh
 		//ban dan moi, sin hon (dan bi)
 		handleMove(_tankMain, backgroundHeight / 2 - 2 * box.h);
-		bulletType = Bullet::fireBossBullet;
+		bulletType = Bullet::marblesLv1Bullet;
 		armor = 50;
 		// is_render_shield = true;
 		/*if (allow_create_boss == true)
@@ -172,7 +172,7 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		//ban red zone
 		//sinh rat nhieu boss
 		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
-		bulletType = Bullet::fireBossBullet;
+		bulletType = Bullet::ballBullet;
 		armor = 80;
 		//is_render_shield = true;
 		/*if (allow_create_boss == true)
@@ -246,6 +246,122 @@ void SuperTankBoss::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font
 		_minus << "- " << _damge;
 		textMinusHealth.loadText(_font, _minus.str(), _color, _renderer);
 		damgeReceived = 0;
+	}
+}
+
+void SuperTankBoss::createBullet(SDL_Renderer* _renderer) {
+	if (!isDestroy) {
+		Bullet::BulletFirtingRate firtingRate{};
+		if (bulletType == Bullet::fireBossBullet) {
+			firtingRate = Bullet::fireBossRate;
+		}
+		else if (bulletType == Bullet::ballBullet) {
+			firtingRate = Bullet::ballBossRate;
+		}
+		else if (bulletType == Bullet::ballNomalBullet) {
+			firtingRate = Bullet::ballNormalBossRate;
+		}
+		else if (bulletType == Bullet::marblesLv1Bullet) {
+			firtingRate = Bullet::marblesRate;
+		}
+
+
+		if (SDL_GetTicks() - saveTimeShoot > firtingRate) {
+			std::string _imgBullet; // hình viên đạn
+			Bullet::DameBullet _damge = Bullet::fireBossDamge; // damge viên đạn
+			if (bulletType == Bullet::fireBossBullet) {
+				_imgBullet = "./image/bullet_tank_boss.png";
+				_damge = Bullet::fireBossDamge;
+
+			}
+			else if (bulletType == Bullet::ballNomalBullet) {
+				_imgBullet = "./image/bullet_tank_boss_2.png";
+				_damge = Bullet::ballNormalBossDamge;
+			}
+			else if (bulletType == Bullet::ballBullet) {
+				_imgBullet = "./image/bullet_tank_boss_2.png";
+				_damge = Bullet::ballBossDamge;
+			}
+			else if (bulletType == Bullet::marblesLv1Bullet) {
+				_imgBullet = "./image/marbles_bullet_lv1.png";
+				_damge = Bullet::marblesDamge;
+			}
+
+			Bullet* bullet = new Bullet(); // khai báo viên đạn mới
+			bullet->setType(bulletType);
+			bullet->loadImg(_imgBullet, "./image/effect_shoot_2.png", "./image/collision3.png", _renderer);
+			int x, y; // vị trí ban đầu
+			if (rotation >= 0 && rotation <= PI / 2) {
+				bullet->setDir(Bullet::TOP_RIGHT);
+				bullet->setSpX(round(sin(rotation) * Bullet::speed)); // độ lệch x
+				bullet->setSpY(round(cos(rotation) * Bullet::speed)); // độ lệch y
+				x = tankCircle.x + (sin(rotation) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y - (cos(rotation) * (box.h / 2)) - bullet->getH() / 2;
+				// std::cout << (sin(rotation) * Bullet::speed) << (cos(rotation) * Bullet::speed);
+			}
+			else if (rotation > PI / 2 && rotation <= PI) {
+				bullet->setDir(Bullet::BOTTOM_RIGHT);
+				bullet->setSpX(round(sin(PI - rotation) * Bullet::speed));
+				bullet->setSpY(round(cos(PI - rotation) * Bullet::speed));
+				x = tankCircle.x + (sin(PI - rotation) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y + (cos(PI - rotation) * (box.h / 2)) - bullet->getH() / 2;
+			}
+			else if (rotation > PI && rotation <= 1.5 * PI) {
+				bullet->setDir(Bullet::BOTTOM_LEFT);
+				bullet->setSpX(round(sin(rotation - PI) * Bullet::speed));
+				bullet->setSpY(round(cos(rotation - PI) * Bullet::speed));
+				x = tankCircle.x - (sin(rotation - PI) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y + (cos(rotation - PI) * (box.h / 2)) - bullet->getH() / 2;
+			}
+			else if (rotation > 1.5 * PI && rotation < 2 * PI) {
+				bullet->setDir(Bullet::TOP_LEFT);
+				bullet->setSpX(round(sin(2 * PI - rotation) * Bullet::speed));
+				bullet->setSpY(round(cos(2 * PI - rotation) * Bullet::speed));
+				x = tankCircle.x - (sin(2 * PI - rotation) * (box.h / 2)) - bullet->getW() / 2;
+				y = tankCircle.y - (cos(2 * PI - rotation) * (box.h / 2)) - bullet->getH() / 2;
+			}
+			bullet->setXY(x, y);
+			bullet->setRotation(rotation);
+			bullet->setDamge(_damge);
+			bullet->setIsMove(true);
+
+			bullets.push_back(bullet);
+
+			saveTimeShoot = SDL_GetTicks();
+		}
+	}
+}
+
+int SuperTankBoss::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain) {
+	int _damge = 0;
+	for (int i = 0; i < bullets.size(); i++) {
+		bullets[i]->move();
+
+		if (_map.checkCollisionRect(bullets[i]->getBox())) {
+			bullets[i]->setIsMove(false);
+		}
+		else if (check::checkRect_Circle(bullets[i]->getBox(), _tankMain)) {
+			bullets[i]->setIsMove(false);
+			_damge += bullets[i]->getDamge();
+		}
+
+		if (bullets[i]->getIsMove() == false) {
+			bullets[i]->renderCollisionEffect(_renderer, _camera);
+			delete bullets[i];
+			bullets.erase(bullets.begin() + i);
+			i--;
+		}
+	}
+	return _damge;
+}
+
+void SuperTankBoss::renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera) {
+	for (int i = 0; i < bullets.size(); i++) {
+		if (bullets[i]->getIsEffectShoot()) {
+			bullets[i]->setIsEffectShoot(false);
+			bullets[i]->renderShootEffect(_renderer, _camera, box);
+		}
+		bullets[i]->render(_renderer, _camera);
 	}
 }
 

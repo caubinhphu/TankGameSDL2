@@ -177,8 +177,7 @@ bool TankBoss::renderDestroy(SDL_Renderer* _renderer, SDL_Rect _camera)
 
 void TankBoss::createBullet(SDL_Renderer* _renderer, Circle _tankMain)
 {
-	if (!isDestroy && check::binhPhuongKhoangCach(box.x, box.y, _tankMain.x, _tankMain.y) <= RANGE_SQUARE)
-	{
+	if (!isDestroy && check::binhPhuongKhoangCach(box.x, box.y, _tankMain.x, _tankMain.y) <= RANGE_SQUARE) {
 		if (SDL_GetTicks() - saveTimeShoot > bulletRate) {
 			Bullet* bullet = new Bullet(); // khai báo viên đạn mới
 			bullet->setType(bulletType);

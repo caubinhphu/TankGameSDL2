@@ -83,7 +83,9 @@ public:
 
 	void freePositionWallTileList() { positionWallTileList.clear(); }
 
-	
+	void createBullet(SDL_Renderer* _renderer);
+	int handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain);
+	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
 
 	//void load_ball_fire(SDL_Renderer* RenDer, std::string path);
 	//void render_ball_fire(SDL_Renderer* RenDer, SDL_Rect cam);
