@@ -12,7 +12,8 @@ SuperTankBoss::SuperTankBoss() {
 	saveTimeShoot = timeBulletLv1 = timeBulletLv2 = 0;
 	isAllowRenderShield = false;
 	isSwitchLevel = false;
-	switchLevel = 0;
+	switchLevel = -1;
+	frameDestroy = 0;
 }
 
 SuperTankBoss::~SuperTankBoss() {
@@ -34,16 +35,12 @@ void SuperTankBoss::loadEffectAppear(SDL_Renderer* _renderer) {
 }
 
 void SuperTankBoss::handleEffectAppear(std::vector<int> _mapWall) {
-	for (int i = 0; i < TOTAL_TILE; i++)
-	{
+	for (int i = 0; i < TOTAL_TILE; i++) {
 		int hang = 0, cot = 0;
-		if (_mapWall[i] == 1)
-		{
+		if (_mapWall[i] == 1) {
 			hang = i / 20;
 			cot = i % 20;
-
-			if (hang != 0 && hang != 19 && cot != 0 && cot != 19)
-			{
+			if (hang != 0 && hang != 19 && cot != 0 && cot != 19) {
 				std::vector<int> tam;
 				tam.push_back(hang);
 				tam.push_back(cot);
@@ -55,11 +52,6 @@ void SuperTankBoss::handleEffectAppear(std::vector<int> _mapWall) {
 
 bool SuperTankBoss::renderEffectAppear(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	int x = 0, y = 0;
-	//if (frame + 1 < 0)
-	//{
-	//	frame++;
-	//	return false;
-	//}
 	for (int i = 0; i < positionWallTileList.size(); i++)
 	{
 		y = positionWallTileList[i][0] * 80;
@@ -92,46 +84,42 @@ void SuperTankBoss::handleMove(Circle _tankMain, int _y) {
 		if (box.y > _y) spY = -speed;
 		else if (box.y < _y) spY = speed;
 	}
-	else{
+	else {
 		spX = spY = 0;
 	}
 }
 
 void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 	if (bloodBar.percent > 95) {
-		//ban dan lua
+		// bắn đạn lửa
 		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
 		bulletType = Bullet::fireBossBullet;
-		//damebullet = AMMO::fire_boss_dame;
 	}
 	else if (bloodBar.percent > 85) {
-		//ban danj lua
-		//ban red zone
+		// bắn đạn lửa
+		// sinh boss
 		handleMove(_tankMain, 85);
-		//type_bullet = AMMO::marbles_lv1;
 		bulletType = Bullet::fireBossBullet;
-		//if (allow_create_rz == true)
-		//{
-		//	is_create_red_zone = true;
-		//	allow_create_rz = false;//red zone
-		//}
-		//damebullet = AMMO::fire_boss_dame;
+		if (switchLevel < 0)
+		{
+			switchLevel++;
+			isSwitchLevel = true;
+		}
 	}
 	else if (bloodBar.percent > 75) {
-		//ban dan cau
+		// bắn đạn cầu 1
+		// sinh boss
 		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
-		//type_bullet = AMMO::ball_normal;
 		bulletType = Bullet::ballNomalBullet;
 		if (switchLevel < 1)
 		{
 			switchLevel++;
 			isSwitchLevel = true;
 		}
-		//sinh boss
 	}
 	else if (bloodBar.percent > 55) {
-		//ban dan lua
-		//sinh nhieu boss
+		// bắn đạn lửa
+		// sinh boss
 		handleMove(_tankMain, backgroundHeight - 85 - box.h);
 		bulletType = Bullet::fireBossBullet;
 		if (switchLevel < 2)
@@ -141,21 +129,14 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		}
 	}
 	else if (bloodBar.percent > 45) {
-		//ban dan cau sin
-		//ban red_zone
+		// bắn đạn cầu 2
 		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
 		bulletType = Bullet::ballBullet;
-
-		//if (allow_create_rz == true)
-		//{
-		//	is_create_red_zone = true;
-		//	allow_create_rz = false;//red zone
-		//}
 	}
 	else if (bloodBar.percent > 10) {
-		//tang giap
-		//bien hinh
-		//ban dan moi, sin hon (dan bi)
+		// tăng giáp
+		// bắn đạn bi
+		// sinh boss
 		handleMove(_tankMain, backgroundHeight / 2 - 2 * box.h);
 		bulletType = Bullet::marblesLv1Bullet;
 		armor = 50;
@@ -168,13 +149,9 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		}
 	}
 	else if (bloodBar.percent > 0) {
-		//tang giap
-		//la chan
-		//sinh boss
-		//ban dan cau
-		//ban dan cau sin
-		//ban red zone
-		//sinh rat nhieu boss
+		// tăng giáp
+		// bắn đạn bi
+		// sinh boss
 		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
 		bulletType = Bullet::ballBullet;
 		armor = 80;
@@ -183,12 +160,6 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 			switchLevel++;
 			isSwitchLevel = true;
 		}
-
-		//if (allow_create_rz == true)
-		//{
-		//	is_create_red_zone = true;
-		//	allow_create_rz = false;//red zone
-		//}
 	}
 	else if (bloodBar.percent <= 0)
 		isDestroy = true;
@@ -211,34 +182,43 @@ bool SuperTankBoss::loadImg(SDL_Renderer* _renderer) {
 	return true;
 }
 
-void SuperTankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
-	// render tank
-	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
+bool SuperTankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
+	if (!isDestroy) {
+		// render tank
+		BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
 
-	// render vòng lửa
-	ballFire.render(_renderer, box.x - 45 - _camera.x, box.y - 45 - _camera.y, NULL, 0);
+		// render vòng lửa
+		ballFire.render(_renderer, box.x - 45 - _camera.x, box.y - 45 - _camera.y, NULL, 0);
 
-	// render shield nếu có
-	if (isAllowRenderShield)
-		shield.render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
+		// render shield nếu có
+		if (isAllowRenderShield)
+			shield.render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
 
-	// render thanh máu
-	bloodBar.x = box.x;
-	bloodBar.y = box.y - 65;
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 128, 0);
-	SDL_Rect rimBar = { bloodBar.x - _camera.x, bloodBar.y - _camera.y, bloodBar.width, bloodBar.height };
-	SDL_RenderDrawRect(_renderer, &rimBar);
-	SDL_SetRenderDrawColor(_renderer, 77, 1, 201, 0);
-	bloodBar.percent = healthCurrent * 100 / totalHealth; // tính phần trăm máu còn lại
-	if (bloodBar.percent <= 0) bloodBar.percent = 0;
-	SDL_Rect _bloodBar = { bloodBar.x - _camera.x + 1, bloodBar.y - _camera.y + 1, (float)(bloodBar.width - 2) * ((float)bloodBar.percent / 100), bloodBar.height - 2 };
-	SDL_RenderFillRect(_renderer, &_bloodBar);
+		// render thanh máu
+		bloodBar.x = box.x;
+		bloodBar.y = box.y - 65;
+		SDL_SetRenderDrawColor(_renderer, 0, 0, 128, 0);
+		SDL_Rect rimBar = { bloodBar.x - _camera.x, bloodBar.y - _camera.y, bloodBar.width, bloodBar.height };
+		SDL_RenderDrawRect(_renderer, &rimBar);
+		SDL_SetRenderDrawColor(_renderer, 77, 1, 201, 0);
+		bloodBar.percent = healthCurrent * 100 / totalHealth; // tính phần trăm máu còn lại
+		if (bloodBar.percent <= 0) bloodBar.percent = 0;
+		SDL_Rect _bloodBar = { bloodBar.x - _camera.x + 1, bloodBar.y - _camera.y + 1, (float)(bloodBar.width - 2) * ((float)bloodBar.percent / 100), bloodBar.height - 2 };
+		SDL_RenderFillRect(_renderer, &_bloodBar);
 
-	// render text máu mất
-	if (isMinusHealth) {
-		isMinusHealth = false;
-		textMinusHealth.render(_renderer, box.x + box.w - _camera.x + 5, box.y - 65 - _camera.y, NULL, 0);
+		// render text máu mất
+		if (isMinusHealth) {
+			isMinusHealth = false;
+			textMinusHealth.render(_renderer, box.x + box.w - _camera.x + 5, box.y - 65 - _camera.y, NULL, 0);
+		}
 	}
+	else {
+		spX = spY = 0;
+		if (renderDestroy(_renderer, _camera)) {
+			return false; // you win
+		}
+	}
+	return true;
 }
 
 void SuperTankBoss::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font) {
@@ -527,4 +507,20 @@ void SuperTankBoss::setCircleBallFire(int _x, int _y) {
 	ballFireCircle.x = _x + ballFire.getW() / 2;
 	ballFireCircle.y = _y + ballFire.getH() / 2;
 	ballFireCircle.r = ballFire.getW() / 2;
+}
+
+void SuperTankBoss::loadDestroyImg(SDL_Renderer* _renderer) {
+	destroyImg[0].loadImg("./image/explosionBoss_1.png", _renderer);
+	destroyImg[1].loadImg("./image/explosionBoss_2.png", _renderer);
+	destroyImg[2].loadImg("./image/explosionBoss_3.png", _renderer);
+	destroyImg[3].loadImg("./image/explosionBoss_4.png", _renderer);
+}
+
+bool SuperTankBoss::renderDestroy(SDL_Renderer* _renderer, SDL_Rect _camera)
+{
+	destroyImg[frameDestroy / 8].render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, 0);
+	frameDestroy++;
+	if (frameDestroy / 8 == 4)
+		return true;
+	return false;
 }

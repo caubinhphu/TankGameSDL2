@@ -519,3 +519,9 @@ void TankBossList::renderBulletOfTankList(SDL_Renderer* _renderer, SDL_Rect _cam
 		bossList[i]->renderBullet(_renderer, _camera);
 	}
 }
+
+void TankBossList::clearList() {
+	for (int i = 0; i < bossList.size(); i++) {
+		bossList[i]->setIsDestroy(true);
+	}
+}

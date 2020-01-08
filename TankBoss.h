@@ -113,6 +113,7 @@ public:
 	int handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool &_isSlowedTankMain, Circle _fireBall);
 	void renderBulletOfTankList(SDL_Renderer* _renderer, SDL_Rect _camera);
 	int getQualityBoss() { return bossList.size(); };
+	void clearList();
 };
 
 #endif // !TANKBOSSES_H_
