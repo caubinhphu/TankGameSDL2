@@ -48,6 +48,8 @@ private:
 	//bool is_render_shield;
 	BasicObj shield;
 	bool isAllowRenderShield;
+	bool isSwitchLevel;
+	int switchLevel;
 public:
 	SuperTankBoss();
 	~SuperTankBoss();
@@ -94,6 +96,10 @@ public:
 
 	void setCircleBallFire(int _x, int _y);
 	Circle getCircleBallFire() { return ballFireCircle; };
+
+	void setSwitchLevel(bool _is) { isSwitchLevel = _is; };
+	bool getSwitchLevel() { return isSwitchLevel; };
+
 
 	//std::vector<AMMO*> get_list_bullet() const { return ds_bullet; };
 	//void set_list_bullet(std::vector<AMMO*> list_bl) { ds_bullet = list_bl; }

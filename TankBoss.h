@@ -105,7 +105,7 @@ private:
 public:
 	TankBossList();
 	~TankBossList();
-	void createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer, int _health, int _armor);
+	void createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer, int _health, int _armor, Circle _superTank, Circle _ballFire);
 	bool checkCollisionTankBossList(Circle _boss, int k);
 	void renderList(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Font* _font);
 	void handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera, ItemList _itemList, Circle _fireBall);

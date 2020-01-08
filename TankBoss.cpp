@@ -341,7 +341,7 @@ TankBossList::~TankBossList() {
 	;
 }
 
-void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer, int _health, int _armor) {
+void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer, int _health, int _armor, Circle _superTank, Circle _ballFire) {
 	for (int i = 0; i < _quality; i++) {
 		int type = 1 + rand() % _typeNum;
 		TankBoss* boss = new TankBoss;
@@ -396,8 +396,11 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 			_box.y = TILE_HEIGHT + rand() % (backgroundHeight - TILE_HEIGHT - _box.h);
 			boss->setTankCircle(_box.x, _box.y);
 			_bossCircle = boss->getTankCircle();
-		} while (_map.checkCollision(_bossCircle) || checkCollisionTankBossList(_bossCircle, -1)
-			|| check::checkCircle_Circle(_bossCircle, _tankMain)); // || _box.x % boss->getSpeed() != 0 || _box.y % boss->getSpeed() != 0
+		} while (_map.checkCollision(_bossCircle)
+			|| checkCollisionTankBossList(_bossCircle, -1)
+			|| check::checkCircle_Circle(_bossCircle, _tankMain)
+			|| check::checkCircle_Circle(_bossCircle, _superTank)
+			|| check::checkCircle_Circle(_bossCircle, _ballFire)); // || _box.x % boss->getSpeed() != 0 || _box.y % boss->getSpeed() != 0
 		boss->setXY(_box.x, _box.y);
 		boss->loadDestroyImg(_renderer);
 		bossList.push_back(boss);

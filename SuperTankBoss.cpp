@@ -11,6 +11,8 @@ SuperTankBoss::SuperTankBoss() {
 	isMinusHealth = false;
 	saveTimeShoot = timeBulletLv1 = timeBulletLv2 = 0;
 	isAllowRenderShield = false;
+	isSwitchLevel = false;
+	switchLevel = 0;
 }
 
 SuperTankBoss::~SuperTankBoss() {
@@ -120,12 +122,11 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
 		//type_bullet = AMMO::ball_normal;
 		bulletType = Bullet::ballNomalBullet;
-		//if (allow_create_boss == true)
-		//{
-		//	is_create_boss = true;
-		//	allow_create_boss = false;//red zone
-		//}
-		//damebullet = AMMO::ball_normal_boss_dame;
+		if (switchLevel < 1)
+		{
+			switchLevel++;
+			isSwitchLevel = true;
+		}
 		//sinh boss
 	}
 	else if (bloodBar.percent > 55) {
@@ -133,8 +134,11 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		//sinh nhieu boss
 		handleMove(_tankMain, backgroundHeight - 85 - box.h);
 		bulletType = Bullet::fireBossBullet;
-		//damebullet = AMMO::fire_boss_dame;
-
+		if (switchLevel < 2)
+		{
+			switchLevel++;
+			isSwitchLevel = true;
+		}
 	}
 	else if (bloodBar.percent > 45) {
 		//ban dan cau sin
@@ -147,8 +151,6 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		//	is_create_red_zone = true;
 		//	allow_create_rz = false;//red zone
 		//}
-
-		//damebullet = AMMO::ball_boss_dame;
 	}
 	else if (bloodBar.percent > 10) {
 		//tang giap
@@ -158,12 +160,12 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		bulletType = Bullet::marblesLv1Bullet;
 		armor = 50;
 		isAllowRenderShield = true;
-		/*if (allow_create_boss == true)
+
+		if (switchLevel < 3)
 		{
-			is_create_boss = true;
-			allow_create_boss = false;
-		}*/
-		//damebullet = AMMO::fire_boss_dame;
+			switchLevel++;
+			isSwitchLevel = true;
+		}
 	}
 	else if (bloodBar.percent > 0) {
 		//tang giap
@@ -176,19 +178,17 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
 		bulletType = Bullet::ballBullet;
 		armor = 80;
-		//is_render_shield = true;
-		/*if (allow_create_boss == true)
+		if (switchLevel < 4)
 		{
-			is_create_boss = true;
-			allow_create_boss = false;
-		}*/
+			switchLevel++;
+			isSwitchLevel = true;
+		}
 
 		//if (allow_create_rz == true)
 		//{
 		//	is_create_red_zone = true;
 		//	allow_create_rz = false;//red zone
 		//}
-		//damebullet = AMMO::fire_boss_dame;
 	}
 	else if (bloodBar.percent <= 0)
 		isDestroy = true;

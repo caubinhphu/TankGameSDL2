@@ -5,7 +5,7 @@
 #include "Item.h"
 #include "SuperTankBoss.h"
 
-#define TOTAL_LEVEL_GAME 2
+#define TOTAL_LEVEL_GAME 5
 
 MapGame map;
 TankMain tank(100, 100);
@@ -79,7 +79,7 @@ int main(int arc, char* arg[]) {
 		if (load()) {
 			SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 			SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
-			bossList.createListBoss(map, tank.getTankCircle(), level, level < 5 ? level : 4, renderer, level * 50, level * 2);
+			bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 50, level * 2, { 0, 0, 0 }, { 0, 0, 0 });
 			while (!out) {
 				while (SDL_PollEvent(&event) != 0) { // bắt các sự kiện
 					if (event.type == SDL_QUIT) {
@@ -182,7 +182,12 @@ int main(int arc, char* arg[]) {
 				}
 
 				if (isAllowCreateTankBossList) {
-					bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 50, level * 2);
+					if (isAllowRenderSuperTank) {
+						bossList.createListBoss(map, tank.getTankCircle(), level * 2, level < 5 ? level : 4, renderer, level * 50, level * 2, superTankBoss->getTankCircle(), superTankBoss->getCircleBallFire());
+					}
+					else {
+						bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 50, level * 2, { 0, 0, 0 }, { 0, 0, 0 });
+					}
 					isAllowCreateTankBossList = false;
 				}
 
@@ -194,6 +199,11 @@ int main(int arc, char* arg[]) {
 					if (isAllowRenderSuperTank) {
 						tank.move(map, bossList, superTankBoss->getTankCircle(), superTankBoss->getCircleBallFire());
 						bossList.handleList(map, tank.getTankCircle(), renderer, camera, itemList, superTankBoss->getCircleBallFire());
+						if (superTankBoss->getSwitchLevel()) {
+							isLevelUp = true;
+							superTankBoss->setSwitchLevel(false);
+							std::cout << level << std::endl;
+						}
 					}
 					else {
 						tank.move(map, bossList, { 0, 0, 0 }, { 0, 0, 0 });
