@@ -46,7 +46,8 @@ private:
 	//bool is_create_boss;
 	//bool allow_create_boss;
 	//bool is_render_shield;
-	//BASIC_OBJECT img_shield;
+	BasicObj shield;
+	bool isAllowRenderShield;
 public:
 	SuperTankBoss();
 	~SuperTankBoss();

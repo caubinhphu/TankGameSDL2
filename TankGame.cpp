@@ -178,7 +178,6 @@ int main(int arc, char* arg[]) {
 						superTankBoss->createBullet(renderer);
 						tank.setDamgeReceived(superTankBoss->handleBullet(map, renderer, camera, tank.getTankCircle()));
 						superTankBoss->renderBullet(renderer, camera);
-						
 					}
 				}
 

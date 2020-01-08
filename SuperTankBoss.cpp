@@ -10,6 +10,7 @@ SuperTankBoss::SuperTankBoss() {
 	damgeReceived = 0;
 	isMinusHealth = false;
 	saveTimeShoot = timeBulletLv1 = timeBulletLv2 = 0;
+	isAllowRenderShield = false;
 }
 
 SuperTankBoss::~SuperTankBoss() {
@@ -156,7 +157,7 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		handleMove(_tankMain, backgroundHeight / 2 - 2 * box.h);
 		bulletType = Bullet::marblesLv1Bullet;
 		armor = 50;
-		// is_render_shield = true;
+		isAllowRenderShield = true;
 		/*if (allow_create_boss == true)
 		{
 			is_create_boss = true;
@@ -205,6 +206,8 @@ bool SuperTankBoss::loadImg(SDL_Renderer* _renderer) {
 		return false;
 	if (!ballFire.loadImg("./image/ball_fire_3.png", _renderer))
 		return false;
+	if (!shield.loadImg("./image/shield_2.png", _renderer))
+		return false;
 	return true;
 }
 
@@ -214,6 +217,10 @@ void SuperTankBoss::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 
 	// render vòng lửa
 	ballFire.render(_renderer, box.x - 45 - _camera.x, box.y - 45 - _camera.y, NULL, 0);
+
+	// render shield nếu có
+	if (isAllowRenderShield)
+		shield.render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
 
 	// render thanh máu
 	bloodBar.x = box.x;
