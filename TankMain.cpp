@@ -219,11 +219,13 @@ void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _render
 				textMinusHealth.loadText(_font, _plus.str(), _color, _renderer);
 			}
 			else if (_itemlist[i]->getType() == Item::fireBulletItem) {
-				std::cout << "fire bullet" << std::endl;
+				// std::cout << "fire bullet" << std::endl;
+				totalFireBullet += PLUS_FIREBULLET_ITEM;
 				isPlusHealth = false;
 			}
 			else if (_itemlist[i]->getType() == Item::moneyItem) {
-				std::cout << "money" << std::endl;
+				// std::cout << "money" << std::endl;
+				money += PLUS_MONEY_ITEM;
 				isPlusHealth = false;
 			}
 			return;
@@ -319,9 +321,15 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 			firtingRate = Bullet::nomalRate;
 		}
 		else if (bulletType == Bullet::fireBullet) {
+			if (totalFireBullet <= 0) {
+				return;
+			}
 			firtingRate = Bullet::fireRate;
 		}
 		else if (bulletType == Bullet::rocketBullet) {
+			if (totalRocketBullet <= 0) {
+				return;
+			}
 			firtingRate = Bullet::rocketRate;
 		}
 

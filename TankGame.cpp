@@ -23,7 +23,7 @@ BasicObj pauseBackground;
 BasicObj warning;
 
 BasicObj textMenu[4];
-BasicObj textMainHome[3];
+BasicObj textMainHome[4];
 BasicObj textHome[4];
 BasicObj textGunHome[4];
 BasicObj textAbout;
@@ -117,10 +117,12 @@ void loadHomeMenu() {
 	textMainHome[0].loadText(bigFont, "Play", _color, renderer);
 	textMainHome[1].loadText(bigFont, "Shop", _color, renderer);
 	textMainHome[2].loadText(bigFont, "Back", _color, renderer);
+	textMainHome[3].loadText(bigFont, "Save Game", _color, renderer);
 
 	textMainHome[0].setXY(490, cameraHeight - textMainHome[0].getH());
 	textMainHome[1].setXY(220, cameraHeight - textMainHome[1].getH());
 	textMainHome[2].setXY(20, cameraHeight - textMainHome[2].getH());
+	textMainHome[3].setXY(460, 320);
 
 	frameHome[0].loadImg("./image/frame_money.png", renderer);//tien
 	for (int i = 1; i <= 3; i++)
@@ -153,11 +155,11 @@ void loadHomeMenu() {
 void loadPauseMenu() {
 	// load menu Pause
 	SDL_Color _color = { 255, 255, 255 };
-	aboutBackground.loadImg("./image/background_pause.png", renderer);
+	pauseBackground.loadImg("./image/background_pause.png", renderer);
 	textPause[0].loadText(bigFont, "RESUME", _color, renderer);
-	textPause[0].setXY(300, 300);
+	textPause[0].setXY(242, 237);
 	textPause[1].loadText(bigFont, "BACK TO HOME", _color, renderer);
-	textPause[1].setXY(250, 400);
+	textPause[1].setXY(202, 320);
 }
 
 void loadGame() {
@@ -202,11 +204,10 @@ void loadGame() {
 int handleMenuPause() {
 	bool out = false;
 	std::vector<bool> flagChuck(2, false);
+	SDL_ShowCursor(SDL_ENABLE);
 	while (!out) {
 		SDL_Event e;
 		while (SDL_PollEvent(&e) != 0) {
-			if (Mix_PlayingMusic() == 0)
-				Mix_PlayMusic(musicBackgroundGame, -1);
 			if (e.type == SDL_QUIT)
 				out = true;
 			if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
@@ -221,6 +222,7 @@ int handleMenuPause() {
 						textPause[i].setColor(0, 0, 128);
 						if (e.type == SDL_MOUSEBUTTONDOWN) {
 							if (i == 0) { // chơi tiếp
+								SDL_ShowCursor(SDL_DISABLE);
 								return 0;
 							}
 							else if (i == 1) { // về home
@@ -342,10 +344,14 @@ int handleMenuGame() {
 
 void game();
 
+void saveGame() {
+	;
+}
+
 void handleMenuHome() {
 	bool out = false;
 	std::vector<bool> flagChuck(11, false);
-	std::vector<bool> flagChuckMainText(3, false);
+	std::vector<bool> flagChuckMainText(4, false);
 	bool isRenderFrame89 = false;
 	bool isRenderFrame10 = false;
 	bool isRenderFrameGun = false;
@@ -601,7 +607,7 @@ void handleMenuHome() {
 					}
 				}
 
-				for (int k = 0; k < 3; k++) {
+				for (int k = 0; k < 4; k++) {
 					if (check::checkInsideRect(_x, _y, textMainHome[k].getBox())) {
 						textMainHome[k].setColor(0, 0, 128);
 						if (flagChuckMainText[k] == false) {
@@ -651,13 +657,15 @@ void handleMenuHome() {
 								Mix_HaltMusic();
 								return;
 							}
+							else if (k == 3) { // save game
+								saveGame();
+							}
 						}
 						break;
 					}
-					else
-					{
+					else {
 						textMainHome[k].setColor(255, 255, 255);
-						if (k >= 2) flagChuckMainText.assign(3, false);
+						if (k >= 3) flagChuckMainText.assign(4, false);
 					}
 				}
 			}
@@ -790,6 +798,8 @@ void game() {
 	bool isAllowTankMainMove = true; // cho phép tank main di chuyển?
 	bool isAllowCreateTankBossList = false; // cho phép tạo bost list?
 	bool isYouWin = false;
+
+	loadPauseMenu();
 	if (load()) {
 		SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 		SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
@@ -960,6 +970,7 @@ void game() {
 				tank.renderTam(renderer);
 				if (tank.getIsDestroy()) { // còn hiện game over nữa
 					Mix_HaltMusic();
+					SDL_ShowCursor(SDL_ENABLE); // hiện con trỏ chuột
 					return;
 				}
 			}
@@ -972,6 +983,7 @@ void game() {
 	}
 	close();
 	Mix_HaltMusic();
+	SDL_ShowCursor(SDL_ENABLE); // hiện con trỏ chuột
 	return;
 }
 
