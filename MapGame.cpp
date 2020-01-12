@@ -85,3 +85,9 @@ void MapGame::reload() {
 		}
 	}
 }
+
+void MapGame::assign() {
+	tiles.assign(0, NULL);
+	loadMap();
+
+}

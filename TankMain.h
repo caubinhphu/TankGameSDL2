@@ -144,7 +144,7 @@ public:
 
 	bool getIsDestroy() { return isDestroy; };
 
-
+	void assign();
 };
 
 #endif // !TANKMAIN_H_

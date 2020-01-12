@@ -306,6 +306,24 @@ bool TankMain::moveAutomatic(SDL_Renderer* _renderer, int _x, int _y) {
 	return false;
 }
 
+void TankMain::assign() {
+	healthCurrent = totalHealth;
+	spX = spY = 0;
+	rotation = 0;
+	box.x = box.y = 100;
+	setTankCircle();
+	isMouseDown = isMouseUp = false;
+	saveTimeShoot = 0;
+	bulletType = slotGun1Type;
+	bloodBar = { 0, 0, 60, 10, 100 };
+	isSlowed = false;
+	saveTimeIsSlowed = 0;
+	isMinusHealth = false;
+	isPlusHealth = false;
+	damgeReceived = 0;
+	isDestroy = false;
+}
+
 void TankMain::renderTam(SDL_Renderer* _renderer) {
 	int mouseX = 0, mouseY = 0;
 	SDL_GetMouseState(&mouseX, &mouseY);

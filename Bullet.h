@@ -27,7 +27,7 @@ public:
 	enum DameBullet
 	{
 		nomalDamge = 10,
-		fireDamge = 20,
+		fireDamge = 2000,
 		fireBossDamge = 50,
 		ballBossDamge = 40,
 		ballNormalBossDamge = 40,

@@ -7,7 +7,7 @@
 
 #define TOTAL_LEVEL_GAME 2
 
-MapGame map;
+MapGame* map;
 TankMain tank(100, 100);
 TankBossList bossList;
 ItemList itemList;
@@ -20,6 +20,7 @@ BasicObj shopBackground;
 BasicObj aboutBackground;
 BasicObj winBackground;
 BasicObj pauseBackground;
+BasicObj gameOverBackground;
 BasicObj warning;
 
 BasicObj textMenu[4];
@@ -28,6 +29,8 @@ BasicObj textHome[4];
 BasicObj textGunHome[4];
 BasicObj textAbout;
 BasicObj textPause[2];
+BasicObj textWin;
+BasicObj textGameOver;
 
 BasicObj frameHome[11];
 BasicObj frameGunHome[3];
@@ -117,12 +120,12 @@ void loadHomeMenu() {
 	textMainHome[0].loadText(bigFont, "Play", _color, renderer);
 	textMainHome[1].loadText(bigFont, "Shop", _color, renderer);
 	textMainHome[2].loadText(bigFont, "Back", _color, renderer);
-	textMainHome[3].loadText(bigFont, "Save Game", _color, renderer);
+	textMainHome[3].loadText(bigFont, "Save", _color, renderer);
 
 	textMainHome[0].setXY(490, cameraHeight - textMainHome[0].getH());
 	textMainHome[1].setXY(220, cameraHeight - textMainHome[1].getH());
 	textMainHome[2].setXY(20, cameraHeight - textMainHome[2].getH());
-	textMainHome[3].setXY(460, 320);
+	textMainHome[3].setXY(480, 310);
 
 	frameHome[0].loadImg("./image/frame_money.png", renderer);//tien
 	for (int i = 1; i <= 3; i++)
@@ -210,7 +213,13 @@ int handleMenuPause() {
 		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT)
 				out = true;
-			if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
+			else if (e.type == SDL_KEYUP) {
+				if (e.key.keysym.sym == SDLK_ESCAPE) {
+					SDL_ShowCursor(SDL_DISABLE);
+					return 0;
+				}
+			}
+			else if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
 				int _x = 0, _y = 0;
 				SDL_GetMouseState(&_x, &_y); // lấy tọa độ chuột
 				for (int i = 0; i < 2; i++) {
@@ -718,7 +727,7 @@ void handleMenuHome() {
 		textGunHome[2].render(renderer, cameraWidth - textGunHome[2].getW(), 160, NULL, 0);
 		textGunHome[3].render(renderer, cameraWidth - textGunHome[3].getW(), 250, NULL, 0);
 
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 4; i++)
 			textMainHome[i].render(renderer, textMainHome[i].getX(), textMainHome[i].getY(), NULL, 0);
 		SDL_RenderPresent(renderer);
 		}
@@ -729,13 +738,95 @@ bool load() {
 	if (!tank.loadImg(renderer)) {
 		return false;
 	}
-	if (!map.loadMap("./image/mapimg5.png", "./general/mapgame.map", renderer)) {
-		return false;
-	}
+	//if (!map.loadMap("./image/mapimg5.png", "./general/mapgame.map", renderer)) {
+	//	return false;
+	//}
 	if (!winBackground.loadImg("./image/youwin.png", renderer)) {
 		return false;
 	}
+	textWin.loadText(bigFont, "BACK", { 255, 255, 255 }, renderer);
+	textWin.setXY(525, 395);
+	if (!gameOverBackground.loadImg("./image/background_destroy.png", renderer)) {
+		return false;
+	}
+	textGameOver.loadText(bigFont, "BACK", { 255, 255, 255 }, renderer);
+	textGameOver.setXY(525, 395);
+
 	return true;
+}
+
+void handleGameOverMenu() {
+	bool out = false;
+	bool flagChuck = false;
+	SDL_ShowCursor(SDL_ENABLE);
+	while (!out) {
+		SDL_Event e;
+		while (SDL_PollEvent(&e) != 0) {
+			if (e.type == SDL_QUIT)
+				out = true;
+			if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
+				int _x = 0, _y = 0;
+				SDL_GetMouseState(&_x, &_y); // lấy tọa độ chuột
+				if (check::checkInsideRect(_x, _y, textGameOver.getBox())) {
+					if (!flagChuck) {
+						Mix_PlayChannel(-1, musicChunk[SOUND_MOUSE_INSIDE], 0);
+						flagChuck = true;
+					}
+					textGameOver.setColor(255, 0, 0);
+					if (e.type == SDL_MOUSEBUTTONDOWN) {
+						return;
+					}
+				}
+				else {
+					textGameOver.setColor(255, 255, 255);
+					flagChuck = false;
+				}
+			}
+		}
+		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(renderer, 0, 100, 100, 0);
+		gameOverBackground.render(renderer, 0, 0, NULL, 0);
+		textGameOver.render(renderer, textGameOver.getX(), textGameOver.getY(), NULL, 0);
+
+		SDL_RenderPresent(renderer);
+	}
+}
+
+void handleWinMenu() {
+	bool out = false;
+	bool flagChuck = false;
+	SDL_ShowCursor(SDL_ENABLE);
+	while (!out) {
+		SDL_Event e;
+		while (SDL_PollEvent(&e) != 0) {
+			if (e.type == SDL_QUIT)
+				out = true;
+			if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
+				int _x = 0, _y = 0;
+				SDL_GetMouseState(&_x, &_y); // lấy tọa độ chuột
+				if (check::checkInsideRect(_x, _y, textWin.getBox())) {
+					if (!flagChuck) {
+						Mix_PlayChannel(-1, musicChunk[SOUND_MOUSE_INSIDE], 0);
+						flagChuck = true;
+					}
+					textWin.setColor(255, 0, 0);
+					if (e.type == SDL_MOUSEBUTTONDOWN) {
+						return;
+					}
+				}
+				else {
+					textWin.setColor(255, 255, 255);
+					flagChuck = false;
+				}
+			}
+		}
+		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(renderer, 0, 100, 100, 0);
+		winBackground.render(renderer, 0, 0, NULL, 0);
+		textWin.render(renderer, textWin.getX(), textWin.getY(), NULL, 0);
+
+		SDL_RenderPresent(renderer);
+	}
 }
 
 void loadDataTank(bool _isNewGame) {
@@ -799,11 +890,22 @@ void game() {
 	bool isAllowCreateTankBossList = false; // cho phép tạo bost list?
 	bool isYouWin = false;
 
+	MapGame* _map = new MapGame();
+	_map->loadMap("./image/mapimg5.png", "./general/mapgame.map", renderer);
+	map = _map;
+	delete _map;
+
 	loadPauseMenu();
 	if (load()) {
+
+		tank.assign();
+		bossList.assign();
+
+
 		SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 		SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
 		bossList.createListBoss(map, tank.getTankCircle(), level * 1, level < 5 ? level : 4, renderer, level * 50, level * 2, { 0, 0, 0 }, { 0, 0, 0 });
+		
 		while (!out) {
 			while (SDL_PollEvent(&event) != 0) { // bắt các sự kiện
 				if (event.type == SDL_QUIT) {
@@ -812,7 +914,7 @@ void game() {
 				if (isAllowTankMainMove)
 					tank.handleEvents(&event, camera);
 
-				if (event.type == SDL_KEYDOWN) {
+				if (event.type == SDL_KEYUP) {
 					if (event.key.keysym.sym == SDLK_ESCAPE) {
 						if (handleMenuPause() == 1) { // về home
 							Mix_HaltMusic();
@@ -968,14 +1070,14 @@ void game() {
 				tank.render(renderer, camera);
 				bossList.renderList(renderer, camera, smallFont);
 				tank.renderTam(renderer);
-				if (tank.getIsDestroy()) { // còn hiện game over nữa
-					Mix_HaltMusic();
-					SDL_ShowCursor(SDL_ENABLE); // hiện con trỏ chuột
+				if (tank.getIsDestroy()) {
+					handleGameOverMenu();
 					return;
 				}
 			}
-			else { // chưa đâu đâu nha
-				winBackground.render(renderer, 0, 0, NULL, 0);
+			else {
+				handleWinMenu();
+				return;
 			}
 
 			SDL_RenderPresent(renderer);

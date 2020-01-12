@@ -114,6 +114,7 @@ public:
 	void renderBulletOfTankList(SDL_Renderer* _renderer, SDL_Rect _camera);
 	int getQualityBoss() { return bossList.size(); };
 	void clearList();
+	void assign() { bossList.assign(0, NULL); }
 };
 
 #endif // !TANKBOSSES_H_
