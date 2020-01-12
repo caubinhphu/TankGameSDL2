@@ -26,7 +26,7 @@ public:
 	};
 	enum DameBullet
 	{
-		nomalDamge = 1000,
+		nomalDamge = 10,
 		fireDamge = 20,
 		fireBossDamge = 50,
 		ballBossDamge = 40,
@@ -49,7 +49,7 @@ private:
 	bool isEffectShoot;
 	BulletType type;
 	BulletFirtingRate firtingRate;
-	DameBullet damge;
+	int damge;
 	Uint32 timeShoot;
 public:
 	Bullet();
@@ -72,8 +72,8 @@ public:
 	BulletType getType() { return type; };
 	void setType(BulletType _type) { type = _type; };
 	BulletFirtingRate getFirtingRate() { return firtingRate; };
-	void setDamge(DameBullet _damge) { damge = _damge; };
-	DameBullet getDamge() { return damge; };
+	void setDamge(int _damge) { damge = _damge; };
+	int getDamge() { return damge; };
 	void setTimeShoot(Uint32 _time) { timeShoot = _time; };
 	Uint32 getTimeShoot() { return timeShoot; };
 };

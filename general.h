@@ -20,12 +20,28 @@
 #define cameraHeight 450
 #define PI 3.14159265359 // số PI
 
+#define SOUND_SHOOT_FIRE 0
+#define SOUND_SHOOT_NORMAL 1
+#define SOUND_COLLISION_WALL 2
+#define SOUND_COLLISION_ENEMIES 3
+#define SOUND_NULL_BULLET 4
+#define SOUND_EXPLOSION 5
+#define SOUND_MOUSE_INSIDE 6
+#define SOUND_SHOOT_ROCKET 7
+
+
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 static SDL_Event event;
 static TTF_Font* font = NULL;
 static TTF_Font* smallFont = NULL;
 static TTF_Font* bigFont = NULL;
+
+static Mix_Music* musicBackgroundGame = NULL;
+static Mix_Music* musicMenuMain = NULL;
+static Mix_Music* musicMenuHome = NULL;
+static Mix_Music* musicMenuShop = NULL;
+static Mix_Chunk* musicChunk[8] = { NULL };
 
 struct Circle
 {
@@ -38,6 +54,7 @@ namespace check {
 	int binhPhuongKhoangCach(int x1, int y1, int x2, int y2);
 	bool checkRect_Circle(SDL_Rect b, Circle a);
 	bool checkCircle_Circle(Circle a, Circle b);
+	bool checkInsideRect(int _x, int _y, SDL_Rect a);
 }
 
 typedef struct BloodBar

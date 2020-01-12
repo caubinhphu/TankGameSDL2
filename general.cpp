@@ -56,3 +56,9 @@ bool check::checkCircle_Circle(Circle a, Circle b)
 		return true;
 	return false;
 }
+
+bool check::checkInsideRect(int _x, int _y, SDL_Rect a) {
+	if (_x < a.x || _x > a.x + a.w || _y < a.y || _y > a.y + a.h)
+		return false;
+	return true;
+}

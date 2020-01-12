@@ -58,3 +58,7 @@ void BasicObj::render(SDL_Renderer* _renderer, int _x, int _y, SDL_Rect* _clip =
 
 	SDL_RenderCopyEx(_renderer, texture, _clip, &rect, (_aRadian * 180) / PI, NULL, SDL_FLIP_NONE);
 }
+
+void BasicObj::setColor(Uint8 _r, Uint8 _g, Uint8 _b) {
+	SDL_SetTextureColorMod(texture, _r, _g, _b);
+}

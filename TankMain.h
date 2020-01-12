@@ -14,6 +14,11 @@
 #define TANK_HEIGHT 60
 #define TIME_SLOWED 500
 
+#define PLUS_UPGRADE_ARMOR 1
+#define PLUS_UPGRADE_SPEED 1
+#define PLUS_UPGRADE_POWER 1
+#define PLUS_UPGRADE_HEALTH 10
+
 class TankMain : public BasicObj {
 private:
 	int speed; // tốc độ của xe
@@ -42,6 +47,18 @@ private:
 	bool isPlusHealth;
 	double rotationMoveAuto;
 	int damgeReceived;
+
+	Bullet::BulletType slotGun1Type, slotGun2Type;
+	int moneyNeedUpgradeArmor;
+	int moneyNeedUpgradeSpeed;
+	int moneyNeedUpgradePower;
+	int moneyNeedUpgradeTotalHealth;
+	int money;
+	int totalFireBullet;
+	int totalRocketBullet;
+
+	bool isHaveFireGun, isHaveRocketGun;
+	bool isDestroy;
 public:
 	TankMain(int _x, int _y);
 	~TankMain();
@@ -59,15 +76,14 @@ public:
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
 
 	int getSpeed() { return speed; };
+	void setPlusSpeed(int _plus) { speed += _plus; };
 	void setSpeed(int _speed) { speed = _speed; };
+
 	void setSpXY(int _spX, int _spY) { spX = _spX; spY = _spY; };
 	Circle getTankCircle() { return tankCircle; };
 
-	void setPlusAmor(int _armorPlus) { armor += _armorPlus; };
 	void setPlusHealthCurrent(int _healthPlus) { healthCurrent += _healthPlus; };
 	int getHealthCurrent() { return healthCurrent; };
-	void setPlusTotalHealth(int _totalPlus) { totalHealth += _totalPlus; };
-	void setPlusPower(int _powerPlus) { power += _powerPlus; };
 	// void setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TTF_Font* _font);
 	void setDamgeReceived(int _damgeReceived) { damgeReceived += _damgeReceived; };
 	void handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font);
@@ -77,6 +93,58 @@ public:
 
 	void handleMoveAutomatic(int _x, int _y);
 	bool moveAutomatic(SDL_Renderer* _renderer, int _x, int _y);
+
+	void setPlusArmor(int _plus) { armor += _plus; };
+	int getArmor() { return armor; };
+	void setArmor(int _armor) { armor = _armor; };
+
+	void setPlusPower(int _plus) { power += _plus; };
+	int getPower() { return power; };
+	void setPower(int _power) { power = _power; };
+
+	void setPlusTotalHealth(int _plus) { totalHealth += _plus; healthCurrent = totalHealth; };
+	int getTotalHealth() { return totalHealth; };
+	void setTotalHealth(int _total) { totalHealth = _total; healthCurrent = totalHealth; };
+
+	Bullet::BulletType getSlotGun1Type() { return slotGun1Type; }
+	Bullet::BulletType getSlotGun2Type() { return slotGun2Type; }
+	void setSlotGun1Type(Bullet::BulletType _type) { slotGun1Type = _type; bulletType = _type; }
+	void setSlotGun2Type(Bullet::BulletType _type) { slotGun2Type = _type; }
+
+	int getMoneyNeedUpgradeArmor() { return moneyNeedUpgradeArmor; }
+	void setMoneyNeedUpgradeArmor() { moneyNeedUpgradeArmor *= 2; }
+ 	void setTotalMoneyNeedUpgradeArmor(int _m) { moneyNeedUpgradeArmor = _m; }
+
+	int getMoneyNeedUpgradeSpeed() { return moneyNeedUpgradeSpeed; }
+	void setMoneyNeedUpgradeSpeed() { moneyNeedUpgradeSpeed *= 8; }
+	void setTotalMoneyNeedUpgradeSpeed(const int _m) { moneyNeedUpgradeSpeed = _m; }
+
+	int getMoneyNeedUpgradePower() { return moneyNeedUpgradePower; }
+	void setMoneyNeedUpgradePower() { moneyNeedUpgradePower *= 5; }
+	void setTotalMoneyNeedUpgradePower(const int _m) { moneyNeedUpgradePower = _m; }
+
+	int getMoneyNeedUpgradeTotalHealth() { return moneyNeedUpgradeTotalHealth; }
+	void setMoneyNeedUpgradeTotalHealth() { moneyNeedUpgradeTotalHealth *= 2; }
+	void setTotalMoneyNeedUpgradeTotalHealth(const int _m) { moneyNeedUpgradeTotalHealth = _m; }
+
+	int getMoney() { return money; };
+	void setChangeMoney(int _change) { money += _change; };
+	void setMoney(int _money) { money = _money; };
+
+	int getTotalFireBullet() { return totalFireBullet; };
+	void setTotalFireBullet(int _total) { totalFireBullet = _total; };
+
+	int getTotalRocketBullet() { return totalRocketBullet; };
+	void setPlusTotalRocketBullet(int _plus) { totalRocketBullet += _plus; };
+
+	void setIsHaveFireGun(bool _have) { isHaveFireGun = _have; }
+	bool getIsHaveFireGun() { return isHaveFireGun; }
+	void setIsHaveRocketGun(bool _have) { isHaveRocketGun = _have; }
+	bool getIsHaveRocketGun() { return isHaveRocketGun; }
+
+	bool getIsDestroy() { return isDestroy; };
+
+
 };
 
 #endif // !TANKMAIN_H_

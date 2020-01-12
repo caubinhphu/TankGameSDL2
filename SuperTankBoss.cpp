@@ -100,8 +100,7 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		// sinh boss
 		handleMove(_tankMain, 85);
 		bulletType = Bullet::fireBossBullet;
-		if (switchLevel < 0)
-		{
+		if (switchLevel < 0) {
 			switchLevel++;
 			isSwitchLevel = true;
 		}
@@ -111,8 +110,7 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		// sinh boss
 		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
 		bulletType = Bullet::ballNomalBullet;
-		if (switchLevel < 1)
-		{
+		if (switchLevel < 1) {
 			switchLevel++;
 			isSwitchLevel = true;
 		}
@@ -122,8 +120,7 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		// sinh boss
 		handleMove(_tankMain, backgroundHeight - 85 - box.h);
 		bulletType = Bullet::fireBossBullet;
-		if (switchLevel < 2)
-		{
+		if (switchLevel < 2) {
 			switchLevel++;
 			isSwitchLevel = true;
 		}
@@ -142,8 +139,7 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		armor = 50;
 		isAllowRenderShield = true;
 
-		if (switchLevel < 3)
-		{
+		if (switchLevel < 3) {
 			switchLevel++;
 			isSwitchLevel = true;
 		}
@@ -155,8 +151,7 @@ void SuperTankBoss::handleSwitchLevel(Circle _tankMain) {
 		handleMove(_tankMain, backgroundHeight / 2 - box.h / 2);
 		bulletType = Bullet::ballBullet;
 		armor = 80;
-		if (switchLevel < 4)
-		{
+		if (switchLevel < 4) {
 			switchLevel++;
 			isSwitchLevel = true;
 		}

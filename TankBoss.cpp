@@ -100,28 +100,23 @@ void TankBoss::randomDirection(int k)
 void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams, Circle _fireBall)
 {
 	rotation = check::rotationA_B(_tankMain.x, _tankMain.y, box.x + box.w / 2, box.y + box.h / 2);
-	if (isCollisionTeams == true)
-	{
-		if (dir == LEFT)
-		{
+	if (isCollisionTeams == true) {
+		if (dir == LEFT) {
 			spX = 5;
 			spY = 0;
 			dir = RIGHT;
 		}
-		else if (dir == RIGHT)
-		{
+		else if (dir == RIGHT) {
 			spX = -5;
 			spY = 0;
 			dir = LEFT;
 		}
-		else if (dir == TOP)
-		{
+		else if (dir == TOP) {
 			spY = 5;
 			spX = 0;
 			dir = BOTTOM;
 		}
-		else if (dir == BOTTOM)
-		{
+		else if (dir == BOTTOM) {
 			spY = -5;
 			spX = 0;
 			dir = TOP;
@@ -316,19 +311,6 @@ void TankBoss::renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera) {
 		bullets[i]->render(_renderer, _camera);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

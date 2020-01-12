@@ -2,21 +2,30 @@
 
 TankMain::TankMain(int _x, int _y) {
 	box = { _x, _y, TANK_WIDTH, TANK_HEIGHT };
-	speed = 5;
+	speed = 0;
 	spX = spY = 0;
 	rotation = 0;
 	setTankCircle();
 	isMouseDown = isMouseUp = false;
 	saveTimeShoot = 0;
 	bulletType = Bullet::BulletType::nomalBullet;
-	totalHealth = healthCurrent = 100;
+	totalHealth = healthCurrent = 0;
 	bloodBar = { 0, 0, 60, 10, 100 };
-	armor = 50;
+	armor = 0;
 	isSlowed = false;
 	saveTimeIsSlowed = 0;
 	isMinusHealth = false;
 	isPlusHealth = false;
 	damgeReceived = 0;
+	slotGun1Type = slotGun2Type = Bullet::BulletType::nomalBullet;
+	moneyNeedUpgradeArmor = 0;
+	moneyNeedUpgradeSpeed = 0;
+	moneyNeedUpgradePower = 0;
+	moneyNeedUpgradeTotalHealth = 0;
+	money = 0;
+	totalFireBullet = totalRocketBullet = 0;
+	power = 0;
+	isDestroy = false;
 }
 
 TankMain::~TankMain() {
@@ -67,11 +76,9 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 		case SDLK_w:
 			spY -= speed; break;
 		case SDLK_1:
-			bulletType = Bullet::nomalBullet; break;
+			bulletType = slotGun1Type; break;
 		case SDLK_2:
-			bulletType = Bullet::fireBullet; break;
-		case SDLK_3:
-			bulletType = Bullet::rocketBullet; break;
+			bulletType = slotGun1Type; break;
 		}
 	}
 	else if (_e->type == SDL_KEYUP && _e->key.repeat == 0) {
@@ -190,7 +197,8 @@ void TankMain::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font) {
 	}
 	if (healthCurrent < 0) {
 		// std::cout << "Game Over" << std::endl;
-		healthCurrent = totalHealth;
+		// healthCurrent = totalHealth;
+		isDestroy = true;
 	}
 }
 
@@ -296,10 +304,6 @@ bool TankMain::moveAutomatic(SDL_Renderer* _renderer, int _x, int _y) {
 	return false;
 }
 
-//bool TankMain::loadTamBan(std::string _path, SDL_Renderer* _renderer) {
-//	return tamBan.loadImg(_path, _renderer);
-//}
-//
 void TankMain::renderTam(SDL_Renderer* _renderer) {
 	int mouseX = 0, mouseY = 0;
 	SDL_GetMouseState(&mouseX, &mouseY);
@@ -324,7 +328,7 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 		// kiểm tra thời điểm bắn đạn trước so với thời điểm bắn đạn sau có lớn hơn tốc độ bắn hay không
 		if (SDL_GetTicks() - saveTimeShoot > firtingRate) {
 			std::string _imgBullet; // hình viên đạn
-			Bullet::DameBullet _damge = Bullet::nomalDamge; // damge viên đạn
+			int _damge = Bullet::nomalDamge; // damge viên đạn
 			if (bulletType == Bullet::nomalBullet) {
 				_imgBullet = "./image/ammo.png";
 				_damge = Bullet::nomalDamge;
@@ -374,7 +378,7 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 			}
 			bullet->setXY(x, y);
 			bullet->setRotation(rotation);
-			bullet->setDamge(_damge);
+			bullet->setDamge(_damge * power);
 			bullet->setIsMove(true);
 
 			bullets.push_back(bullet);

@@ -25,6 +25,7 @@ public:
 	SDL_Rect getBox() { return box; };
 
 	void setAlphaMod(Uint8 _alpha) { SDL_SetTextureAlphaMod(texture, _alpha); };
+	void setColor(Uint8 _r, Uint8 _g, Uint8 _b);
 };
 
 
