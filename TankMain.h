@@ -59,6 +59,11 @@ private:
 
 	bool isHaveFireGun, isHaveRocketGun;
 	bool isDestroy;
+
+	BasicObj frameMoney;
+	BasicObj textMoney;
+	BasicObj gunCurrent;
+	BasicObj textGunCurrent;
 public:
 	TankMain(int _x, int _y);
 	~TankMain();
@@ -89,7 +94,7 @@ public:
 	void handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font);
 	void setIsSlowed(bool _is) { isSlowed = _is; };
 	void setSaveTimeIsSlowed(Uint32 _time) { saveTimeIsSlowed = _time; };
-	void handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _font);
+	void handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _smallFont);
 
 	void handleMoveAutomatic(int _x, int _y);
 	bool moveAutomatic(SDL_Renderer* _renderer, int _x, int _y);
@@ -128,8 +133,8 @@ public:
 	void setTotalMoneyNeedUpgradeTotalHealth(const int _m) { moneyNeedUpgradeTotalHealth = _m; }
 
 	int getMoney() { return money; };
-	void setChangeMoney(int _change) { money += _change; };
-	void setMoney(int _money) { money = _money; };
+	void setChangeMoney(int _change, TTF_Font* _font, SDL_Renderer* _renderer);
+	void setMoney(int _money, TTF_Font* _font, SDL_Renderer* _renderer);
 
 	int getTotalFireBullet() { return totalFireBullet; };
 	void setTotalFireBullet(int _total) { totalFireBullet = _total; };

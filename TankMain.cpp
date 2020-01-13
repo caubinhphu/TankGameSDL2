@@ -44,6 +44,10 @@ bool TankMain::loadImg(SDL_Renderer* _renderer)
 		return false;
 	}
 	snowFlake.setAlphaMod(191);
+	frameMoney.loadImg("./image/tray_money.png", _renderer);
+	frameMoney.setXY(480, 10);
+	textMoney.setXY(520, 12);
+
 	return true;
 }
 
@@ -175,6 +179,10 @@ void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	if (isSlowed) {
 		snowFlake.render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, 0);
 	}
+
+	// render money
+	frameMoney.render(_renderer, 480, 10, NULL, 0);
+	textMoney.render(_renderer, 520, 12, NULL, 0);
 }
 
 void TankMain::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font) {
@@ -202,7 +210,7 @@ void TankMain::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font) {
 	}
 }
 
-void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _font) {
+void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _smallFont) {
 	for (int i = 0; i < _itemlist.size(); i++) {
 		if (check::checkRect_Circle(_itemlist[i]->getBox(), tankCircle)) {
 			_itemlist[i]->setIsEat(true);
@@ -216,7 +224,7 @@ void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _render
 				std::stringstream _plus;
 				_plus.str("");
 				_plus << "+ " << PLUS_HEALTH_ITEM;
-				textMinusHealth.loadText(_font, _plus.str(), _color, _renderer);
+				textMinusHealth.loadText(_smallFont, _plus.str(), _color, _renderer);
 			}
 			else if (_itemlist[i]->getType() == Item::fireBulletItem) {
 				// std::cout << "fire bullet" << std::endl;
@@ -225,7 +233,7 @@ void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _render
 			}
 			else if (_itemlist[i]->getType() == Item::moneyItem) {
 				// std::cout << "money" << std::endl;
-				money += PLUS_MONEY_ITEM;
+				setChangeMoney(PLUS_MONEY_ITEM, _smallFont, _renderer);
 				isPlusHealth = false;
 			}
 			return;
@@ -304,6 +312,26 @@ bool TankMain::moveAutomatic(SDL_Renderer* _renderer, int _x, int _y) {
 		}
 	}
 	return false;
+}
+
+void TankMain::setChangeMoney(int _change, TTF_Font* _font, SDL_Renderer* _renderer) {
+	if (_change > 0) {
+		money += _change;
+		SDL_Color _color = { 0, 0, 128 };
+		std::stringstream _money;
+		_money.str("");
+		_money << money;
+		textMoney.loadText(_font, _money.str(), _color, _renderer);
+	}
+}
+
+void TankMain::setMoney(int _money, TTF_Font* _font, SDL_Renderer* _renderer) {
+	money = _money;
+	SDL_Color _color = { 0, 0, 128 };
+	std::stringstream _moneyText;
+	_moneyText.str("");
+	_moneyText << money;
+	textMoney.loadText(_font, _moneyText.str(), _color, _renderer);
 }
 
 void TankMain::assign() {

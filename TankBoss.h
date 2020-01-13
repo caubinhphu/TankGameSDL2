@@ -20,6 +20,12 @@ public:
 	enum Direction {
 		TOP, BOTTOM, LEFT, RIGHT, STAND_STILL,
 	};
+	enum Bonus {
+		nomalTankBonus = 20,
+		fireTankBonus = 40,
+		iceTankBonus = 50,
+		triangleTankBonus = 100,
+	};
 private:
 	int spX, spY;
 	double rotation;
@@ -46,6 +52,8 @@ private:
 	bool isDamgeReceived;
 	int damgeReceive;
 	BasicObj textDamgeReceive;
+
+	Bonus bonus;
 public:
 	TankBoss();
 	~TankBoss();
@@ -92,6 +100,9 @@ public:
 	void setBulletType(Bullet::BulletType _type) { bulletType = _type; };
 	void setBulletRate(Bullet::BulletFirtingRate _rate) { bulletRate = _rate; };
 	void setPathBullet(std::string _path) { pathBulletImg = _path; };
+
+	void setBonus(Bonus _bonus) { bonus = _bonus; };
+	Bonus getBonus() { return bonus; };
 };
 
 #endif // !TANKBOSS_H_
@@ -108,7 +119,7 @@ public:
 	void createListBoss(MapGame _map, Circle _tankMain, int _quality, int _typeNum, SDL_Renderer* _renderer, int _health, int _armor, Circle _superTank, Circle _ballFire);
 	bool checkCollisionTankBossList(Circle _boss, int k);
 	void renderList(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Font* _font);
-	void handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera, ItemList _itemList, Circle _fireBall);
+	int handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera, ItemList _itemList, Circle _fireBall);
 	bool checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _damgeBullet);
 	int handleBulletOfTankList(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, Circle _tankMain, bool &_isSlowedTankMain, Circle _fireBall);
 	void renderBulletOfTankList(SDL_Renderer* _renderer, SDL_Rect _camera);

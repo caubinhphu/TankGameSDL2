@@ -5,7 +5,7 @@
 #include "Item.h"
 #include "SuperTankBoss.h"
 
-#define TOTAL_LEVEL_GAME 2
+#define TOTAL_LEVEL_GAME 5
 
 TankMain tank(100, 100);
 
@@ -386,7 +386,7 @@ void handleMenuHome() {
 						if (e.type == SDL_MOUSEBUTTONDOWN) {
 							if (indexFrameHome == 4) {
 								if (tank.getMoney() >= tank.getMoneyNeedUpgradeArmor()) {
-									tank.setChangeMoney(-tank.getMoneyNeedUpgradeArmor());
+									tank.setChangeMoney(-tank.getMoneyNeedUpgradeArmor(), smallFont, renderer);
 									tank.setPlusArmor(PLUS_UPGRADE_ARMOR);
 									tank.setMoneyNeedUpgradeArmor();
 
@@ -402,7 +402,7 @@ void handleMenuHome() {
 							}
 							else if (indexFrameHome == 5) {
 								if (tank.getMoney() >= tank.getMoneyNeedUpgradeSpeed()) {
-									tank.setChangeMoney(-tank.getMoneyNeedUpgradeSpeed());
+									tank.setChangeMoney(-tank.getMoneyNeedUpgradeSpeed(), smallFont, renderer);
 									tank.setPlusSpeed(PLUS_UPGRADE_SPEED);
 									tank.setMoneyNeedUpgradeSpeed();
 
@@ -418,7 +418,7 @@ void handleMenuHome() {
 							}
 							else if (indexFrameHome == 6) {
 								if (tank.getMoney() >= tank.getMoneyNeedUpgradePower()) {
-									tank.setChangeMoney(-tank.getMoneyNeedUpgradePower());
+									tank.setChangeMoney(-tank.getMoneyNeedUpgradePower(), smallFont, renderer);
 									tank.setPlusPower(PLUS_UPGRADE_POWER);
 									tank.setMoneyNeedUpgradePower();
 
@@ -434,7 +434,7 @@ void handleMenuHome() {
 							}
 							else if (indexFrameHome == 7) {
 								if (tank.getMoney() >= tank.getMoneyNeedUpgradeTotalHealth()) {
-									tank.setChangeMoney(-tank.getMoneyNeedUpgradeTotalHealth());
+									tank.setChangeMoney(-tank.getMoneyNeedUpgradeTotalHealth(), font, renderer);
 									tank.setPlusTotalHealth(PLUS_UPGRADE_HEALTH);
 									tank.setMoneyNeedUpgradeTotalHealth();
 
@@ -835,7 +835,7 @@ void loadDataTank(bool _isNewGame) {
 	getline(_dataTank, _data); tank.setArmor(atoi(_data.c_str()));
 	getline(_dataTank, _data); tank.setPower(atoi(_data.c_str()));
 	getline(_dataTank, _data); tank.setSpeed(atoi(_data.c_str()));
-	getline(_dataTank, _data); tank.setMoney(atoi(_data.c_str()));
+	getline(_dataTank, _data); tank.setMoney(atoi(_data.c_str()), smallFont, renderer);
 	getline(_dataTank, _data); tank.setTotalMoneyNeedUpgradeArmor(atoi(_data.c_str()));
 	getline(_dataTank, _data); tank.setTotalMoneyNeedUpgradeTotalHealth(atoi(_data.c_str()));
 	getline(_dataTank, _data); tank.setTotalMoneyNeedUpgradePower(atoi(_data.c_str()));
@@ -896,7 +896,7 @@ void game() {
 
 		SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 		SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
-		bossList.createListBoss(map, tank.getTankCircle(), level * 1, level < 5 ? level : 4, renderer, level * 50, level * 2, { 0, 0, 0 }, { 0, 0, 0 });
+		bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 50, level * 2, { 0, 0, 0 }, { 0, 0, 0 });
 		
 		while (!out) {
 			while (SDL_PollEvent(&event) != 0) { // bắt các sự kiện
@@ -1013,7 +1013,7 @@ void game() {
 				if (isAllowTankMainMove) {
 					if (isAllowRenderSuperTank) {
 						tank.move(map, bossList, superTankBoss->getTankCircle(), superTankBoss->getCircleBallFire());
-						bossList.handleList(map, tank.getTankCircle(), renderer, camera, itemList, superTankBoss->getCircleBallFire());
+						tank.setChangeMoney(bossList.handleList(map, tank.getTankCircle(), renderer, camera, itemList, superTankBoss->getCircleBallFire()), smallFont, renderer);
 						if (superTankBoss->getSwitchLevel()) {
 							isLevelUp = true;
 							superTankBoss->setSwitchLevel(false);
@@ -1022,7 +1022,7 @@ void game() {
 					}
 					else {
 						tank.move(map, bossList, { 0, 0, 0 }, { 0, 0, 0 });
-						bossList.handleList(map, tank.getTankCircle(), renderer, camera, itemList, { 0, 0, 0 });
+						tank.setChangeMoney(bossList.handleList(map, tank.getTankCircle(), renderer, camera, itemList, { 0, 0, 0 }), smallFont, renderer);
 						if (!isSuperTankAppear && bossList.getQualityBoss() == 0) {
 							isLevelUp = true;
 							std::cout << level << std::endl;

@@ -337,6 +337,7 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 			boss->setPathBullet("./image/ammo.png");
 			boss->setHealth(_health);
 			boss->setArmor(_armor * 1.5);
+			boss->setBonus(TankBoss::nomalTankBonus);
 		}
 		else if (type == 2) {
 			boss->setType(TankBoss::fireTank);
@@ -348,6 +349,7 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 			boss->setPathBullet("./image/danlua4.png");
 			boss->setHealth(_health * 1.5);
 			boss->setArmor(_armor);
+			boss->setBonus(TankBoss::fireTankBonus);
 		}
 		else if (type == 3) {
 			boss->setType(TankBoss::iceTank);
@@ -359,6 +361,7 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 			boss->setPathBullet("./image/ice_bullet.png");
 			boss->setHealth(_health);
 			boss->setArmor(_armor);
+			boss->setBonus(TankBoss::iceTankBonus);
 		}
 		else if (type == 4) {
 			boss->setType(TankBoss::triangleTank);
@@ -370,6 +373,7 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 			boss->setPathBullet("./image/triangle_bullet.png");
 			boss->setHealth(_health * 2);
 			boss->setArmor(_armor * 2);
+			boss->setBonus(TankBoss::triangleTankBonus);
 		}
 		SDL_Rect _box = { 0, 0, boss->getW(), boss->getH() };
 		Circle _bossCircle = { 0, 0, 0 };
@@ -415,7 +419,8 @@ void TankBossList::renderList(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Fon
 	}
 }
 
-void TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera, ItemList _itemList, Circle _fireBall) {
+int TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _renderer, SDL_Rect _camera, ItemList _itemList, Circle _fireBall) {
+	int moneyBonus = 0;
 	for (int i = 0; i < bossList.size(); i++) {
 		if (!bossList[i]->getIsDestroy()) {
 			bossList[i]->handleDirection();
@@ -450,6 +455,8 @@ void TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _ren
 
 
 				//std::cout <<_itemList.getSize() << std::endl;
+				moneyBonus += bossList[i]->getBonus();
+
 				delete bossList[i];
 			//	std::cout << _itemList.getSize() << std::endl;
 				bossList.erase(bossList.begin() + i);
@@ -459,6 +466,7 @@ void TankBossList::handleList(MapGame _map, Circle _tankMain, SDL_Renderer* _ren
 		}
 	}
 	// if (_itemList.getSize() != 0) std::cout << _itemList.getSize() << std::endl;
+	return moneyBonus;
 }
 
 bool TankBossList::checkCollisionBullet(SDL_Rect _bullet, bool _iSenemies, int _damgeBullet)
