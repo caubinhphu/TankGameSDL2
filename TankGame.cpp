@@ -7,12 +7,7 @@
 
 #define TOTAL_LEVEL_GAME 2
 
-MapGame* map;
 TankMain tank(100, 100);
-TankBossList bossList;
-ItemList itemList;
-SuperTankBoss* superTankBoss;
-
 
 BasicObj menuBacground;
 BasicObj homeBacground;
@@ -738,9 +733,6 @@ bool load() {
 	if (!tank.loadImg(renderer)) {
 		return false;
 	}
-	//if (!map.loadMap("./image/mapimg5.png", "./general/mapgame.map", renderer)) {
-	//	return false;
-	//}
 	if (!winBackground.loadImg("./image/youwin.png", renderer)) {
 		return false;
 	}
@@ -890,17 +882,17 @@ void game() {
 	bool isAllowCreateTankBossList = false; // cho phép tạo bost list?
 	bool isYouWin = false;
 
-	MapGame* _map = new MapGame();
-	_map->loadMap("./image/mapimg5.png", "./general/mapgame.map", renderer);
-	map = _map;
-	delete _map;
+	MapGame map;
+	TankBossList bossList;
+	ItemList itemList;
+	SuperTankBoss* superTankBoss = NULL ;
+
+	map.loadMap("./image/mapimg5.png", "./general/mapgame.map", renderer);
 
 	loadPauseMenu();
 	if (load()) {
 
 		tank.assign();
-		bossList.assign();
-
 
 		SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 		SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
