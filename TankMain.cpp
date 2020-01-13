@@ -26,6 +26,7 @@ TankMain::TankMain(int _x, int _y) {
 	totalFireBullet = totalRocketBullet = 0;
 	power = 0;
 	isDestroy = false;
+	isChangeGun = true;
 }
 
 TankMain::~TankMain() {
@@ -80,9 +81,13 @@ void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
 		case SDLK_w:
 			spY -= speed; break;
 		case SDLK_1:
-			bulletType = slotGun1Type; break;
+			bulletType = slotGun1Type;
+			isChangeGun = true;
+			break;
 		case SDLK_2:
-			bulletType = slotGun1Type; break;
+			bulletType = slotGun2Type;
+			isChangeGun = true;
+			break;
 		}
 	}
 	else if (_e->type == SDL_KEYUP && _e->key.repeat == 0) {
@@ -154,7 +159,7 @@ void TankMain::setCamera(SDL_Rect &_camera) {
 	}
 }
 
-void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
+void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Font* _font) {
 	// render xe tank
 	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
 
@@ -183,6 +188,19 @@ void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera) {
 	// render money
 	frameMoney.render(_renderer, 480, 10, NULL, 0);
 	textMoney.render(_renderer, 520, 12, NULL, 0);
+
+	// render loại súng đang sử dụng
+	if (isChangeGun) {
+		loadTextBulletCurrent(_font, _renderer);
+		isChangeGun = false;
+	}
+	textGunCurrent.render(_renderer, 100, 400, NULL, 0);
+	if (bulletType == slotGun1Type) {
+		gunSlot1.render(_renderer, 10, 400, NULL, 0);
+	}
+	else if (bulletType == slotGun2Type) {
+		gunSlot2.render(_renderer, 10, 400, NULL, 0);
+	}
 }
 
 void TankMain::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font) {
@@ -229,6 +247,7 @@ void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _render
 			else if (_itemlist[i]->getType() == Item::fireBulletItem) {
 				// std::cout << "fire bullet" << std::endl;
 				totalFireBullet += PLUS_FIREBULLET_ITEM;
+				isChangeGun = true;
 				isPlusHealth = false;
 			}
 			else if (_itemlist[i]->getType() == Item::moneyItem) {
@@ -334,7 +353,7 @@ void TankMain::setMoney(int _money, TTF_Font* _font, SDL_Renderer* _renderer) {
 	textMoney.loadText(_font, _moneyText.str(), _color, _renderer);
 }
 
-void TankMain::assign() {
+void TankMain::assign(SDL_Renderer* _renderer) {
 	healthCurrent = totalHealth;
 	spX = spY = 0;
 	rotation = 0;
@@ -350,6 +369,30 @@ void TankMain::assign() {
 	isPlusHealth = false;
 	damgeReceived = 0;
 	isDestroy = false;
+	isChangeGun = true;
+	loadGun12(_renderer);
+}
+
+void TankMain::loadGun12(SDL_Renderer* _renderer) {
+	if (slotGun1Type == Bullet::nomalBullet) {
+		gunSlot1.loadImg("./image/TD_gun.png", _renderer);
+	}
+	else if (slotGun1Type == Bullet::fireBullet) {
+		gunSlot1.loadImg("./image/fire_gun.png", _renderer);
+	}
+	else if (slotGun1Type == Bullet::rocketBullet) {
+		gunSlot1.loadImg("./image/rocket_gun.png", _renderer);
+	}
+
+	if (slotGun2Type == Bullet::nomalBullet) {
+		gunSlot2.loadImg("./image/TD_gun.png", _renderer);
+	}
+	else if (slotGun2Type == Bullet::fireBullet) {
+		gunSlot2.loadImg("./image/fire_gun.png", _renderer);
+	}
+	else if (slotGun2Type == Bullet::rocketBullet) {
+		gunSlot2.loadImg("./image/rocket_gun.png", _renderer);
+	}
 }
 
 void TankMain::renderTam(SDL_Renderer* _renderer) {
@@ -391,10 +434,14 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 			else if (bulletType == Bullet::fireBullet) {
 				_imgBullet = "./image/danlua4.png";
 				_damge = Bullet::fireDamge;
+				isChangeGun = true;
+				totalFireBullet--;
 			}
 			else if (bulletType == Bullet::rocketBullet) {
 				_imgBullet = "./image/bullet_rocket.png";
 				_damge = Bullet::rocketDamge;
+				isChangeGun = true;
+				totalRocketBullet--;
 			}
 
 			Bullet* bullet = new Bullet(); // khai báo viên đạn mới
@@ -473,4 +520,17 @@ void TankMain::renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera) {
 		}
 		bullets[i]->render(_renderer, _camera);
 	}
+}
+
+void TankMain::loadTextBulletCurrent(TTF_Font* _font, SDL_Renderer* _renderer) {
+	SDL_Color color = { 150, 0, 0 };
+	std::stringstream t;
+	t.str("");
+	if (bulletType == Bullet::nomalBullet)
+		t << "oo";
+	else if (bulletType == Bullet::fireBullet)
+		t << totalFireBullet;
+	else if (bulletType == Bullet::rocketBullet)
+		t << totalRocketBullet;
+	textGunCurrent.loadText(_font, t.str(), color, _renderer);
 }

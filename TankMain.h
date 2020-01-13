@@ -62,8 +62,9 @@ private:
 
 	BasicObj frameMoney;
 	BasicObj textMoney;
-	BasicObj gunCurrent;
+	BasicObj gunSlot1, gunSlot2;
 	BasicObj textGunCurrent;
+	bool isChangeGun;
 public:
 	TankMain(int _x, int _y);
 	~TankMain();
@@ -76,9 +77,10 @@ public:
 	void createBullet(SDL_Renderer* _renderer);
 	void handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList, SuperTankBoss* _superTank);
 	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
+	void loadTextBulletCurrent(TTF_Font* _font, SDL_Renderer* _renderer);
 	void move(MapGame map, TankBossList _bossList, Circle _superTank, Circle _fireBall);
 	void setCamera(SDL_Rect &_camera);
-	void render(SDL_Renderer* _renderer, SDL_Rect _camera);
+	void render(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Font* _font);
 
 	int getSpeed() { return speed; };
 	void setPlusSpeed(int _plus) { speed += _plus; };
@@ -149,7 +151,8 @@ public:
 
 	bool getIsDestroy() { return isDestroy; };
 
-	void assign();
+	void assign(SDL_Renderer* _renderer);
+	void loadGun12(SDL_Renderer* _renderer);
 };
 
 #endif // !TANKMAIN_H_

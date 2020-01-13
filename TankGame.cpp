@@ -622,6 +622,29 @@ void handleMenuHome() {
 							if (k == 0) { // chơi game
 								Mix_HaltMusic();
 								game();
+
+								std::stringstream _bullet("");
+								if (tank.getSlotGun1Type() == Bullet::fireBullet) {
+									_bullet.str("");
+									_bullet << tank.getTotalFireBullet();
+									textGunHome[2].loadText(smallFont, _bullet.str(), _colorPurple, renderer);
+								}
+								else if (tank.getSlotGun1Type() == Bullet::rocketBullet) {
+									_bullet.str("");
+									_bullet << tank.getTotalRocketBullet();
+									textGunHome[2].loadText(smallFont, _bullet.str(), _colorPurple, renderer);
+								}
+
+								if (tank.getSlotGun2Type() == Bullet::fireBullet) {
+									_bullet.str("");
+									_bullet << tank.getTotalFireBullet();
+									textGunHome[3].loadText(smallFont, _bullet.str(), _colorPurple, renderer);
+								}
+								else if (tank.getSlotGun2Type() == Bullet::rocketBullet) {
+									_bullet.str("");
+									_bullet << tank.getTotalRocketBullet();
+									textGunHome[3].loadText(smallFont, _bullet.str(), _colorPurple, renderer);
+								}
 							}
 							else if (k == 1) { // vào shop
 								// Mix_HaltMusic();
@@ -719,8 +742,8 @@ void handleMenuHome() {
 
 		textGunHome[0].render(renderer, 460, 145, NULL, 0);
 		textGunHome[1].render(renderer, 460, 235, NULL, 0);
-		textGunHome[2].render(renderer, cameraWidth - textGunHome[2].getW(), 160, NULL, 0);
-		textGunHome[3].render(renderer, cameraWidth - textGunHome[3].getW(), 250, NULL, 0);
+		textGunHome[2].render(renderer, cameraWidth - textGunHome[2].getW() - 5, 160, NULL, 0);
+		textGunHome[3].render(renderer, cameraWidth - textGunHome[3].getW() - 5, 250, NULL, 0);
 
 		for (int i = 0; i < 4; i++)
 			textMainHome[i].render(renderer, textMainHome[i].getX(), textMainHome[i].getY(), NULL, 0);
@@ -856,6 +879,7 @@ void loadDataTank(bool _isNewGame) {
 		else if (_data == "GJKD_Fire") tank.setSlotGun2Type(Bullet::fireBullet);
 		else if (_data == "GS3_Rocket") tank.setSlotGun2Type(Bullet::rocketBullet);
 	}
+	tank.loadGun12(renderer);
 }
 
 void close() {
@@ -892,7 +916,7 @@ void game() {
 	loadPauseMenu();
 	if (load()) {
 
-		tank.assign();
+		tank.assign(renderer);
 
 		SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 		SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
@@ -1059,7 +1083,7 @@ void game() {
 				itemList.renderItemlist(renderer, camera);
 				tank.renderBullet(renderer, camera);
 				bossList.renderBulletOfTankList(renderer, camera);
-				tank.render(renderer, camera);
+				tank.render(renderer, camera, font);
 				bossList.renderList(renderer, camera, smallFont);
 				tank.renderTam(renderer);
 				if (tank.getIsDestroy()) {
