@@ -74,8 +74,11 @@ void loadFontSound() {
 	musicChunk[SOUND_EXPLOSION] = Mix_LoadWAV("./sound/explosion.wav");
 	musicChunk[SOUND_MOUSE_INSIDE] = Mix_LoadWAV("./sound/effect_mouse_inside_2.wav");
 	musicChunk[SOUND_SHOOT_ROCKET] = Mix_LoadWAV("./sound/shoot_rocket.wav");
+	musicChunk[SOUND_EAT_HEALTH] = Mix_LoadWAV("./sound/eat_health.wav");
+	musicChunk[SOUND_EAT_BULLET] = Mix_LoadWAV("./sound/eat_bullet.wav");
+	musicChunk[SOUND_EAT_MONEY] = Mix_LoadWAV("./sound/eat_money.wav");
 
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 11; i++)
 		musicChunk[i]->volume = 400;
 }
 
@@ -1064,7 +1067,7 @@ void game() {
 
 				if (level >= 1) {
 					itemList.handleList();
-					tank.handleEatItem(itemList.getItemList(), renderer, smallFont);
+					tank.handleEatItem(itemList.getItemList(), renderer, smallFont, musicChunk);
 				}
 				tank.createBullet(renderer, musicChunk);
 				bool _isSlowedTankMain = false;

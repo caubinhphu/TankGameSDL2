@@ -28,6 +28,9 @@
 #define SOUND_EXPLOSION 5
 #define SOUND_MOUSE_INSIDE 6
 #define SOUND_SHOOT_ROCKET 7
+#define SOUND_EAT_HEALTH 8
+#define SOUND_EAT_BULLET 9
+#define SOUND_EAT_MONEY 10
 
 
 static SDL_Window* window = NULL;
@@ -41,7 +44,7 @@ static Mix_Music* musicBackgroundGame = NULL;
 static Mix_Music* musicMenuMain = NULL;
 static Mix_Music* musicMenuHome = NULL;
 static Mix_Music* musicMenuShop = NULL;
-static Mix_Chunk* musicChunk[8] = { NULL };
+static Mix_Chunk* musicChunk[11] = { NULL };
 
 struct Circle
 {

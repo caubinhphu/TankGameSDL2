@@ -228,7 +228,7 @@ void TankMain::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font) {
 	}
 }
 
-void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _smallFont) {
+void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _smallFont, Mix_Chunk* _mixChuck[]) {
 	for (int i = 0; i < _itemlist.size(); i++) {
 		if (check::checkRect_Circle(_itemlist[i]->getBox(), tankCircle)) {
 			_itemlist[i]->setIsEat(true);
@@ -236,7 +236,7 @@ void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _render
 			if (_itemlist[i]->getType() == Item::healthItem) {
 				// std::cout << "health" << std::endl;
 				healthCurrent = healthCurrent + PLUS_HEALTH_ITEM < totalHealth ? healthCurrent + PLUS_HEALTH_ITEM : totalHealth;
-
+				Mix_PlayChannel(-1, _mixChuck[SOUND_EAT_HEALTH], 0);
 				isPlusHealth = true;
 				SDL_Color _color = { 0, 255, 0 };
 				std::stringstream _plus;
@@ -246,12 +246,14 @@ void TankMain::handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _render
 			}
 			else if (_itemlist[i]->getType() == Item::fireBulletItem) {
 				// std::cout << "fire bullet" << std::endl;
+				Mix_PlayChannel(-1, _mixChuck[SOUND_EAT_BULLET], 0);
 				totalFireBullet += PLUS_FIREBULLET_ITEM;
 				isChangeGun = true;
 				isPlusHealth = false;
 			}
 			else if (_itemlist[i]->getType() == Item::moneyItem) {
 				// std::cout << "money" << std::endl;
+				Mix_PlayChannel(-1, _mixChuck[SOUND_EAT_MONEY], 0);
 				setChangeMoney(PLUS_MONEY_ITEM, _smallFont, _renderer);
 				isPlusHealth = false;
 			}

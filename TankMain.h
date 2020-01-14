@@ -96,7 +96,7 @@ public:
 	void handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font);
 	void setIsSlowed(bool _is) { isSlowed = _is; };
 	void setSaveTimeIsSlowed(Uint32 _time) { saveTimeIsSlowed = _time; };
-	void handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _smallFont);
+	void handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _smallFont, Mix_Chunk* _mixChuck[]);
 
 	void handleMoveAutomatic(int _x, int _y);
 	bool moveAutomatic(SDL_Renderer* _renderer, int _x, int _y);
