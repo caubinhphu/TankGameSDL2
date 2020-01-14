@@ -65,6 +65,9 @@ private:
 	BasicObj gunSlot1, gunSlot2;
 	BasicObj textGunCurrent;
 	bool isChangeGun;
+
+	BasicObj destroyImg[4];
+	int frameDestroy;
 public:
 	TankMain(int _x, int _y);
 	~TankMain();
@@ -78,6 +81,9 @@ public:
 	void handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList, SuperTankBoss* _superTank, Mix_Chunk* _mixChuck[]);
 	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void loadTextBulletCurrent(TTF_Font* _font, SDL_Renderer* _renderer);
+	void loadDestroyImg(SDL_Renderer* _renderer);
+	bool renderDestroy(SDL_Renderer* _renderer, SDL_Rect _camera);
+
 	void move(MapGame map, TankBossList _bossList, Circle _superTank, Circle _fireBall);
 	void setCamera(SDL_Rect &_camera);
 	void render(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Font* _font);
@@ -93,7 +99,7 @@ public:
 	int getHealthCurrent() { return healthCurrent; };
 	// void setDamageReceived(int _damgeReceived, SDL_Renderer* _renderer, TTF_Font* _font);
 	void setDamgeReceived(int _damgeReceived) { damgeReceived += _damgeReceived; };
-	void handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font);
+	void handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font, SDL_Rect _camera);
 	void setIsSlowed(bool _is) { isSlowed = _is; };
 	void setSaveTimeIsSlowed(Uint32 _time) { saveTimeIsSlowed = _time; };
 	void handleEatItem(std::vector<Item*> _itemlist, SDL_Renderer* _renderer, TTF_Font* _smallFont, Mix_Chunk* _mixChuck[]);

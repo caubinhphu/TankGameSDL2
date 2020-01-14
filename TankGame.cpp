@@ -82,6 +82,8 @@ void loadFontSound() {
 		musicChunk[i]->volume = 400;
 }
 
+void close();
+
 void loadMenuMain() {
 
 	//load font + sound
@@ -346,6 +348,7 @@ int handleMenuGame() {
 		}
 		SDL_RenderPresent(renderer);
 	}
+	close();
 	return 3;
 }
 
@@ -368,14 +371,14 @@ void handleMenuHome() {
 	SDL_Color _color = { 255, 0, 0 };
 	SDL_Color _colorPurple = { 163, 73, 164 };
 	bool isRenderWarning = false;
-	if (Mix_PlayingMusic() == 0)
-		Mix_PlayMusic(musicMenuHome, -1);
 
 	std::stringstream _t("");
 	_t << tank.getMoney();
 	textHome[0].loadText(font, _t.str(), _color, renderer);
 
 	while (!out) {
+		if (Mix_PlayingMusic() == 0)
+			Mix_PlayMusic(musicMenuHome, -1);
 		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT) {
 				out = true;
@@ -753,7 +756,8 @@ void handleMenuHome() {
 		for (int i = 0; i < 4; i++)
 			textMainHome[i].render(renderer, textMainHome[i].getX(), textMainHome[i].getY(), NULL, 0);
 		SDL_RenderPresent(renderer);
-		}
+	}
+	Mix_HaltMusic();
 	return;
 }
 
@@ -771,6 +775,8 @@ bool load() {
 	}
 	textGameOver.loadText(bigFont, "BACK", { 255, 255, 255 }, renderer);
 	textGameOver.setXY(525, 395);
+
+	tank.loadDestroyImg(renderer);
 
 	return true;
 }
@@ -889,10 +895,20 @@ void loadDataTank(bool _isNewGame) {
 
 void close() {
 	tank.free();
+	delete musicBackgroundGame;
+	delete musicMenuHome;
+	delete musicMenuMain;
+	delete musicMenuShop;
+
+	for (int i = 0; i < 11; i++)
+		delete musicChunk[i];
 	SDL_DestroyRenderer(renderer);
 	renderer = NULL;
 	SDL_DestroyWindow(window);
 	window = NULL;
+	IMG_Quit();
+	Mix_Quit();
+	TTF_Quit();
 	SDL_Quit();
 }
 
@@ -910,6 +926,7 @@ void game() {
 	bool isAllowTankMainMove = true; // cho phép tank main di chuyển?
 	bool isAllowCreateTankBossList = false; // cho phép tạo bost list?
 	bool isYouWin = false;
+	bool isGameOver = false;
 
 	MapGame map;
 	TankBossList bossList;
@@ -934,7 +951,7 @@ void game() {
 				if (event.type == SDL_QUIT) {
 					out = true;
 				}
-				if (isAllowTankMainMove)
+				if (!isGameOver && isAllowTankMainMove)
 					tank.handleEvents(&event, camera);
 
 				if (event.type == SDL_KEYUP) {
@@ -951,7 +968,7 @@ void game() {
 			SDL_RenderClear(renderer); // clear màn hình render
 			SDL_SetRenderDrawColor(renderer, 100, 50, 0, 0);
 
-			if (!isYouWin) {
+			if (!isYouWin || !isGameOver) {
 				if (isLevelUp) { // tăng độ level game
 					level++;
 					isLevelUp = false;
@@ -1041,7 +1058,7 @@ void game() {
 					itemList.createList(renderer, map);
 				}
 
-				if (isAllowTankMainMove) {
+				if (isAllowTankMainMove && !isGameOver) {
 					if (isAllowRenderSuperTank) {
 						tank.move(map, bossList, superTankBoss->getTankCircle(), superTankBoss->getCircleBallFire());
 						tank.setChangeMoney(bossList.handleList(map, tank.getTankCircle(), renderer, camera, itemList, superTankBoss->getCircleBallFire()), smallFont, renderer);
@@ -1059,7 +1076,7 @@ void game() {
 							std::cout << level << std::endl;
 						}
 					}
-					tank.handleDamgeReceived(renderer, smallFont);
+					tank.handleDamgeReceived(renderer, smallFont, camera);
 
 				}
 
@@ -1094,8 +1111,10 @@ void game() {
 				bossList.renderList(renderer, camera, smallFont);
 				tank.renderTam(renderer);
 				if (tank.getIsDestroy()) {
-					handleGameOverMenu();
-					return;
+					if (tank.renderDestroy(renderer, camera)) {
+						handleGameOverMenu();
+						return;
+					}
 				}
 			}
 			else {
@@ -1106,7 +1125,6 @@ void game() {
 			SDL_RenderPresent(renderer);
 		}
 	}
-	close();
 	Mix_HaltMusic();
 	SDL_ShowCursor(SDL_ENABLE); // hiện con trỏ chuột
 	return;

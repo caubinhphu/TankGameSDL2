@@ -27,6 +27,7 @@ TankMain::TankMain(int _x, int _y) {
 	power = 0;
 	isDestroy = false;
 	isChangeGun = true;
+	frameDestroy = 0;
 }
 
 TankMain::~TankMain() {
@@ -57,58 +58,63 @@ void TankMain::setTankCircle() {
 }
 
 void TankMain::handleEvents(SDL_Event* _e, SDL_Rect _camera) {
-	int mouseX = 0, mouseY = 0;
-	SDL_GetMouseState(&mouseX, &mouseY);
+	if (!isDestroy) {
+		int mouseX = 0, mouseY = 0;
+		SDL_GetMouseState(&mouseX, &mouseY);
 
-	if (mouseX == tankCircle.x && mouseY == tankCircle.y) {
-		rotation = 0;
-		//std::cout << 1 << std::endl;
+		if (mouseX == tankCircle.x && mouseY == tankCircle.y) {
+			rotation = 0;
+			//std::cout << 1 << std::endl;
+		}
+		else {
+			rotation = check::rotationA_B(mouseX, mouseY, box.x + box.w / 2 - _camera.x, box.y + box.h / 2 - _camera.y);
+		}
+		if (rotation < 0) rotation = 0;
+		// std::cout << rotation << std::endl;
+
+		if (_e->type == SDL_KEYDOWN && _e->key.repeat == 0) {
+			switch (_e->key.keysym.sym) {
+			case SDLK_a:
+				spX -= speed; break;
+			case SDLK_d:
+				spX += speed; break;
+			case SDLK_s:
+				spY += speed; break;
+			case SDLK_w:
+				spY -= speed; break;
+			case SDLK_1:
+				bulletType = slotGun1Type;
+				isChangeGun = true;
+				break;
+			case SDLK_2:
+				bulletType = slotGun2Type;
+				isChangeGun = true;
+				break;
+			}
+		}
+		else if (_e->type == SDL_KEYUP && _e->key.repeat == 0) {
+			switch (_e->key.keysym.sym) {
+			case SDLK_a:
+				spX += speed; break;
+			case SDLK_d:
+				spX -= speed; break;
+			case SDLK_s:
+				spY -= speed; break;
+			case SDLK_w:
+				spY += speed; break;
+			}
+		}
+		else if (_e->type == SDL_MOUSEBUTTONDOWN) {
+			isMouseDown = true;
+			isMouseUp = false;
+		}
+		else if (_e->type == SDL_MOUSEBUTTONUP) {
+			isMouseDown = false;
+			isMouseUp = true;
+		}
 	}
 	else {
-		rotation = check::rotationA_B(mouseX, mouseY, box.x + box.w / 2 - _camera.x, box.y + box.h / 2 - _camera.y);
-	}
-	if (rotation < 0) rotation = 0;
-	// std::cout << rotation << std::endl;
-
-	if (_e->type == SDL_KEYDOWN && _e->key.repeat == 0) {
-		switch (_e->key.keysym.sym) {
-		case SDLK_a:
-			spX -= speed; break;
-		case SDLK_d:
-			spX += speed; break;
-		case SDLK_s:
-			spY += speed; break;
-		case SDLK_w:
-			spY -= speed; break;
-		case SDLK_1:
-			bulletType = slotGun1Type;
-			isChangeGun = true;
-			break;
-		case SDLK_2:
-			bulletType = slotGun2Type;
-			isChangeGun = true;
-			break;
-		}
-	}
-	else if (_e->type == SDL_KEYUP && _e->key.repeat == 0) {
-		switch (_e->key.keysym.sym) {
-		case SDLK_a:
-			spX += speed; break;
-		case SDLK_d:
-			spX -= speed; break;
-		case SDLK_s:
-			spY -= speed; break;
-		case SDLK_w:
-			spY += speed; break;
-		}
-	}
-	else if (_e->type == SDL_MOUSEBUTTONDOWN) {
-		isMouseDown = true;
-		isMouseUp = false;
-	}
-	else if (_e->type == SDL_MOUSEBUTTONUP) {
-		isMouseDown = false;
-		isMouseUp = true;
+		spX = spY = 0;
 	}
 }
 
@@ -160,50 +166,52 @@ void TankMain::setCamera(SDL_Rect &_camera) {
 }
 
 void TankMain::render(SDL_Renderer* _renderer, SDL_Rect _camera, TTF_Font* _font) {
-	// render xe tank
-	BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
+	if (!isDestroy) {
+		// render xe tank
+		BasicObj::render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, rotation);
 
-	// render thanh máu
-	bloodBar.x = box.x;
-	bloodBar.y = box.y - 20;
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 128, 0);
-	SDL_Rect rimBar = { bloodBar.x - _camera.x, bloodBar.y - _camera.y, bloodBar.width, bloodBar.height };
-	SDL_RenderDrawRect(_renderer, &rimBar);
-	SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 0);
-	bloodBar.percent = healthCurrent * 100 / totalHealth; // tính phần trăm máu còn lại
-	if (bloodBar.percent <= 0) bloodBar.percent = 0;
-	SDL_Rect _bloodBar = { bloodBar.x - _camera.x + 1, bloodBar.y - _camera.y + 1, (float)(bloodBar.width - 2) * ((float)bloodBar.percent / 100), bloodBar.height - 2 };
-	SDL_RenderFillRect(_renderer, &_bloodBar);
+		// render thanh máu
+		bloodBar.x = box.x;
+		bloodBar.y = box.y - 20;
+		SDL_SetRenderDrawColor(_renderer, 0, 0, 128, 0);
+		SDL_Rect rimBar = { bloodBar.x - _camera.x, bloodBar.y - _camera.y, bloodBar.width, bloodBar.height };
+		SDL_RenderDrawRect(_renderer, &rimBar);
+		SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 0);
+		bloodBar.percent = healthCurrent * 100 / totalHealth; // tính phần trăm máu còn lại
+		if (bloodBar.percent <= 0) bloodBar.percent = 0;
+		SDL_Rect _bloodBar = { bloodBar.x - _camera.x + 1, bloodBar.y - _camera.y + 1, (float)(bloodBar.width - 2) * ((float)bloodBar.percent / 100), bloodBar.height - 2 };
+		SDL_RenderFillRect(_renderer, &_bloodBar);
 
-	// render minus health
-	if (isMinusHealth || isPlusHealth) {
-		textMinusHealth.render(_renderer, box.x + box.w - _camera.x, box.y - 20 - _camera.y, NULL, 0);
-	}
+		// render minus health
+		if (isMinusHealth || isPlusHealth) {
+			textMinusHealth.render(_renderer, box.x + box.w - _camera.x, box.y - 20 - _camera.y, NULL, 0);
+		}
 
-	// render bông tuyết
-	if (isSlowed) {
-		snowFlake.render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, 0);
-	}
+		// render bông tuyết
+		if (isSlowed) {
+			snowFlake.render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, 0);
+		}
 
-	// render money
-	frameMoney.render(_renderer, 480, 10, NULL, 0);
-	textMoney.render(_renderer, 520, 12, NULL, 0);
+		// render money
+		frameMoney.render(_renderer, 480, 10, NULL, 0);
+		textMoney.render(_renderer, 520, 12, NULL, 0);
 
-	// render loại súng đang sử dụng
-	if (isChangeGun) {
-		loadTextBulletCurrent(_font, _renderer);
-		isChangeGun = false;
-	}
-	textGunCurrent.render(_renderer, 100, 400, NULL, 0);
-	if (bulletType == slotGun1Type) {
-		gunSlot1.render(_renderer, 10, 400, NULL, 0);
-	}
-	else if (bulletType == slotGun2Type) {
-		gunSlot2.render(_renderer, 10, 400, NULL, 0);
+		// render loại súng đang sử dụng
+		if (isChangeGun) {
+			loadTextBulletCurrent(_font, _renderer);
+			isChangeGun = false;
+		}
+		textGunCurrent.render(_renderer, 100, 400, NULL, 0);
+		if (bulletType == slotGun1Type) {
+			gunSlot1.render(_renderer, 10, 400, NULL, 0);
+		}
+		else if (bulletType == slotGun2Type) {
+			gunSlot2.render(_renderer, 10, 400, NULL, 0);
+		}
 	}
 }
 
-void TankMain::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font) {
+void TankMain::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font, SDL_Rect _camera) {
 	if (damgeReceived != 0) {
 		int _damge = damgeReceived * (1 - (armor / 100.0));
 		// std::cout << _damgeReceived << ", " << _damge << std::endl;
@@ -222,8 +230,6 @@ void TankMain::handleDamgeReceived(SDL_Renderer* _renderer, TTF_Font* _font) {
 		isMinusHealth = false;
 	}
 	if (healthCurrent < 0) {
-		// std::cout << "Game Over" << std::endl;
-		// healthCurrent = totalHealth;
 		isDestroy = true;
 	}
 }
@@ -373,6 +379,7 @@ void TankMain::assign(SDL_Renderer* _renderer) {
 	isDestroy = false;
 	isChangeGun = true;
 	loadGun12(_renderer);
+	frameDestroy = 0;
 }
 
 void TankMain::loadGun12(SDL_Renderer* _renderer) {
@@ -404,7 +411,7 @@ void TankMain::renderTam(SDL_Renderer* _renderer) {
 }
 
 void TankMain::createBullet(SDL_Renderer* _renderer, Mix_Chunk* _mixChuck[]) {
-	if (isMouseDown && !isMouseUp) { // kiểm tra chuột trái có đang được nhấn
+	if (!isDestroy && isMouseDown && !isMouseUp) { // kiểm tra chuột trái có đang được nhấn
 		Bullet::BulletFirtingRate firtingRate{};
 
 		// Kiểm tra tốc độ bắn của loại đạn đang sử dung
@@ -544,4 +551,22 @@ void TankMain::loadTextBulletCurrent(TTF_Font* _font, SDL_Renderer* _renderer) {
 	else if (bulletType == Bullet::rocketBullet)
 		t << totalRocketBullet;
 	textGunCurrent.loadText(_font, t.str(), color, _renderer);
+}
+
+void TankMain::loadDestroyImg(SDL_Renderer* _renderer) {
+	destroyImg[0].loadImg("./image/explosion_1.png", _renderer);
+	destroyImg[1].loadImg("./image/explosion_2.png", _renderer);
+	destroyImg[2].loadImg("./image/explosion_3.png", _renderer);
+	destroyImg[3].loadImg("./image/explosion_4.png", _renderer);
+}
+
+bool TankMain::renderDestroy(SDL_Renderer* _renderer, SDL_Rect _camera)
+{
+	// img_effect_money.render(_renderer, width_camera - img_effect_money.get_width() - 160, 10, NULL, 0);
+
+	destroyImg[frameDestroy / 8].render(_renderer, box.x - _camera.x, box.y - _camera.y, NULL, 0);
+	frameDestroy++;
+	if (frameDestroy / 8 == 4)
+		return true;
+	return false;
 }
