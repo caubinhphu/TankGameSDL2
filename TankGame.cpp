@@ -361,16 +361,18 @@ void handleMenuHome() {
 	bool isRenderFrameGun = false;
 	bool isMouseInsideFrameGun = false;
 	int indexFrameHome = -1;
+	SDL_Event e;
+	SDL_Color _color = { 255, 0, 0 };
+	SDL_Color _colorPurple = { 163, 73, 164 };
+	bool isRenderWarning = false;
+	if (Mix_PlayingMusic() == 0)
+		Mix_PlayMusic(musicMenuHome, -1);
+
+	std::stringstream _t("");
+	_t << tank.getMoney();
+	textHome[0].loadText(font, _t.str(), _color, renderer);
 
 	while (!out) {
-		SDL_Event e;
-		SDL_Color _color = { 255, 0, 0 };
-		SDL_Color _colorPurple = { 163, 73, 164 };
-
-		bool isRenderWarning = false;
-
-		if (Mix_PlayingMusic() == 0)
-			Mix_PlayMusic(musicMenuHome, -1);
 		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT) {
 				out = true;
@@ -645,6 +647,10 @@ void handleMenuHome() {
 									_bullet << tank.getTotalRocketBullet();
 									textGunHome[3].loadText(smallFont, _bullet.str(), _colorPurple, renderer);
 								}
+
+								_t = std::stringstream("");
+								_t << tank.getMoney();
+								textHome[0].loadText(font, _t.str(), _color, renderer);
 							}
 							else if (k == 1) { // vào shop
 								// Mix_HaltMusic();
@@ -697,10 +703,6 @@ void handleMenuHome() {
 				}
 			}
 		}
-
-		std::stringstream _t("");
-		_t << tank.getMoney();
-		textHome[0].loadText(font, _t.str(), _color, renderer);
 
 		SDL_RenderClear(renderer);
 		SDL_SetRenderDrawColor(renderer, 0, 100, 100, 0);
@@ -914,6 +916,8 @@ void game() {
 	map.loadMap("./image/mapimg5.png", "./general/mapgame.map", renderer);
 
 	loadPauseMenu();
+	if (Mix_PlayingMusic() == 0)
+		Mix_PlayMusic(musicBackgroundGame, -1);
 	if (load()) {
 
 		tank.assign(renderer);
@@ -1062,17 +1066,17 @@ void game() {
 					itemList.handleList();
 					tank.handleEatItem(itemList.getItemList(), renderer, smallFont);
 				}
-				tank.createBullet(renderer);
+				tank.createBullet(renderer, musicChunk);
 				bool _isSlowedTankMain = false;
 
 				if (isAllowRenderSuperTank) { // có super tank
 					tank.setDamgeReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTankMain, superTankBoss->getCircleBallFire()));
-					tank.handleBullet(map, renderer, camera, bossList, superTankBoss);
+					tank.handleBullet(map, renderer, camera, bossList, superTankBoss, musicChunk);
 					superTankBoss->handleDamgeReceived(renderer, font);
 				}
 				else { // không có super tank
 					tank.setDamgeReceived(bossList.handleBulletOfTankList(map, renderer, camera, tank.getTankCircle(), _isSlowedTankMain, { 0, 0, 0 }));
-					tank.handleBullet(map, renderer, camera, bossList, NULL);
+					tank.handleBullet(map, renderer, camera, bossList, NULL, musicChunk);
 				}
 
 				if (_isSlowedTankMain) {

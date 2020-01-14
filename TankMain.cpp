@@ -401,7 +401,7 @@ void TankMain::renderTam(SDL_Renderer* _renderer) {
 	tamBan.render(_renderer, mouseX - tamBan.getW() / 2, mouseY - tamBan.getH() / 2, NULL, 0);
 }
 
-void TankMain::createBullet(SDL_Renderer* _renderer) {
+void TankMain::createBullet(SDL_Renderer* _renderer, Mix_Chunk* _mixChuck[]) {
 	if (isMouseDown && !isMouseUp) { // kiểm tra chuột trái có đang được nhấn
 		Bullet::BulletFirtingRate firtingRate{};
 
@@ -411,12 +411,14 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 		}
 		else if (bulletType == Bullet::fireBullet) {
 			if (totalFireBullet <= 0) {
+				Mix_PlayChannel(-1, _mixChuck[SOUND_NULL_BULLET], 0);
 				return;
 			}
 			firtingRate = Bullet::fireRate;
 		}
 		else if (bulletType == Bullet::rocketBullet) {
 			if (totalRocketBullet <= 0) {
+				Mix_PlayChannel(-1, _mixChuck[SOUND_NULL_BULLET], 0);
 				return;
 			}
 			firtingRate = Bullet::rocketRate;
@@ -429,19 +431,21 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 			if (bulletType == Bullet::nomalBullet) {
 				_imgBullet = "./image/ammo.png";
 				_damge = Bullet::nomalDamge;
-				
+				Mix_PlayChannel(-1, _mixChuck[SOUND_SHOOT_NORMAL], 0);
 			}
 			else if (bulletType == Bullet::fireBullet) {
 				_imgBullet = "./image/danlua4.png";
 				_damge = Bullet::fireDamge;
 				isChangeGun = true;
 				totalFireBullet--;
+				Mix_PlayChannel(-1, _mixChuck[SOUND_SHOOT_FIRE], 0);
 			}
 			else if (bulletType == Bullet::rocketBullet) {
 				_imgBullet = "./image/bullet_rocket.png";
 				_damge = Bullet::rocketDamge;
 				isChangeGun = true;
 				totalRocketBullet--;
+				Mix_PlayChannel(-1, _mixChuck[SOUND_SHOOT_ROCKET], 0);
 			}
 
 			Bullet* bullet = new Bullet(); // khai báo viên đạn mới
@@ -488,18 +492,23 @@ void TankMain::createBullet(SDL_Renderer* _renderer) {
 	}
 }
 
-void TankMain::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList, SuperTankBoss* _superTank) {
+void TankMain::handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList, SuperTankBoss* _superTank, Mix_Chunk* _mixChuck[]) {
 	for (int i = 0; i < bullets.size(); i++) {		
 		bullets[i]->move();
 
-		if (_map.checkCollisionRect(bullets[i]->getBox())
-			|| _tankList.checkCollisionBullet(bullets[i]->getBox(), true, bullets[i]->getDamge())) {
+		if (_map.checkCollisionRect(bullets[i]->getBox())) {
 			bullets[i]->setIsMove(false);
+			Mix_PlayChannel(-1, _mixChuck[SOUND_COLLISION_WALL], 0);
 		}
-		if (_superTank != NULL) {
+		else if (_tankList.checkCollisionBullet(bullets[i]->getBox(), true, bullets[i]->getDamge())) {
+			bullets[i]->setIsMove(false);
+			Mix_PlayChannel(-1, _mixChuck[SOUND_COLLISION_ENEMIES], 0);
+		}
+		else if (_superTank != NULL) {
 			if (check::checkRect_Circle(bullets[i]->getBox(), _superTank->getTankCircle())) {
 				_superTank->setDamgeReceived(bullets[i]->getDamge());
 				bullets[i]->setIsMove(false);
+				Mix_PlayChannel(-1, _mixChuck[SOUND_COLLISION_ENEMIES], 0);
 			}
 		}
 		if (bullets[i]->getIsMove() == false) {

@@ -74,8 +74,8 @@ public:
 	void renderTam(SDL_Renderer* _renderer);
 
 	void handleEvents(SDL_Event* _e, SDL_Rect _camera);
-	void createBullet(SDL_Renderer* _renderer);
-	void handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList, SuperTankBoss* _superTank);
+	void createBullet(SDL_Renderer* _renderer, Mix_Chunk* _mixChuck[]);
+	void handleBullet(MapGame _map, SDL_Renderer* _renderer, SDL_Rect _camera, TankBossList _tankList, SuperTankBoss* _superTank, Mix_Chunk* _mixChuck[]);
 	void renderBullet(SDL_Renderer* _renderer, SDL_Rect _camera);
 	void loadTextBulletCurrent(TTF_Font* _font, SDL_Renderer* _renderer);
 	void move(MapGame map, TankBossList _bossList, Circle _superTank, Circle _fireBall);

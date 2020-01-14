@@ -27,7 +27,7 @@ public:
 	enum DameBullet
 	{
 		nomalDamge = 10,
-		fireDamge = 2000,
+		fireDamge = 20,
 		fireBossDamge = 50,
 		ballBossDamge = 40,
 		ballNormalBossDamge = 40,
@@ -38,7 +38,7 @@ public:
 		rocketDamge = 200,
 	};
 
-	static const int speed = 10; // 20
+	static const int speed = 20; // 20
 private:
 	int spX, spY;
 	double rotation;
