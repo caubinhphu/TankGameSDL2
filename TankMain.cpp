@@ -342,7 +342,7 @@ bool TankMain::moveAutomatic(SDL_Renderer* _renderer, int _x, int _y) {
 }
 
 void TankMain::setChangeMoney(int _change, TTF_Font* _font, SDL_Renderer* _renderer) {
-	if (_change > 0) {
+	if (_change != 0) {
 		money += _change;
 		SDL_Color _color = { 0, 0, 128 };
 		std::stringstream _money;

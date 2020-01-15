@@ -101,7 +101,7 @@ void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams,
 {
 	rotation = check::rotationA_B(_tankMain.x, _tankMain.y, box.x + box.w / 2, box.y + box.h / 2);
 	if (isCollisionTeams == true) {
-		if (dir == LEFT) {
+		/*if (dir == LEFT) {
 			spX = 5;
 			spY = 0;
 			dir = RIGHT;
@@ -120,6 +120,26 @@ void TankBoss::handleMove(MapGame _map, Circle _tankMain, bool isCollisionTeams,
 			spY = -5;
 			spX = 0;
 			dir = TOP;
+		}*/
+		if (dir == LEFT) {
+			spX = 5;
+			spY = 0;
+			dir = STAND_STILL;
+		}
+		else if (dir == RIGHT) {
+			spX = -5;
+			spY = 0;
+			dir = STAND_STILL;
+		}
+		else if (dir == TOP) {
+			spY = 5;
+			spX = 0;
+			dir = STAND_STILL;
+		}
+		else if (dir == BOTTOM) {
+			spY = -5;
+			spX = 0;
+			dir = STAND_STILL;
 		}
 	}
 
@@ -395,9 +415,6 @@ void TankBossList::createListBoss(MapGame _map, Circle _tankMain, int _quality, 
 
 bool TankBossList::checkCollisionTankBossList(Circle _boss, int k)
 {
-	if (k != -1) {
-		_boss.r += 10;
-	}
 	for (int i = 0; i < bossList.size(); i++)
 	{
 		Circle _boss2 = bossList[i]->getTankCircle();

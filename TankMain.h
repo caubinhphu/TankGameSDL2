@@ -146,6 +146,7 @@ public:
 
 	int getTotalFireBullet() { return totalFireBullet; };
 	void setTotalFireBullet(int _total) { totalFireBullet = _total; };
+	void setPlusTotalFireBullet(int _plus) { totalFireBullet += _plus; };
 
 	int getTotalRocketBullet() { return totalRocketBullet; };
 	void setPlusTotalRocketBullet(int _plus) { totalRocketBullet += _plus; };

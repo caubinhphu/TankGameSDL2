@@ -155,6 +155,7 @@
     <ClCompile Include="general.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="MapGame.cpp" />
+    <ClCompile Include="Message.cpp" />
     <ClCompile Include="SuperTankBoss.cpp" />
     <ClCompile Include="TankBoss.cpp" />
     <ClCompile Include="TankGame.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="general.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="MapGame.h" />
+    <ClInclude Include="Message.h" />
     <ClInclude Include="SuperTankBoss.h" />
     <ClInclude Include="TankBoss.h" />
     <ClInclude Include="TankMain.h" />

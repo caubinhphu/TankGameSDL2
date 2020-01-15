@@ -4,6 +4,7 @@
 #include "TankBoss.h"
 #include "Item.h"
 #include "SuperTankBoss.h"
+#include "Message.h"
 
 #define TOTAL_LEVEL_GAME 5
 
@@ -16,6 +17,7 @@ BasicObj aboutBackground;
 BasicObj winBackground;
 BasicObj pauseBackground;
 BasicObj gameOverBackground;
+
 BasicObj warning;
 
 BasicObj textMenu[4];
@@ -26,9 +28,11 @@ BasicObj textAbout;
 BasicObj textPause[2];
 BasicObj textWin;
 BasicObj textGameOver;
+BasicObj textShop[2];
 
 BasicObj frameHome[11];
 BasicObj frameGunHome[3];
+BasicObj frameShop[4];
 
 bool init() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
@@ -138,6 +142,9 @@ void loadHomeMenu() {
 	frameHome[9].loadImg("./image/frame_upgrade.png", renderer);//nang cap
 	frameHome[10].loadImg("./image/double_frame.png", renderer);//khung kep
 
+	for (int i = 0; i < 10; i++)
+		frameHome[i].setAlphaMod(200);
+
 	frameHome[0].setXY(420, 55);
 	frameHome[1].setXY(420, 135);
 	frameHome[2].setXY(420, 225);
@@ -153,6 +160,9 @@ void loadHomeMenu() {
 	frameGunHome[0].loadImg("./image/TD_gun.png", renderer);
 	frameGunHome[1].loadImg("./image/fire_gun.png", renderer);
 	frameGunHome[2].loadImg("./image/rocket_gun.png", renderer);
+	frameGunHome[0].setAlphaMod(200);
+	frameGunHome[1].setAlphaMod(200);
+	frameGunHome[2].setAlphaMod(200);
 }
 
 void loadPauseMenu() {
@@ -163,6 +173,29 @@ void loadPauseMenu() {
 	textPause[0].setXY(242, 237);
 	textPause[1].loadText(bigFont, "BACK TO HOME", _color, renderer);
 	textPause[1].setXY(202, 320);
+}
+
+void loadShopMenu() {
+	shopBackground.loadImg("./image/background_shop.png", renderer);
+
+	SDL_Color _color = { 255, 255, 255 };
+	textShop[0].loadText(bigFont, "Back", _color, renderer);
+	textShop[0].setXY(500, 390);
+
+	frameShop[0].loadImg("./image/fire_look.png", renderer);
+	frameShop[1].loadImg("./image/rocket_look.png", renderer);
+	frameShop[2].loadImg("./image/frame_bullet_fire.png", renderer);
+	frameShop[3].loadImg("./image/frame_bullet_rocket.png", renderer);
+
+	frameShop[0].setAlphaMod(200);
+	frameShop[1].setAlphaMod(200);
+	frameShop[2].setAlphaMod(200);
+	frameShop[3].setAlphaMod(200);
+
+	frameShop[0].setXY(34, 91);
+	frameShop[1].setXY(32, 184);
+	frameShop[2].setXY(402, 157);
+	frameShop[3].setXY(402, 242);
 }
 
 void loadGame() {
@@ -295,6 +328,130 @@ void handleMenuAbout() {
 	}
 }
 
+void handleMenuShop() {
+	bool out = false;
+	std::vector<bool> flagChuck(4, false);
+	bool flagChuckShopText = false;
+	SDL_Event e;
+	SDL_Color _color = { 255, 0, 0 };
+	bool isRenderWarning = false;
+	std::stringstream _t("");
+	_t << tank.getMoney();
+	textShop[1].loadText(font, _t.str(), _color, renderer);
+	if (Mix_PlayingMusic() == 0)
+		Mix_PlayMusic(musicMenuShop, -1);
+	while (!out) {
+		while (SDL_PollEvent(&e) != 0) {
+			if (e.type == SDL_QUIT) {
+				out = true;
+			}
+			if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
+				int _x = 0, _y = 0;
+				SDL_GetMouseState(&_x, &_y);
+				for (int i = 0; i < 4; i++) {
+					if (check::checkInsideRect(_x, _y, frameShop[i].getBox())) {
+						if (flagChuck[i] == false) {
+							Mix_PlayChannel(-1, musicChunk[SOUND_MOUSE_INSIDE], 0);
+							flagChuck[i] = true;
+							frameShop[i].setAlphaMod(255);
+						}
+						if (e.type == SDL_MOUSEBUTTONDOWN) {
+							if (i == 0 && !tank.getIsHaveFireGun()) {
+								if (tank.getMoney() >= 500) {
+									tank.setChangeMoney(-500, font, renderer);
+									tank.setIsHaveFireGun(true);
+
+									_t.str("");
+									_t << tank.getMoney();
+									textShop[1].loadText(font, _t.str(), _color, renderer);
+								}
+								else isRenderWarning = true;
+							}
+							else if (i == 1 && !tank.getIsHaveRocketGun()) {
+								if (tank.getMoney() >= 1000) {
+									tank.setChangeMoney(-1000, font, renderer);
+									tank.setIsHaveRocketGun(true);
+
+									_t.str("");
+									_t << tank.getMoney();
+									textShop[1].loadText(font, _t.str(), _color, renderer);
+								}
+								else isRenderWarning = true;
+							}
+							else if (i == 2) {
+								if (tank.getMoney() >= 20) {
+									tank.setChangeMoney(-20, font, renderer);
+									tank.setPlusTotalFireBullet(10);
+
+									_t.str("");
+									_t << tank.getMoney();
+									textShop[1].loadText(font, _t.str(), _color, renderer);
+								}
+								else isRenderWarning = true;
+							}
+							else if (i == 3) {
+								if (tank.getMoney() >= 50) {
+									tank.setChangeMoney(-50, font, renderer);
+									tank.setPlusTotalRocketBullet(1);
+
+									_t.str("");
+									_t << tank.getMoney();
+									textShop[1].loadText(font, _t.str(), _color, renderer);
+								}
+								else isRenderWarning = true;
+							}
+						}
+						break;
+					}
+					else {
+						flagChuck[i] = false;
+						frameShop[i].setAlphaMod(200);
+					}
+				}
+
+				if (check::checkInsideRect(_x, _y, textShop[0].getBox())) {
+					textShop[0].setColor(0, 0, 128);
+					if (flagChuckShopText == false) {
+						Mix_PlayChannel(-1, musicChunk[SOUND_MOUSE_INSIDE], 0);
+						flagChuckShopText = true;
+					}
+					if (e.type == SDL_MOUSEBUTTONDOWN) {
+						Mix_HaltMusic();
+						return;
+					}
+				}
+				else {
+					textShop[0].setColor(255, 255, 255);
+					flagChuckShopText = false;
+				}
+
+			}
+		}
+
+		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(renderer, 0, 100, 100, 0);
+
+		shopBackground.render(renderer, 0, 0, NULL, 0);
+
+		if (!tank.getIsHaveFireGun()) frameShop[0].render(renderer, 34, 91, NULL, 0);
+		if (!tank.getIsHaveRocketGun()) frameShop[1].render(renderer, 32, 184, NULL, 0);
+		frameShop[2].render(renderer, 402, 157, NULL, 0);
+		frameShop[3].render(renderer, 402, 242, NULL, 0);
+
+		textShop[0].render(renderer, 500, 390, NULL, 0);
+		textShop[1].render(renderer, 480, 70, NULL, 0);
+
+		if (isRenderWarning) {
+			warning.render(renderer, 580, 70, NULL, 0);
+			isRenderWarning = false;
+		}
+		SDL_RenderPresent(renderer);
+	}
+
+	Mix_HaltMusic();
+	return;
+}
+
 int handleMenuGame() {
 	bool out = false;
 	std::vector<bool> flagChuck(4, false);
@@ -321,8 +478,17 @@ int handleMenuGame() {
 								return 0;
 							}
 							else if (i == 1) { // new game
-								Mix_HaltMusic();
-								return 1;
+								std::vector<std::string> _option;
+								_option.push_back("CANCEL");
+								_option.push_back("OK");
+								Message* message = new Message("New game", "Are you sure?", _option);
+								message->createMessage(renderer, font);
+								std::string option = message->handleMessage(renderer);
+								if (option == "OK") {
+									Mix_HaltMusic();
+									return 1;
+								}
+								delete message;
 							}
 							else if (i == 2) { // about
 								return 2;
@@ -355,7 +521,22 @@ int handleMenuGame() {
 void game();
 
 void saveGame() {
-	;
+	std::ofstream _dataTank("dataSave.txt", std::ios::out);
+	_dataTank << tank.getTotalHealth() << std::endl;
+	_dataTank << tank.getArmor() << std::endl;
+	_dataTank << tank.getPower() << std::endl;
+	_dataTank << tank.getSpeed() << std::endl;
+	_dataTank << tank.getMoney() << std::endl;
+	_dataTank << tank.getMoneyNeedUpgradeArmor() << std::endl;
+	_dataTank << tank.getMoneyNeedUpgradeTotalHealth() << std::endl;
+	_dataTank << tank.getMoneyNeedUpgradePower() << std::endl;
+	_dataTank << tank.getMoneyNeedUpgradeSpeed() << std::endl;
+	_dataTank << tank.getTotalFireBullet() << std::endl;
+	_dataTank << tank.getTotalRocketBullet() << std::endl;
+	_dataTank << tank.getIsHaveFireGun() << std::endl;
+	_dataTank << tank.getIsHaveRocketGun() << std::endl;
+	_dataTank << tank.getSlotGun1Type() << std::endl;
+	_dataTank << tank.getSlotGun2Type();
 }
 
 void handleMenuHome() {
@@ -376,6 +557,7 @@ void handleMenuHome() {
 	_t << tank.getMoney();
 	textHome[0].loadText(font, _t.str(), _color, renderer);
 
+	bool isSavedGame = true;
 	while (!out) {
 		if (Mix_PlayingMusic() == 0)
 			Mix_PlayMusic(musicMenuHome, -1);
@@ -389,22 +571,28 @@ void handleMenuHome() {
 				SDL_GetMouseState(&_x, &_y);
 				if (isRenderFrame89) {
 					if (check::checkInsideRect(_x, _y, frameHome[9].getBox())) {
+						frameHome[9].setAlphaMod(255);
 						frameHome[10].setXY(frameHome[9].getX() + frameHome[9].getW() + 4, frameHome[9].getY());
 						isRenderFrame10 = true;
 						if (e.type == SDL_MOUSEBUTTONDOWN) {
+							isSavedGame = false;
 							if (indexFrameHome == 4) {
 								if (tank.getMoney() >= tank.getMoneyNeedUpgradeArmor()) {
 									tank.setChangeMoney(-tank.getMoneyNeedUpgradeArmor(), smallFont, renderer);
 									tank.setPlusArmor(PLUS_UPGRADE_ARMOR);
 									tank.setMoneyNeedUpgradeArmor();
 
-									std::stringstream _t("");
+									_t.str("");
 									_t << tank.getArmor();
 									textHome[1].loadText(smallFont, _t.str(), _color, renderer);
 
 									_t.str("");
 									_t << "-" << tank.getMoneyNeedUpgradeArmor();
 									textHome[3].loadText(smallFont, _t.str(), _color, renderer);
+
+									_t.str("");
+									_t << tank.getMoney();
+									textHome[0].loadText(font, _t.str(), _color, renderer);
 								}
 								else isRenderWarning = true;
 							}
@@ -414,13 +602,17 @@ void handleMenuHome() {
 									tank.setPlusSpeed(PLUS_UPGRADE_SPEED);
 									tank.setMoneyNeedUpgradeSpeed();
 
-									std::stringstream _t("");
+									_t.str("");
 									_t << tank.getSpeed();
 									textHome[1].loadText(smallFont, _t.str(), _color, renderer);
 
 									_t.str("");
 									_t << "-" << tank.getMoneyNeedUpgradeSpeed();
 									textHome[3].loadText(smallFont, _t.str(), _color, renderer);
+
+									_t.str("");
+									_t << tank.getMoney();
+									textHome[0].loadText(font, _t.str(), _color, renderer);
 								}
 								else isRenderWarning = true;
 							}
@@ -430,13 +622,17 @@ void handleMenuHome() {
 									tank.setPlusPower(PLUS_UPGRADE_POWER);
 									tank.setMoneyNeedUpgradePower();
 
-									std::stringstream _t("");
+									_t.str("");
 									_t << tank.getPower();
 									textHome[1].loadText(smallFont, _t.str(), _color, renderer);
 
 									_t.str("");
 									_t << "-" << tank.getMoneyNeedUpgradePower();
 									textHome[3].loadText(smallFont, _t.str(), _color, renderer);
+
+									_t.str("");
+									_t << tank.getMoney();
+									textHome[0].loadText(font, _t.str(), _color, renderer);
 								}
 								else isRenderWarning = true;
 							}
@@ -446,27 +642,35 @@ void handleMenuHome() {
 									tank.setPlusTotalHealth(PLUS_UPGRADE_HEALTH);
 									tank.setMoneyNeedUpgradeTotalHealth();
 
-									std::stringstream _t("");
+									_t.str("");
 									_t << tank.getTotalHealth();
 									textHome[1].loadText(smallFont, _t.str(), _color, renderer);
 
 									_t.str("");
 									_t << "-" << tank.getMoneyNeedUpgradeTotalHealth();
 									textHome[3].loadText(smallFont, _t.str(), _color, renderer);
+
+									_t.str("");
+									_t << tank.getMoney();
+									textHome[0].loadText(font, _t.str(), _color, renderer);
 								}
 								else isRenderWarning = true;
 							}
 						}
 					}
-					else isRenderFrame10 = false;
+					else {
+						isRenderFrame10 = false;
+						frameHome[9].setAlphaMod(200);
+					}
 				}
 
 				if (isRenderFrameGun) {
 					std::stringstream _bullet("");
 
-					for (int l = 0; l < 3; l++)
-					{
+					for (int l = 0; l < 3; l++) {
 						if (check::checkInsideRect(_x, _y, frameGunHome[l].getBox())) {
+							isSavedGame = false;
+							frameGunHome[l].setAlphaMod(255);
 							if (e.type == SDL_MOUSEBUTTONDOWN) {
 								if (l == 0) {
 									if (indexFrameHome == 1) {
@@ -515,8 +719,11 @@ void handleMenuHome() {
 							}
 							break;
 						}
-						else if (l >= 2) {
-							if (isMouseInsideFrameGun == false) isRenderFrameGun = false;
+						else {
+							frameGunHome[l].setAlphaMod(200);
+							if (l >= 2 && !isMouseInsideFrameGun) {
+								isRenderFrameGun = false;
+							}
 						}
 					}
 				}
@@ -529,6 +736,7 @@ void handleMenuHome() {
 							for (int j = 0; j < 8; j++) {
 								if (j != i) flagChuck[j] = false;
 							}
+							frameHome[i].setAlphaMod(255);
 						}
 						if (i == 4 || i == 5 || i == 6 || i == 7) {
 							isMouseInsideFrameGun = false;
@@ -611,11 +819,13 @@ void handleMenuHome() {
 						}
 						break;
 					}
-					else if (i >= 7)
-					{
-						if (isRenderFrame10 == false) isRenderFrame89 = false;
-						flagChuck.assign(11, false);
-						isMouseInsideFrameGun = false;
+					else {
+						frameHome[i].setAlphaMod(200);
+						if (i >= 7) {
+							if (isRenderFrame10 == false) isRenderFrame89 = false;
+							flagChuck.assign(11, false);
+							isMouseInsideFrameGun = false;
+						}
 					}
 				}
 
@@ -657,47 +867,67 @@ void handleMenuHome() {
 								_t = std::stringstream("");
 								_t << tank.getMoney();
 								textHome[0].loadText(font, _t.str(), _color, renderer);
+
+								isSavedGame = false;
 							}
 							else if (k == 1) { // vào shop
-								// Mix_HaltMusic();
+								Mix_HaltMusic();
+								handleMenuShop();
 
-								// if (menu_shop() == 9) return 9;
-
-								/*std::stringstream _bullet("");
-								if (main_char.get_type_gun_slot_1() == AMMO::fire)
-								{
+								std::stringstream _bullet("");
+								if (tank.getSlotGun1Type() == Bullet::fireBullet) {
 									_bullet.str("");
-									_bullet << main_char.get_total_ammo();
-									text_gun_home[2].load_text(small_font, _bullet.str(), _color_purple, renderer);
+									_bullet << tank.getTotalFireBullet();
+									textGunHome[2].loadText(smallFont, _bullet.str(), _colorPurple, renderer);
 								}
-								else if (main_char.get_type_gun_slot_1() == AMMO::rocket)
-								{
+								else if (tank.getSlotGun1Type() == Bullet::rocketBullet) {
 									_bullet.str("");
-									_bullet << main_char.get_total_bullet_rocket();
-									text_gun_home[2].load_text(small_font, _bullet.str(), _color_purple, renderer);
+									_bullet << tank.getTotalRocketBullet();
+									textGunHome[2].loadText(smallFont, _bullet.str(), _colorPurple, renderer);
 								}
 
-								if (main_char.get_type_gun_slot_2() == AMMO::fire)
-								{
+								if (tank.getSlotGun2Type() == Bullet::fireBullet) {
 									_bullet.str("");
-									_bullet << main_char.get_total_ammo();
-									text_gun_home[3].load_text(small_font, _bullet.str(), _color_purple, renderer);
+									_bullet << tank.getTotalFireBullet();
+									textGunHome[3].loadText(smallFont, _bullet.str(), _colorPurple, renderer);
 								}
-								else if (main_char.get_type_gun_slot_2() == AMMO::rocket)
-								{
+								else if (tank.getSlotGun2Type() == Bullet::rocketBullet) {
 									_bullet.str("");
-									_bullet << main_char.get_total_bullet_rocket();
-									text_gun_home[3].load_text(small_font, _bullet.str(), _color_purple, renderer);
-								}*/
-								return;
+									_bullet << tank.getTotalRocketBullet();
+									textGunHome[3].loadText(smallFont, _bullet.str(), _colorPurple, renderer);
+								}
+
+								_t = std::stringstream("");
+								_t << tank.getMoney();
+								textHome[0].loadText(font, _t.str(), _color, renderer);
+								isSavedGame = false;
 							}
 							else if (k == 2) // back
 							{
+								if (!isSavedGame) {
+									std::vector<std::string> _option;
+									_option.push_back("YES");
+									_option.push_back("NO");
+									Message* message = new Message("Save game", "Do you want to save game?", _option);
+									message->createMessage(renderer, font);
+									std::string option = message->handleMessage(renderer);
+									if (option == "YES") {
+										saveGame();
+									}
+									delete message;
+								}
 								Mix_HaltMusic();
 								return;
 							}
 							else if (k == 3) { // save game
 								saveGame();
+								std::vector<std::string> _option;
+								_option.push_back("OK");
+								Message* message = new Message("Save game", "Successfully", _option);
+								message->createMessage(renderer, font);
+								message->handleMessage(renderer);
+								delete message;
+
 							}
 						}
 						break;
@@ -738,8 +968,11 @@ void handleMenuHome() {
 			textHome[3].render(renderer, frameHome[10].getX(), frameHome[10].getY() + textHome[2].getH() - 8, NULL, 0);
 		}
 
-		if (isRenderWarning)
+		if (isRenderWarning) {
 			warning.render(renderer, 600, 50, NULL, 0);
+			isRenderWarning = false;
+		}
+			
 		if (isRenderFrameGun) {
 			frameGunHome[0].render(renderer, frameGunHome[0].getX(), frameGunHome[0].getY(), NULL, 0);
 			if (tank.getIsHaveFireGun())
@@ -800,6 +1033,7 @@ void handleGameOverMenu() {
 					}
 					textGameOver.setColor(255, 0, 0);
 					if (e.type == SDL_MOUSEBUTTONDOWN) {
+						Mix_HaltMusic();
 						return;
 					}
 				}
@@ -816,6 +1050,8 @@ void handleGameOverMenu() {
 
 		SDL_RenderPresent(renderer);
 	}
+	Mix_HaltMusic();
+	return;
 }
 
 void handleWinMenu() {
@@ -858,12 +1094,16 @@ void handleWinMenu() {
 void loadDataTank(bool _isNewGame) {
 	std::string pathDataFile;
 	if (_isNewGame) {
-		pathDataFile = "dulieu.txt";
+		pathDataFile = "dataNewGame.txt";
+		remove("dataSave.txt");
 	}
 	else {
-		pathDataFile = "dulieu2.txt";
+		pathDataFile = "dataSave.txt";
 	}
 	std::ifstream _dataTank(pathDataFile, std::ios::in);
+	if (_dataTank.fail()) {
+		_dataTank.open("dataNewGame.txt", std::ios::in);
+	}
 	std::string _data;
 	getline(_dataTank, _data); tank.setTotalHealth(atoi(_data.c_str()));
 	getline(_dataTank, _data); tank.setArmor(atoi(_data.c_str()));
@@ -880,15 +1120,15 @@ void loadDataTank(bool _isNewGame) {
 	getline(_dataTank, _data); tank.setIsHaveRocketGun(atoi(_data.c_str()));
 	getline(_dataTank, _data);
 	{
-		if (_data == "T-D Gun") tank.setSlotGun1Type(Bullet::nomalBullet);
-		else if (_data == "GJKD_Fire") tank.setSlotGun1Type(Bullet::fireBullet);
-		else if (_data == "GS3_Rocket") tank.setSlotGun1Type(Bullet::rocketBullet);
+		if (atoi(_data.c_str()) == 0) tank.setSlotGun1Type(Bullet::nomalBullet);
+		else if (atoi(_data.c_str()) == 1) tank.setSlotGun1Type(Bullet::fireBullet);
+		else if (atoi(_data.c_str()) == 2) tank.setSlotGun1Type(Bullet::rocketBullet);
 	}
 	getline(_dataTank, _data);
 	{
-		if (_data == "T-D Gun") tank.setSlotGun2Type(Bullet::nomalBullet);
-		else if (_data == "GJKD_Fire") tank.setSlotGun2Type(Bullet::fireBullet);
-		else if (_data == "GS3_Rocket") tank.setSlotGun2Type(Bullet::rocketBullet);
+		if (atoi(_data.c_str()) == 0) tank.setSlotGun2Type(Bullet::nomalBullet);
+		else if (atoi(_data.c_str()) == 1) tank.setSlotGun2Type(Bullet::fireBullet);
+		else if (atoi(_data.c_str()) == 2) tank.setSlotGun2Type(Bullet::rocketBullet);
 	}
 	tank.loadGun12(renderer);
 }
@@ -944,7 +1184,7 @@ void game() {
 
 		SDL_Rect camera = { 0, 0, cameraWidth, cameraHeight }; // khai báo camera
 		SDL_ShowCursor(SDL_DISABLE); // ẩn con trỏ chuột
-		bossList.createListBoss(map, tank.getTankCircle(), level * 5, level < 5 ? level : 4, renderer, level * 50, level * 2, { 0, 0, 0 }, { 0, 0, 0 });
+		bossList.createListBoss(map, tank.getTankCircle(), level * 50, level < 5 ? level : 4, renderer, level * 50, level * 2, { 0, 0, 0 }, { 0, 0, 0 });
 		
 		while (!out) {
 			while (SDL_PollEvent(&event) != 0) { // bắt các sự kiện
@@ -1136,6 +1376,7 @@ int main(int arc, char* arg[]) {
 		loadMenuMain();
 		loadAboutMenu();
 		loadHomeMenu();
+		loadShopMenu();
 		while (true) {
 			selection = handleMenuGame();
 			if (selection == 0) { // chơi tiếp
